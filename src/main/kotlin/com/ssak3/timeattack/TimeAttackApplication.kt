@@ -1,9 +1,12 @@
 package com.ssak3.timeattack
 
+import com.ssak3.timeattack.member.auth.properties.KakaoProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
+@EnableConfigurationProperties(KakaoProperties::class)
 class TimeAttackApplication
 
 fun main(args: Array<String>) {
