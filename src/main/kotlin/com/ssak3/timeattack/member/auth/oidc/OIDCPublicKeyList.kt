@@ -11,7 +11,16 @@ import java.io.Serializable
 data class OIDCPublicKeyList(
     @JsonProperty("keys")
     val keys: List<OIDCPublicKey>
-) : Serializable
+) : Serializable {
+
+    /**
+     * id token의 kid, alg와 맞는 공개키 찾기
+     * TODO : 공통 에러 response로 수정하기
+     */
+    fun getMatchedKey(kid: String, alg: String): OIDCPublicKey =
+        keys.find { it.kid == kid && it.alg == alg }
+            ?: throw IllegalArgumentException("일치하는 공개키를 찾을 수 없습니다.")
+}
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OIDCPublicKey(
