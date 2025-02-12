@@ -1,6 +1,5 @@
-package com.ssak3.timeattack.member.controller
+package com.ssak3.timeattack.member.auth
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.ssak3.timeattack.member.oidc.OIDCPublicKeyList
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,7 +22,7 @@ interface KakaoAuthClient {
         @RequestParam("redirect_uri") redirectUri: String,
         @RequestParam("code") code: String,
         @RequestParam("client_secret") clientSecret: String,
-    ): KakaoTokenResponse
+    ): OAuthTokenResponse
 
 
     /**
@@ -33,20 +32,3 @@ interface KakaoAuthClient {
     @GetMapping("/.well-known/jwks.json")
     fun getPublicKeys(): OIDCPublicKeyList
 }
-
-data class KakaoTokenResponse(
-    @JsonProperty("access_token")
-    val accessToken: String,
-
-    @JsonProperty("token_type")
-    val tokenType: String,
-
-    @JsonProperty("refresh_token")
-    val refreshToken: String,
-
-    @JsonProperty("id_token")
-    val idToken: String,
-
-    @JsonProperty("expires_in")
-    val expiresIn: Int
-)
