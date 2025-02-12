@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
     name = "kakaoAuthClient",
     url = "https://kauth.kakao.com",
 )
-interface KakaoAuthClient {
+interface KakaoFeignClient {
 
     /**
      * 인가 코드로 카카오 인증 서버에 ID token 요청하기
