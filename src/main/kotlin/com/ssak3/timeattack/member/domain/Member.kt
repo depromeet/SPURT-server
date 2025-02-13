@@ -32,7 +32,7 @@ class Member(
     val oauthProvider: OAuthProvider,
 
     @Column(name = "sub", length = 50)
-    val sub: String,
+    val subject: String,
 
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
@@ -54,7 +54,7 @@ class Member(
         email = "",
         profileImageUrl = "",
         oauthProvider = OAuthProvider.KAKAO,
-        sub = ""
+        subject = ""
     )
 
     // 업데이트 시간을 자동으로 갱신하기 위한 메서드
