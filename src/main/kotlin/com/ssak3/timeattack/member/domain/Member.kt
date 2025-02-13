@@ -1,9 +1,8 @@
 package com.ssak3.timeattack.member.domain
 
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -27,12 +26,8 @@ class Member(
     @Column(name = "profile_image_url", length = 500)
     var profileImageUrl: String,
 
-    @Column(name = "oauth_provider", length = 50)
-    @Enumerated(EnumType.STRING)
-    val oauthProvider: OAuthProvider,
-
-    @Column(name = "sub", length = 50)
-    val subject: String,
+    @Embedded
+    val oAuthProviderInfo: OAuthProviderInfo,
 
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
@@ -49,12 +44,10 @@ class Member(
 
     // jpa에서는 기본 생성자가 필수
     constructor() : this(
-        id = null,
         nickname = "",
         email = "",
         profileImageUrl = "",
-        oauthProvider = OAuthProvider.KAKAO,
-        subject = ""
+        oAuthProviderInfo = OAuthProviderInfo()
     )
 
     // 업데이트 시간을 자동으로 갱신하기 위한 메서드
