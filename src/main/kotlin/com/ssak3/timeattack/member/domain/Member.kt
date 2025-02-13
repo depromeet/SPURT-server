@@ -31,17 +31,7 @@ class Member (
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
 
-) : BaseEntity() {
-
-    // jpa에서는 기본 생성자가 필수
-    constructor() : this(
-        nickname = "",
-        email = "",
-        profileImageUrl = "",
-        oAuthProviderInfo = OAuthProviderInfo()
-    )
-
-}
+) : BaseEntity()
 
 // OAuth Provider Enum
 enum class OAuthProvider {
