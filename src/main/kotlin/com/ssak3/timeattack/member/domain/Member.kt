@@ -15,8 +15,8 @@ import java.time.LocalDateTime
 @Table(name = "member")
 class Member(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
-    val memberId: Long? = null,
+    @Column(name = "id")
+    val id: Long? = null,
 
     @Column(name = "nickname", length = 100)
     var nickname: String,
@@ -49,7 +49,7 @@ class Member(
 
     // jpa에서는 기본 생성자가 필수
     constructor() : this(
-        memberId = 0,
+        id = null,
         nickname = "",
         email = "",
         profileImageUrl = "",
