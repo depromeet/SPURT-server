@@ -1,18 +1,17 @@
 package com.ssak3.timeattack.member.domain
 
+import com.ssak3.timeattack.common.domain.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
-import java.time.LocalDateTime
 
 @Entity
 @Table(name = "member")
-class Member(
+class Member (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     val id: Long? = null,
@@ -32,15 +31,7 @@ class Member(
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
 
-    @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-
-    @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
-
-    @Column(name = "is_deleted")
-    var isDeleted: Boolean = false
-) {
+) : BaseEntity() {
 
     // jpa에서는 기본 생성자가 필수
     constructor() : this(
@@ -50,11 +41,6 @@ class Member(
         oAuthProviderInfo = OAuthProviderInfo()
     )
 
-    // 업데이트 시간을 자동으로 갱신하기 위한 메서드
-    @PreUpdate
-    fun preUpdate() {
-        updatedAt = LocalDateTime.now()
-    }
 }
 
 // OAuth Provider Enum
