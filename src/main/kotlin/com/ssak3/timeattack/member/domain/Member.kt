@@ -10,32 +10,32 @@ class Member(
     @Column(name = "member_id")
     val memberId: Long? = null,
 
-    @Column(name = "nickname", length = 100, nullable = false)
+    @Column(name = "nickname", length = 100)
     var nickname: String,
 
-    @Column(name = "email", length = 100, nullable = false)
+    @Column(name = "email", length = 100)
     var email: String,
 
-    @Column(name = "profile_image_url", length = 500, nullable = false)
+    @Column(name = "profile_image_url", length = 500)
     var profileImageUrl: String,
 
-    @Column(name = "oauth_provider", length = 50, nullable = false)
+    @Column(name = "oauth_provider", length = 50)
     @Enumerated(EnumType.STRING)
     val oauthProvider: OAuthProvider,
 
-    @Column(name = "sub", length = 50, nullable = false)
+    @Column(name = "sub", length = 50)
     val sub: String,
 
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "isDeleted")
     var isDeleted: Boolean = false
 ) {
 
