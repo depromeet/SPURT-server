@@ -56,3 +56,9 @@ allOpen {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
+// plain.jar 파일 생성 방지 - CICD 위해서
+jar {
+    enabled = false
+}
