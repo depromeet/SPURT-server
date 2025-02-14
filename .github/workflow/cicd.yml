@@ -2,9 +2,8 @@ name: CI/CD
 
 on:
   push:
-    branches:
-      - "main"
-      - "feat/SCRUM-17"
+    branches: [ main ]
+
 jobs:
   build:
     runs-on: ubuntu-latest
