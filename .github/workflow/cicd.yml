@@ -2,7 +2,10 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - main
+      - feat/SCRUM-17
+      - dev
 
 jobs:
   build:
