@@ -1,1 +1,1 @@
-rootProject.name = "myproject"
+rootProject.name = "SPURT"
