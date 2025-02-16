@@ -1,5 +1,4 @@
-### Jira Issue
-(지라 티켓 번호)
+(# 입력 하고 이슈 선택)
 
 ### Proposed Changes
 (PR 목적과 변경사항을 적어주세요.)
