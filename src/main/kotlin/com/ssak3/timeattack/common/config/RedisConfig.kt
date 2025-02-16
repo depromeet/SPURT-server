@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.common.config
 
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,16 +18,14 @@ import java.time.Duration
 @Configuration
 @EnableCaching
 class RedisConfig(
-    @Value("\${spring.data.redis.host}") private val host: String,
-    @Value("\${spring.data.redis.port}") private val port: Int,
-    @Value("\${spring.data.redis.password}") private val password: String,
+    val redisProperties: RedisProperties,
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
         val redisStandaloneConfiguration = RedisStandaloneConfiguration().apply {
-            hostName = host
-            port = this@RedisConfig.port
-            password = RedisPassword.of(this@RedisConfig.password)
+            hostName = redisProperties.host
+            port = redisProperties.port
+            password = RedisPassword.of(redisProperties.password)
         }
 
         return LettuceConnectionFactory(redisStandaloneConfiguration)
@@ -51,3 +49,10 @@ class RedisConfig(
             .build()
     }
 }
+
+@ConfigurationProperties(prefix = "spring.data.redis")
+data class RedisProperties(
+    val host: String,
+    val port: Int,
+    val password: String,
+)
