@@ -56,11 +56,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/spurt:latest .
+          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/spurt:latest
+          docker push ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest
 
   deploy:
     needs: build
@@ -73,8 +73,12 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd /home/ikhyeon/spurt-api-dev
-            docker pull ${{ secrets.DOCKER_USERNAME }}/spurt:latest
+            cd ${{ secrets.DEV_COMPOSE_PATH }}
+            
+            echo "${{ secrets.DEV_ENV }}" > .env
+            cat .env || echo ".env file is missing!"
+            
+            docker pull ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest
             
             if [ "$(docker ps -q -f name=spurt-api-dev)" ]; then
               echo "Stopping and removing existing container..."
