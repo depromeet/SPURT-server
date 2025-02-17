@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/spurt:latest .
+          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/spurt:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
