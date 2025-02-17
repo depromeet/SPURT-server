@@ -4,10 +4,4 @@ import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TimeAttackApplicationTests {
-
-    @Test
-    fun contextLoads() {
-    }
-
-}
+class TimeAttackApplicationTest
