@@ -2,9 +2,7 @@ name: "[DEV] SPURT API CI/CD"
 
 on:
   push:
-    branches:
-      - develop
-      - "feat/SCRUM-17"
+    branches: [ develop ]
 
 jobs:
   build:
