@@ -16,13 +16,13 @@ spring:
 
   data:
     redis:
-      host: ${DEV_REDIS_HOST}
-      port: ${DEV_REDIS_PORT}
-      password: ${DEV_REDIS_PASSWORD}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
 
 kakao:
-  client-id: ${DEV_KAKAO_CLIENT_ID}
-  client-secret: ${DEV_KAKAO_CLIENT_SECRET}
-  redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
+  client-id: ${KAKAO_CLIENT_ID}
+  client-secret: ${KAKAO_CLIENT_SECRET}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
 
 
