@@ -64,6 +64,5 @@ class TaskEntity(
     @JoinColumn(name = "persona_id")
     val persona: PersonaEntity,
 
-    @Column(name = "is_delete")
-    var isDelete: Boolean
+    // TODO: BaseEntity 수정 후 isDeleted 필드 추가
 ) : BaseEntity()
