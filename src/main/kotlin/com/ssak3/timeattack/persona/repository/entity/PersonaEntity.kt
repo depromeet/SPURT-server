@@ -14,7 +14,7 @@ class PersonaEntity (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     val name: String,
 
     @Column(name = "persona_image_url")
