@@ -26,7 +26,6 @@ kakao:
   redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
 
 jwt:
-  header: ${DEV_JWT_HEADER}
   secret: ${DEV_JWT_SECRET}
   access-token-validity-in-seconds: ${DEV_JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${DEV_JWT_REFRESH_TOKEN_VALIDITY}

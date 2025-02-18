@@ -84,7 +84,6 @@ class JwtTokenProvider(
 
 @ConfigurationProperties(prefix = "jwt")
 data class JwtProperties(
-    val header: String,
     val secret: String,
     val accessTokenValidityInSeconds: Long,
     val refreshTokenValidityInSeconds: Long,

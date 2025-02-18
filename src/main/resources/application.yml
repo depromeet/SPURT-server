@@ -31,7 +31,6 @@ kakao:
 
 
 jwt:
-  header: ${JWT_HEADER}
   secret: ${JWT_SECRET}
   access-token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY}
