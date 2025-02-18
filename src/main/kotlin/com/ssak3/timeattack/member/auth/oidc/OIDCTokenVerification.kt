@@ -3,16 +3,24 @@ package com.ssak3.timeattack.member.auth.oidc
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.*
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_EXPIRED
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_GENERAL_ERR
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_INVALID_SIGNATURE
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_MALFORMED
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_UNSUPPORTED
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
 import io.jsonwebtoken.ExpiredJwtException
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.MalformedJwtException
+import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.security.SignatureException
-import org.springframework.stereotype.Component
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.RSAPublicKeySpec
-import java.util.*
+import java.util.Base64
+import org.springframework.stereotype.Component
 
 @Component
 class OIDCTokenVerification(
@@ -62,6 +70,12 @@ class OIDCTokenVerification(
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)
         } catch (e: ExpiredJwtException) {
             throw ApplicationException(JWT_EXPIRED, e)
+        } catch (e: MalformedJwtException) {
+            throw ApplicationException(JWT_MALFORMED, e)
+        } catch (e: UnsupportedJwtException) {
+            throw ApplicationException(JWT_UNSUPPORTED, e)
+        } catch (e: JwtException) {
+            throw ApplicationException(JWT_GENERAL_ERR, e)
         } catch (e: Exception) {
             throw ApplicationException(UNDEFINED_EXCEPTION, e)
         }
