@@ -12,7 +12,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.security.KeyPair
 import java.security.interfaces.RSAPublicKey
-import java.util.*
+import java.util.Date
+import java.util.Base64
+import org.junit.jupiter.api.DisplayName
 
 class OIDCTokenVerificationTest {
 
@@ -70,7 +72,8 @@ class OIDCTokenVerificationTest {
     }
 
     @Test
-    fun `유효한 ID 토큰 검증 테스트`() {
+    @DisplayName("유효한 ID 토큰 검증 테스트")
+    fun verifyIdToken_WithValidToken_ShouldReturnExpectedPayload() {
         // given
         val oidcPublicKeyList = OIDCPublicKeyList(listOf(oidcPublicKey))
 
@@ -86,7 +89,8 @@ class OIDCTokenVerificationTest {
     }
 
     @Test
-    fun `만료된 ID 토큰 검증 테스트`() {
+    @DisplayName("만료된 ID 토큰 검증 테스트")
+    fun verifyIdToken_WithExpiredToken_ShouldThrowException() {
         // given
         val oidcPublicKeyList = OIDCPublicKeyList(listOf(oidcPublicKey))
 
