@@ -7,6 +7,7 @@ import java.time.LocalDateTime
 
 class Task (
     val id: Long,
+    val name: String,
     val category: TaskCategory,
     val dueDatetime: LocalDateTime,
     val triggerAction: String? = null,

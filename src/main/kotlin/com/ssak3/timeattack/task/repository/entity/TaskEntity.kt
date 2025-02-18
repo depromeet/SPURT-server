@@ -28,6 +28,9 @@ class TaskEntity(
     @Column(name = "id")
     val id: Long? = null,
 
+    @Column(name = "name")
+    val name: String,
+
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
     val category: TaskCategory,
