@@ -13,7 +13,7 @@ class TaskTypeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long? = null,
+    val id: Int? = null,
 
     @Column(name = "name", unique = true)
     val name: String
