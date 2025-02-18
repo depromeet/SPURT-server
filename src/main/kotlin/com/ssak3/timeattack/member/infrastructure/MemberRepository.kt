@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param
 
 interface MemberRepository : JpaRepository<Member, Long> {
 
-    @Query("SELECT m FROM Member m WHERE m.oAuthProviderInfo.subject = :subject AND m.oAuthProviderInfo.oauthProvider = :oAuthProvider")
-    fun findBySubjectAndOAuthProvider(
-        @Param("subject") subject: String,
-        @Param("oAuthProvider") oAuthProvider: OAuthProvider
-    ): Member
+    @Query("SELECT m FROM Member m WHERE m.oAuthProviderInfo.oauthProvider = :oauthProvider AND m.oAuthProviderInfo.subject = :subject")
+    fun findByProviderAndSubject(
+        @Param("oauthProvider") oauthProvider: OAuthProvider,
+        @Param("subject") subject: String
+    ): Member?
 }
