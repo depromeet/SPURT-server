@@ -45,8 +45,8 @@ class OIDCTokenVerification(
     private fun createPublicKey(publicKey: OIDCPublicKey): PublicKey {
         val keyFactory = KeyFactory.getInstance("RSA")
         val keySpec = RSAPublicKeySpec(
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.module)),
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.exponent))
+            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.n)),
+            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.e))
         )
         return keyFactory.generatePublic(keySpec)
     }
@@ -64,7 +64,7 @@ class OIDCTokenVerification(
                 subject = claims.subject,
                 email = claims["email"] as String,
                 picture = claims["picture"] as String,
-                name = claims["name"] as String
+                name = claims["nickname"] as String
             )
         } catch (e: SignatureException) {
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)
