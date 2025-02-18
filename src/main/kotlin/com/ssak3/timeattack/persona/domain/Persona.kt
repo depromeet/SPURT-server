@@ -7,5 +7,4 @@ class Persona (
     val taskKeywordsCombination: TaskKeywordsCombination
 ) {
 
-
 }

@@ -14,12 +14,13 @@ import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 
 @Entity
-@Table(name = "persona",
+@Table(
+    name = "persona",
     uniqueConstraints = [
         UniqueConstraint(name = "UK_TASK_TYPE__TASK_MODE", columnNames = ["task_type_id", "task_mode_id"])
     ]
 )
-class PersonaEntity (
+class PersonaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
