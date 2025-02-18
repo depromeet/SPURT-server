@@ -58,7 +58,7 @@ class TaskEntity(
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    val member: Member,
+    val member: Member, //TODO: MemberEntity로 변경
 
     @ManyToOne
     @JoinColumn(name = "persona_id")
