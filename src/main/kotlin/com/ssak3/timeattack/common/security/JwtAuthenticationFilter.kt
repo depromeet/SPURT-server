@@ -21,6 +21,14 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        val requestUri = request.requestURI
+
+        // 공개 엔드포인트인 경우 토큰 체크를 하지 않고 필터 체인 진행
+        if (publicEndpoints.contains(requestUri)) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
         // 쿠키에서 accessToken 가져오기
         val accessToken = resolveToken(request) ?: throw ApplicationException(JWT_NOT_FOUND)
 
@@ -48,6 +56,16 @@ class JwtAuthenticationFilter(
         val authenticationToken = UsernamePasswordAuthenticationToken(member, null, ArrayList())
 
         SecurityContextHolder.getContext().authentication = authenticationToken
+    }
+
+    companion object {
+        // 공개 엔드 포인트
+        private val publicEndpoints = listOf(
+            "/oauth/login",
+            "/oauth/refresh",
+            "/oauth/kakao",
+            "/oauth/kakao/callback"
+        )
     }
 
 }
