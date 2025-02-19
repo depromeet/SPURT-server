@@ -33,9 +33,11 @@ class SecurityConfig(
             }
 
             .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/oauth/login", "/oauth/refresh").permitAll()
+                auth.requestMatchers("/oauth/login", "/oauth/renew").permitAll()
                     .anyRequest().authenticated()
             }
+
+            .formLogin { it.disable() }
 
             .addFilterBefore(
                 jwtAuthenticationFilter(),
