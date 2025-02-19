@@ -8,11 +8,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
+@SpringBootTest
 @ActiveProfiles("test")
-@DataJpaTest    // 각 테스트 메서드 트랜잭션으로 감싸고 테스트 종료 후 롤백해줌
 class MemberRepositoryTest @Autowired constructor(
     private val memberRepository: MemberRepository
 ) {
