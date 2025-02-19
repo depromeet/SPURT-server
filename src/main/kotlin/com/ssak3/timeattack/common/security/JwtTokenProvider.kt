@@ -7,7 +7,6 @@ import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_INVALI
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_MALFORMED
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_UNSUPPORTED
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
-import com.ssak3.timeattack.member.domain.Member
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
@@ -29,10 +28,10 @@ class JwtTokenProvider(
 ) {
 
     // accessToken, refreshToken 생성
-    fun generateTokens(member: Member): JwtTokenDto {
+    fun generateTokens(memberId: Long): JwtTokenDto {
         val now = Date.from(Instant.now())
-        val accessToken = generateToken(member, now, jwtProperties.accessTokenValidityInSeconds)
-        val refreshToken = generateToken(member, now, jwtProperties.refreshTokenValidityInSeconds)
+        val accessToken = generateToken(memberId, now, jwtProperties.accessTokenValidityInSeconds)
+        val refreshToken = generateToken(memberId, now, jwtProperties.refreshTokenValidityInSeconds)
 
         return JwtTokenDto(accessToken, refreshToken)
     }
@@ -50,11 +49,9 @@ class JwtTokenProvider(
     }
 
     // 토큰 생성
-    private fun generateToken(member: Member, now: Date, validity: Long): String =
+    private fun generateToken(memberId: Long, now: Date, validity: Long): String =
         Jwts.builder()
-            .setSubject(member.id.toString())
-            .claim("nickname", member.nickname)
-            .claim("email", member.email)
+            .setSubject(memberId.toString())
             .setIssuedAt(now)
             .setExpiration(Date(now.time + validity))
             .signWith(jwtProperties.key)

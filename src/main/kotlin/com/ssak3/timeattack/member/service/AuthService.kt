@@ -10,7 +10,6 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.domain.OAuthProviderInfo
 import com.ssak3.timeattack.member.infrastructure.MemberRepository
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -38,7 +37,8 @@ class AuthService(
                 ?: createMember(oidcPayload, request.provider)
 
         // JWT 토큰 생성 & 반환
-        return jwtTokenProvider.generateTokens(member)
+        // member 객체 무조건 존재하기에 !! 사용
+        return jwtTokenProvider.generateTokens(member.id!!)
     }
 
     private fun createMember(oidcPayload: OIDCPayload, provider: OAuthProvider): Member =
@@ -50,8 +50,4 @@ class AuthService(
                 oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject)
             )
         )
-
-    companion object {
-        private val log = LoggerFactory.getLogger(AuthService::class.java)
-    }
 }
