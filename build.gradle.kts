@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
 }
 
 group = "com.ssak3"
@@ -29,6 +30,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
+
+
+    // QueryDSL 추가
+    val querydslVersion = "5.0.0"
+    implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")
+    kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")

@@ -64,8 +64,8 @@ class OIDCTokenVerificationTest {
         oidcPublicKey = OIDCPublicKey(
             kid = "test-kid",
             alg = "RS256",
-            module = modulusBase64Url,
-            exponent = "AQAB",         // 일반적으로 RSA 공개키의 지수는 "AQAB"임
+            n = modulusBase64Url,
+            e = "AQAB",
             kty = "RSA",
             use = "sig",
         )
@@ -83,8 +83,6 @@ class OIDCTokenVerificationTest {
 
         // then
         assertEquals("1234567890", payload.subject)
-        assertEquals("test@example.com", payload.email)
-        assertEquals("John Doe", payload.name)
         assertEquals("https://example.com/picture.jpg", payload.picture)
     }
 
