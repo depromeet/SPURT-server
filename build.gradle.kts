@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
