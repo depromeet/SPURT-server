@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.9.25"
+    kotlin("kapt") version "1.9.25"
 }
 
 group = "com.ssak3"
@@ -29,7 +30,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
-    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+
+
+    // QueryDSL 추가
+    val querydslVersion = "5.0.0"
+    implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")
+    kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
+    kapt("jakarta.persistence:jakarta.persistence-api")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
@@ -42,6 +49,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+kotlin.sourceSets.main {
+    kotlin.srcDirs("src/main/kotlin", "build/generated/source/kapt/main")
 }
 
 kotlin {
@@ -58,4 +69,8 @@ allOpen {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named<Delete>("clean") {
+    delete("src/main/generated")
 }
