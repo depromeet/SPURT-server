@@ -7,6 +7,7 @@ import com.ssak3.timeattack.member.infrastructure.findByIdOrThrow
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
@@ -36,6 +37,7 @@ class JwtAuthenticationFilter(
         if (jwtTokenProvider.validateToken(accessToken)) {
             val memberId = jwtTokenProvider.getMemberIdFromToken(accessToken)
             setAuthenticationInSecurityContext(memberId)
+            log.info("SecurityContextHolder 설정 성공: ${SecurityContextHolder.getContext().authentication}")
         }
 
         // 유효기간 지난 경우, getClaims()에서 JWT_EXPIRED 예외 발생
@@ -66,6 +68,7 @@ class JwtAuthenticationFilter(
             "/oauth/kakao",
             "/oauth/kakao/callback"
         )
-    }
 
+        private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
+    }
 }
