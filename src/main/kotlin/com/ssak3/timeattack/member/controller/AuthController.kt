@@ -1,9 +1,12 @@
 package com.ssak3.timeattack.member.controller
 
 import com.ssak3.timeattack.common.utils.JwtCookieUtil.Companion.setJwtTokenCookies
+import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.service.AuthService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -28,5 +31,9 @@ class AuthController(
 
         return ResponseEntity.ok("success")
     }
+
+    // SecurityContextHolder & JwtAuthenticationFilter 동작 확인 API
+    @GetMapping("/test")
+    fun testFilter(@AuthenticationPrincipal member: Member): Member = member
 
 }
