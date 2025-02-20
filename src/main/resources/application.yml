@@ -34,3 +34,13 @@ jwt:
   secret: ${JWT_SECRET}
   access-token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY}
+
+cors:
+  allowed-origins:
+    - ${CORS_ALLOWED_ORIGINS_01}
+    - ${CORS_ALLOWED_ORIGINS_02}
+  allowed-headers:
+    - ${CORS_ALLOWED_HEADERS}
+  allowed-methods:
+    - ${CORS_ALLOWED_METHODS}
+  allow-credentials: ${CORS_ALLOW_CREDENTIALS}

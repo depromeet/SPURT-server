@@ -3,6 +3,7 @@ package com.ssak3.timeattack.common.config
 import com.ssak3.timeattack.common.security.JwtAuthenticationFilter
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -18,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @EnableWebSecurity
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
+    private val corsProperties: CorsProperties,
     private val memberRepository: MemberRepository,
 ) {
 
@@ -29,13 +31,12 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            addAllowedOrigin("https://spurt.site")
-            addAllowedOrigin("http://localhost:3000")
-
-            addAllowedHeader("*")
-            addAllowedMethod("*")
-            allowCredentials = true
+            corsProperties.allowedOrigins.forEach { addAllowedOrigin(it) }
+            corsProperties.allowedHeaders.forEach { addAllowedHeader(it) }
+            corsProperties.allowedMethods.forEach { addAllowedMethod(it) }
+            allowCredentials = corsProperties.allowCredentials
         }
+
         // 모든 URL 패턴(**)에 위 설정 적용
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
@@ -67,3 +68,11 @@ class SecurityConfig(
         return http.build()
     }
 }
+
+@ConfigurationProperties(prefix = "cors")
+data class CorsProperties(
+    val allowedOrigins: List<String>,
+    val allowedHeaders: List<String>,
+    val allowedMethods: List<String>,
+    val allowCredentials: Boolean,
+)
