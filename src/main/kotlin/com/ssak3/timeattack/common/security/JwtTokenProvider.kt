@@ -53,7 +53,7 @@ class JwtTokenProvider(
         Jwts.builder()
             .setSubject(memberId.toString())
             .setIssuedAt(now)
-            .setExpiration(Date(now.time + validity))
+            .setExpiration(Date(now.time + (validity * 1000)))
             .signWith(jwtProperties.key)
             .compact()
 
