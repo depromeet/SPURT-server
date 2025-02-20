@@ -2,7 +2,7 @@ package com.ssak3.timeattack.common.config
 
 import com.ssak3.timeattack.common.security.JwtAuthenticationFilter
 import com.ssak3.timeattack.common.security.JwtTokenProvider
-import com.ssak3.timeattack.member.repository.MemberRepository
+import com.ssak3.timeattack.member.service.MemberService
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -21,12 +21,12 @@ class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val corsProperties: CorsProperties,
     private val securityProperties: SecurityProperties,
-    private val memberRepository: MemberRepository,
+    private val memberService: MemberService,
 ) {
 
     @Bean
     fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(jwtTokenProvider, memberRepository)
+        return JwtAuthenticationFilter(jwtTokenProvider, memberService, securityProperties)
     }
 
     @Bean

@@ -1,9 +1,9 @@
 package com.ssak3.timeattack.common.security
 
+import com.ssak3.timeattack.common.config.SecurityProperties
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_NOT_FOUND
-import com.ssak3.timeattack.member.repository.MemberRepository
-import com.ssak3.timeattack.member.repository.findByIdOrThrow
+import com.ssak3.timeattack.member.service.MemberService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -15,7 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val memberRepository: MemberRepository,
+    private val memberService: MemberService,
+    private val securityProperties: SecurityProperties,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -25,7 +26,7 @@ class JwtAuthenticationFilter(
         val requestUri = request.requestURI
 
         // 공개 엔드포인트인 경우 토큰 체크를 하지 않고 필터 체인 진행
-        if (publicEndpoints.contains(requestUri)) {
+        if (securityProperties.permitUrls.contains(requestUri)) {
             filterChain.doFilter(request, response)
             return
         }
@@ -54,21 +55,13 @@ class JwtAuthenticationFilter(
 
     // member 조회하고 securityContextHolder
     private fun setAuthenticationInSecurityContext(memberId: Long) {
-        val member = memberRepository.findByIdOrThrow(memberId)
+        val member = memberService.getMemberById(memberId)
         val authenticationToken = UsernamePasswordAuthenticationToken(member, null, ArrayList())
 
         SecurityContextHolder.getContext().authentication = authenticationToken
     }
 
     companion object {
-        // 공개 엔드 포인트
-        private val publicEndpoints = listOf(
-            "/oauth/login",
-            "/oauth/refresh",
-            "/oauth/kakao",
-            "/oauth/kakao/callback"
-        )
-
         private val log = LoggerFactory.getLogger(JwtAuthenticationFilter::class.java)
     }
 }
