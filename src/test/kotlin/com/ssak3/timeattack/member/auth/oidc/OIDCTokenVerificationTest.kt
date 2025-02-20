@@ -35,7 +35,7 @@ class OIDCTokenVerificationTest {
             .setHeaderParam("kid", "test-kid")
             .setHeaderParam("alg", "RS256")
             .claim("email", "test@example.com")
-            .claim("name", "John Doe")
+            .claim("nickname", "John Doe")
             .claim("picture", "https://example.com/picture.jpg")
             .setExpiration(Date(System.currentTimeMillis() + 3600000))
             .signWith(keyPair.private, SignatureAlgorithm.RS256)

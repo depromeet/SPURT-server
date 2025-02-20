@@ -64,7 +64,7 @@ class OIDCTokenVerification(
                 subject = claims.subject,
                 email = claims["email"] as String,
                 picture = claims["picture"] as String,
-                name = claims["name"] as String
+                name = claims["nickname"] as String
             )
         } catch (e: SignatureException) {
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)
