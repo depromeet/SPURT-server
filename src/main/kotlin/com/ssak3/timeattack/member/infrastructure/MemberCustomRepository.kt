@@ -5,4 +5,6 @@ import com.ssak3.timeattack.member.domain.OAuthProvider
 
 interface MemberCustomRepository {
     fun findByProviderAndSubject(oauthProvider: OAuthProvider, subject: String): Member?
+
+    fun findByIdOrThrow(id: Long): Member
 }
