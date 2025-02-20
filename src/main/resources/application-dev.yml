@@ -39,3 +39,8 @@ cors:
   allowed-methods:
     - ${DEV_CORS_ALLOWED_METHODS}
   allow-credentials: ${DEV_CORS_ALLOW_CREDENTIALS}
+
+security:
+  permit-urls:
+    - ${DEV_SECURITY_PERMIT_URLS_01}
+    - ${DEV_SECURITY_PERMIT_URLS_02}

@@ -20,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val corsProperties: CorsProperties,
+    private val securityProperties: SecurityProperties,
     private val memberRepository: MemberRepository,
 ) {
 
@@ -54,7 +55,7 @@ class SecurityConfig(
             }
 
             .authorizeHttpRequests { auth ->
-                auth.requestMatchers("/oauth/login", "/oauth/renew").permitAll()
+                auth.requestMatchers(*securityProperties.permitUrls.toTypedArray()).permitAll()
                     .anyRequest().authenticated()
             }
 
@@ -75,4 +76,9 @@ data class CorsProperties(
     val allowedHeaders: List<String>,
     val allowedMethods: List<String>,
     val allowCredentials: Boolean,
+)
+
+@ConfigurationProperties(prefix = "security")
+data class SecurityProperties(
+    val permitUrls: List<String>,
 )
