@@ -20,6 +20,8 @@ repositories {
     mavenCentral()
 }
 
+val querydslVersion: String by project
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -33,7 +35,6 @@ dependencies {
 
 
     // QueryDSL 추가
-    val querydslVersion = "5.0.0"
     implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
 
