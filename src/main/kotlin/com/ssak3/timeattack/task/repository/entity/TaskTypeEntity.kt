@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 class TaskTypeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "task_type_id")
     val id: Int? = null,
 
     @Column(name = "name", unique = true)

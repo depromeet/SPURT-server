@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 class TaskEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "task_id")
     val id: Long? = null,
 
     @Column(name = "name")

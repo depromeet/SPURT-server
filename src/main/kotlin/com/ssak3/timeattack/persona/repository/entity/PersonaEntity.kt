@@ -23,6 +23,7 @@ import jakarta.persistence.UniqueConstraint
 class PersonaEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "persona_id")
     val id: Long? = null,
 
     @Column(name = "name", unique = true)
