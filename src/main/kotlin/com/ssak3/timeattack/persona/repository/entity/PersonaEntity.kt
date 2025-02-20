@@ -26,10 +26,10 @@ class PersonaEntity(
     @Column(name = "persona_id")
     val id: Long? = null,
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, length = 100)
     val name: String,
 
-    @Column(name = "persona_image_url")
+    @Column(name = "persona_image_url", length = 255)
     val personaImageUrl: String,
 
     @ManyToOne

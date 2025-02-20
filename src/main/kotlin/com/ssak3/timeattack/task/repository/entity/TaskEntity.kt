@@ -28,7 +28,7 @@ class TaskEntity(
     @Column(name = "task_id")
     val id: Long? = null,
 
-    @Column(name = "name")
+    @Column(name = "name", length = 100)
     val name: String,
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +38,7 @@ class TaskEntity(
     @Column(name = "due_datetime")
     val dueDatetime: LocalDateTime,
 
-    @Column(name = "trigger_action")
+    @Column(name = "trigger_action", length = 100)
     val triggerAction: String? = null,
 
     @Column(name = "estimated_time")

@@ -15,6 +15,6 @@ class TaskTypeEntity(
     @Column(name = "task_type_id")
     val id: Int? = null,
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, length = 20)
     val name: String
 )
