@@ -12,8 +12,6 @@ class Task(
     val dueDatetime: LocalDateTime,
     val triggerAction: String? = null,
     val estimatedTime: Int? = null,
-    val taskType: TaskType,
-    val taskMode: TaskMode,
     val status: TaskStatus,
     val member: Member,
     val persona: Persona,

@@ -44,14 +44,6 @@ class TaskEntity(
     @Column(name = "estimated_time")
     var estimatedTime: Int? = null,
 
-    @ManyToOne
-    @JoinColumn(name = "task_type_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val taskType: TaskTypeEntity,
-
-    @ManyToOne
-    @JoinColumn(name = "task_mode_id", nullable = false, foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val taskMode: TaskModeEntity,
-
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     var status: TaskStatus,
