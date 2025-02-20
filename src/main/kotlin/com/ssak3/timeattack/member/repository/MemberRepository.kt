@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.infrastructure
+package com.ssak3.timeattack.member.repository
 
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.MEMBER_NOT_FOUND_BY_ID

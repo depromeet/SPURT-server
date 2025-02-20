@@ -2,7 +2,7 @@ package com.ssak3.timeattack.common.config
 
 import com.ssak3.timeattack.common.security.JwtAuthenticationFilter
 import com.ssak3.timeattack.common.security.JwtTokenProvider
-import com.ssak3.timeattack.member.infrastructure.MemberRepository
+import com.ssak3.timeattack.member.repository.MemberRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity

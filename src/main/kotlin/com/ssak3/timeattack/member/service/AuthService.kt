@@ -9,7 +9,7 @@ import com.ssak3.timeattack.member.controller.LoginRequest
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.domain.OAuthProviderInfo
-import com.ssak3.timeattack.member.infrastructure.MemberRepository
+import com.ssak3.timeattack.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 
 @Service

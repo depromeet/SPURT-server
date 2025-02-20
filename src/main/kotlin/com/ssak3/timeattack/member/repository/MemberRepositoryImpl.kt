@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.infrastructure
+package com.ssak3.timeattack.member.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.ssak3.timeattack.member.domain.Member
