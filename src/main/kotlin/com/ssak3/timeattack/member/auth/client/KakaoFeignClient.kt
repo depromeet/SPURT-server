@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
     url = "https://kauth.kakao.com",
 )
 interface KakaoFeignClient {
-
     /**
      * 인가 코드로 카카오 인증 서버에 ID token 요청하기
      */
@@ -27,7 +26,6 @@ interface KakaoFeignClient {
         @RequestParam("code") code: String,
         @RequestParam("client_secret") clientSecret: String,
     ): OAuthTokenResponse
-
 
     /**
      * 카카오 인증 서버가 ID 토큰 서명 시 사용한 공개키 목록을 조회

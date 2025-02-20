@@ -3,7 +3,7 @@ package com.ssak3.timeattack.global.response
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 
-data class ExceptionResponse (
+data class ExceptionResponse(
     val httpStatus: String,
     val exceptionCode: String,
     val message: String,
@@ -14,15 +14,18 @@ data class ExceptionResponse (
             return ExceptionResponse(
                 exceptionType.httpStatus.toString(),
                 exceptionType.exceptionCode,
-                exception.message
+                exception.message,
             )
         }
 
-        fun from(exceptionType: ApplicationExceptionType, vararg args: Any): ExceptionResponse {
+        fun from(
+            exceptionType: ApplicationExceptionType,
+            vararg args: Any,
+        ): ExceptionResponse {
             return ExceptionResponse(
                 exceptionType.httpStatus.toString(),
                 exceptionType.exceptionCode,
-                exceptionType.getErrorMessage(*args)
+                exceptionType.getErrorMessage(*args),
             )
         }
     }

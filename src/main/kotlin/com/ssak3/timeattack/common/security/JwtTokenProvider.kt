@@ -27,7 +27,6 @@ import java.util.Date
 class JwtTokenProvider(
     val jwtProperties: JwtProperties,
 ) {
-
     // accessToken, refreshToken 생성
     fun generateTokens(memberId: Long): JwtTokenDto {
         val now = LocalDateTime.now()
@@ -50,7 +49,11 @@ class JwtTokenProvider(
     }
 
     // 토큰 생성
-    private fun generateToken(memberId: Long, now: LocalDateTime, validityInSeconds: Long): String {
+    private fun generateToken(
+        memberId: Long,
+        now: LocalDateTime,
+        validityInSeconds: Long,
+    ): String {
         val expiration = now.plusSeconds(validityInSeconds)
         return Jwts.builder()
             .setSubject(memberId.toString())
@@ -59,7 +62,6 @@ class JwtTokenProvider(
             .signWith(jwtProperties.key)
             .compact()
     }
-
 
     // token에서 claim 정보 추출하기
     private fun getClaims(token: String): Jws<Claims> =

@@ -8,16 +8,15 @@ import io.jsonwebtoken.security.Keys
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.security.KeyPair
 import java.security.interfaces.RSAPublicKey
-import java.util.Date
 import java.util.Base64
-import org.junit.jupiter.api.DisplayName
+import java.util.Date
 
 class OIDCTokenVerificationTest {
-
     private lateinit var oidcTokenVerification: OIDCTokenVerification
     private lateinit var keyPair: KeyPair
     private lateinit var validToken: String
@@ -30,25 +29,27 @@ class OIDCTokenVerificationTest {
         keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
 
         // 유효한 토큰 생성
-        validToken = Jwts.builder()
-            .setSubject("1234567890")
-            .setHeaderParam("kid", "test-kid")
-            .setHeaderParam("alg", "RS256")
-            .claim("email", "test@example.com")
-            .claim("nickname", "John Doe")
-            .claim("picture", "https://example.com/picture.jpg")
-            .setExpiration(Date(System.currentTimeMillis() + 3600000))
-            .signWith(keyPair.private, SignatureAlgorithm.RS256)
-            .compact()
+        validToken =
+            Jwts.builder()
+                .setSubject("1234567890")
+                .setHeaderParam("kid", "test-kid")
+                .setHeaderParam("alg", "RS256")
+                .claim("email", "test@example.com")
+                .claim("nickname", "John Doe")
+                .claim("picture", "https://example.com/picture.jpg")
+                .setExpiration(Date(System.currentTimeMillis() + 3600000))
+                .signWith(keyPair.private, SignatureAlgorithm.RS256)
+                .compact()
 
         // 만료된 토큰 생성
-        expiredToken = Jwts.builder()
-            .setSubject("1234567891")
-            .setHeaderParam("kid", "test-kid")
-            .setHeaderParam("alg", "RS256")
-            .setExpiration(Date(System.currentTimeMillis() - 1000)) // 이미 만료됨
-            .signWith(keyPair.private, SignatureAlgorithm.RS256)
-            .compact()
+        expiredToken =
+            Jwts.builder()
+                .setSubject("1234567891")
+                .setHeaderParam("kid", "test-kid")
+                .setHeaderParam("alg", "RS256")
+                .setExpiration(Date(System.currentTimeMillis() - 1000)) // 이미 만료됨
+                .signWith(keyPair.private, SignatureAlgorithm.RS256)
+                .compact()
 
         // RSA 공개키에서 실제 모듈러스 추출 후 Base64Url 인코딩
         val rsaPublicKey = keyPair.public as RSAPublicKey
@@ -61,14 +62,15 @@ class OIDCTokenVerificationTest {
         val modulusBase64Url = Base64.getUrlEncoder().withoutPadding().encodeToString(modulusBytes)
 
         // 수정된 공개키 정보를 사용
-        oidcPublicKey = OIDCPublicKey(
-            kid = "test-kid",
-            alg = "RS256",
-            n = modulusBase64Url,
-            e = "AQAB",
-            kty = "RSA",
-            use = "sig",
-        )
+        oidcPublicKey =
+            OIDCPublicKey(
+                kid = "test-kid",
+                alg = "RS256",
+                n = modulusBase64Url,
+                e = "AQAB",
+                kty = "RSA",
+                use = "sig",
+            )
     }
 
     @Test
@@ -76,7 +78,6 @@ class OIDCTokenVerificationTest {
     fun verifyIdToken_WithValidToken_ShouldReturnExpectedPayload() {
         // given
         val oidcPublicKeyList = OIDCPublicKeyList(listOf(oidcPublicKey))
-
 
         // when
         val payload = oidcTokenVerification.verifyIdToken(validToken, oidcPublicKeyList)
@@ -100,4 +101,3 @@ class OIDCTokenVerificationTest {
         }
     }
 }
-

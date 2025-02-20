@@ -10,12 +10,12 @@ data class PushNotification(
     val scheduledAt: LocalDateTime,
     val status: Boolean = true,
 ) {
-
-    fun toEntity() = PushNotificationEntity(
-        id = this.id,
-        memberId = this.memberId,
-        taskId = this.taskId,
-        scheduledAt = this.scheduledAt,
-        status = this.status,
-    )
+    fun toEntity() =
+        PushNotificationEntity(
+            id = this.id,
+            memberId = this.memberId,
+            taskId = this.taskId,
+            scheduledAt = this.scheduledAt,
+            status = this.status,
+        )
 }

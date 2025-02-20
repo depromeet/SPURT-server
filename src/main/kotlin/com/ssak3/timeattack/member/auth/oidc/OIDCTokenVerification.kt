@@ -15,19 +15,21 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
 import io.jsonwebtoken.UnsupportedJwtException
 import io.jsonwebtoken.security.SignatureException
+import org.springframework.stereotype.Component
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.PublicKey
 import java.security.spec.RSAPublicKeySpec
 import java.util.Base64
-import org.springframework.stereotype.Component
 
 @Component
 class OIDCTokenVerification(
-    private val objectMapper: ObjectMapper = jacksonObjectMapper()
+    private val objectMapper: ObjectMapper = jacksonObjectMapper(),
 ) {
-
-    fun verifyIdToken(idToken: String, oidcPublicKeys: OIDCPublicKeyList): OIDCPayload {
+    fun verifyIdToken(
+        idToken: String,
+        oidcPublicKeys: OIDCPublicKeyList,
+    ): OIDCPayload {
         val (kid, alg) = extractFromHeader(idToken)
         val matchedKey = oidcPublicKeys.getMatchedKey(kid, alg)
         val publicKey = createPublicKey(matchedKey)
@@ -44,27 +46,32 @@ class OIDCTokenVerification(
     // RSA 공개키 생성
     private fun createPublicKey(publicKey: OIDCPublicKey): PublicKey {
         val keyFactory = KeyFactory.getInstance("RSA")
-        val keySpec = RSAPublicKeySpec(
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.n)),
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.e))
-        )
+        val keySpec =
+            RSAPublicKeySpec(
+                BigInteger(1, Base64.getUrlDecoder().decode(publicKey.n)),
+                BigInteger(1, Base64.getUrlDecoder().decode(publicKey.e)),
+            )
         return keyFactory.generatePublic(keySpec)
     }
 
     // ID Token 검증 및 페이로드 추출
-    private fun verifyAndExtractPayload(token: String, publicKey: PublicKey): OIDCPayload {
+    private fun verifyAndExtractPayload(
+        token: String,
+        publicKey: PublicKey,
+    ): OIDCPayload {
         return try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(publicKey)
-                .build()
-                .parseClaimsJws(token)
-                .body
+            val claims =
+                Jwts.parserBuilder()
+                    .setSigningKey(publicKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .body
 
             OIDCPayload(
                 subject = claims.subject,
                 email = claims["email"] as String,
                 picture = claims["picture"] as String,
-                name = claims["nickname"] as String
+                name = claims["nickname"] as String,
             )
         } catch (e: SignatureException) {
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)

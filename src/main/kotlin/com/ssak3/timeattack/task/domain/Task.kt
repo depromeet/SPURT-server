@@ -4,7 +4,6 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import java.time.LocalDateTime
 
-
 class Task(
     val id: Long,
     val name: String,
@@ -17,7 +16,5 @@ class Task(
     val persona: Persona,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val isDeleted: Boolean
-) {
-
-}
+    val isDeleted: Boolean,
+)
