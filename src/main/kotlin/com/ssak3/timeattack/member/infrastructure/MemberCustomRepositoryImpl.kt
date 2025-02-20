@@ -7,9 +7,9 @@ import com.ssak3.timeattack.member.domain.QMember
 import org.springframework.stereotype.Repository
 
 @Repository
-class MemberRepositoryImpl(
+class MemberCustomRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
-) : MemberRepositoryCustom {
+) : MemberCustomRepository {
 
     override fun findByProviderAndSubject(oauthProvider: OAuthProvider, subject: String): Member? {
         val qMember = QMember.member
