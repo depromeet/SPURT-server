@@ -36,17 +36,17 @@ class TaskEntity(
     val category: TaskCategory,
 
     @Column(name = "due_datetime")
-    var dueDatetime: LocalDateTime,
+    val dueDatetime: LocalDateTime,
 
     @Column(name = "trigger_action")
-    var triggerAction: String? = null,
+    val triggerAction: String? = null,
 
     @Column(name = "estimated_time")
-    var estimatedTime: Int? = null,
+    val estimatedTime: Int? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    var status: TaskStatus,
+    val status: TaskStatus,
 
     @ManyToOne
     @JoinColumn(name = "member_id")
