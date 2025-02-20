@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.member.auth.client
 
-import com.ssak3.timeattack.member.auth.properties.KakaoProperties
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
+import com.ssak3.timeattack.member.auth.properties.KakaoProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -9,11 +9,9 @@ import org.springframework.stereotype.Component
 class KakaoOAuthClient(
     @Autowired
     val kakaoFeignClient: KakaoFeignClient,
-
     @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
-
     override fun getToken(authCode: String): OAuthTokenResponse {
         return kakaoFeignClient.getToken(
             code = authCode,

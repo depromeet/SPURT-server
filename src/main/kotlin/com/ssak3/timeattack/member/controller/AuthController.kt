@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
 ) {
-
     @PostMapping("/login")
     fun socialLogin(
         @RequestBody loginRequest: LoginRequest,
-        response: HttpServletResponse
+        response: HttpServletResponse,
     ): ResponseEntity<String> {
         // 소셜 로그인 후, JWT 토큰 반환
         val tokens = authService.authenticateAndRegister(loginRequest)
@@ -34,6 +33,7 @@ class AuthController(
 
     // SecurityContextHolder & JwtAuthenticationFilter 동작 확인 API
     @GetMapping("/test")
-    fun testFilter(@AuthenticationPrincipal member: Member): Member = member
-
+    fun testFilter(
+        @AuthenticationPrincipal member: Member,
+    ): Member = member
 }

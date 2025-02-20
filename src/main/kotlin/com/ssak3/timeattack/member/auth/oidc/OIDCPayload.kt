@@ -7,5 +7,5 @@ data class OIDCPayload(
     val subject: String,
     val email: String,
     val picture: String,
-    val name: String
+    val name: String,
 )

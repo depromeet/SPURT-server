@@ -11,20 +11,14 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "push_notifications")
 class PushNotificationEntity(
-
     @Id
     @GeneratedValue
     val id: Long = 0,
-
     @Column(name = "member_id")
     val memberId: Long,
-
     @Column(name = "task_id")
     val taskId: Long,
-
     @Column(name = "scheduled_at")
     val scheduledAt: LocalDateTime,
-
     val status: Boolean,
-
 ) : BaseEntity()

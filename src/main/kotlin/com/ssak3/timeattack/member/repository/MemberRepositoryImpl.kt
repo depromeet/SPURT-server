@@ -10,15 +10,17 @@ import org.springframework.stereotype.Repository
 class MemberRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : MemberRepositoryCustom {
-
-    override fun findByProviderAndSubject(oauthProvider: OAuthProvider, subject: String): Member? {
+    override fun findByProviderAndSubject(
+        oauthProvider: OAuthProvider,
+        subject: String,
+    ): Member? {
         val qMember = QMember.member
         return queryFactory
             .select(qMember)
             .from(qMember)
             .where(
                 qMember.oAuthProviderInfo.oauthProvider.eq(oauthProvider),
-                qMember.oAuthProviderInfo.subject.eq(subject)
+                qMember.oAuthProviderInfo.subject.eq(subject),
             )
             .fetchOne()
     }

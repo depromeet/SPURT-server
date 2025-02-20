@@ -10,4 +10,5 @@ interface MemberRepository : JpaRepository<Member, Long>, MemberRepositoryCustom
 
 fun MemberRepository.findByIdOrThrow(id: Long): Member =
     findByIdOrNull(id) ?: throw ApplicationException(
-        MEMBER_NOT_FOUND_BY_ID)
+        MEMBER_NOT_FOUND_BY_ID,
+    )
