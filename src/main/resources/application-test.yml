@@ -19,3 +19,8 @@ spring:
   data:
     redis:
       port: 6379
+
+jwt:
+  access-token-validity-in-seconds: 3600
+  refresh-token-validity-in-seconds: 604800
+  secret: dummyKeyForTestsdummyKeyForTestsdummyKeyForTests

@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.infrastructure
+package com.ssak3.timeattack.member.repository
 
 import com.ssak3.timeattack.common.config.QueryDslConfig
 import com.ssak3.timeattack.member.domain.Member

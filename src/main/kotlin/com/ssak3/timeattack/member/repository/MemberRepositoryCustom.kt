@@ -1,10 +1,8 @@
-package com.ssak3.timeattack.member.infrastructure
+package com.ssak3.timeattack.member.repository
 
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 
-interface MemberCustomRepository {
+interface MemberRepositoryCustom {
     fun findByProviderAndSubject(oauthProvider: OAuthProvider, subject: String): Member?
-
-    fun findByIdOrThrow(id: Long): Member
 }

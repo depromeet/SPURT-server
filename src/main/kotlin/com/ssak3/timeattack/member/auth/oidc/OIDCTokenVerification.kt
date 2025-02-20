@@ -45,8 +45,8 @@ class OIDCTokenVerification(
     private fun createPublicKey(publicKey: OIDCPublicKey): PublicKey {
         val keyFactory = KeyFactory.getInstance("RSA")
         val keySpec = RSAPublicKeySpec(
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.module)),
-            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.exponent))
+            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.n)),
+            BigInteger(1, Base64.getUrlDecoder().decode(publicKey.e))
         )
         return keyFactory.generatePublic(keySpec)
     }
