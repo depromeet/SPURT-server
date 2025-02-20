@@ -39,9 +39,14 @@ enum class ApplicationExceptionType (
     JWT_UNSUPPORTED(HttpStatus.BAD_REQUEST, "ERR_JWT_004", "지원하지 않는 JWT 형식입니다. : {0}"),
 
     /**
+     * Cookie에 JWT 토큰 없는 경우
+     */
+    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "ERR_JWT_005", "쿠키에 JWT 토큰이 존재하지 않습니다."),
+
+    /**
      * {0} : JWT 파싱 에러 중 발생할 수 있는 모든 에러
      */
-    JWT_GENERAL_ERR(HttpStatus.BAD_REQUEST, "ERR_JWT_005", "예상하지 못한 JWT 에러입니다. : {0}"),
+    JWT_GENERAL_ERR(HttpStatus.BAD_REQUEST, "ERR_JWT_999", "예상하지 못한 JWT 에러입니다. : {0}"),
 
     OIDC_PUBLIC_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_OIDC_001", "일치하는 공개키를 찾을 수 없습니다."),
     /**

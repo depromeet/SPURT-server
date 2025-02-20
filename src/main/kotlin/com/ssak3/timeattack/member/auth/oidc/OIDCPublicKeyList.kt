@@ -34,7 +34,7 @@ data class OIDCPublicKey(
     @JsonProperty("use")
     val use: String,
     @JsonProperty("n")
-    val module: String,
+    val n: String,
     @JsonProperty("e")
-    val exponent: String
+    val e: String
 ) : Serializable
