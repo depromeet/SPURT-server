@@ -7,9 +7,9 @@ import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
 import com.ssak3.timeattack.member.controller.LoginRequest
 import com.ssak3.timeattack.member.domain.Member
-import com.ssak3.timeattack.member.domain.OAuthProvider
-import com.ssak3.timeattack.member.domain.OAuthProviderInfo
 import com.ssak3.timeattack.member.repository.MemberRepository
+import com.ssak3.timeattack.member.repository.entity.OAuthProvider
+import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,10 +30,12 @@ class AuthService(
         // id token 파싱
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
 
-        // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
-        val member =
+        // 유저 존재 여부 확인
+        val memberEntity =
             memberRepository.findByProviderAndSubject(request.provider, oidcPayload.subject)
-                ?: createMember(oidcPayload, request.provider)
+
+        // 없으면 유저 생성 (= 자동 회원가입)
+        val member = memberEntity?.toDomain() ?: createMember(oidcPayload, request.provider)
 
         // JWT 토큰 생성 & 반환
         // member 객체 무조건 존재하기에 !! 사용
@@ -50,6 +52,6 @@ class AuthService(
                 email = oidcPayload.email,
                 profileImageUrl = oidcPayload.picture,
                 oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
-            ),
-        )
+            ).toEntity(),
+        ).toDomain()
 }

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
-    fun getMemberById(id: Long): Member = memberRepository.findByIdOrThrow(id)
+    fun getMemberById(id: Long): Member = memberRepository.findByIdOrThrow(id).toDomain()
 }
