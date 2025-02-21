@@ -49,7 +49,7 @@ class JwtAuthenticationFilter(
 
     private fun isPermittedUrl(url: String): Boolean {
         val matcher = AntPathMatcher()
-        return securityProperties.permitUrls.stream().anyMatch { pattern -> matcher.match(pattern, url) }
+        return securityProperties.permitUrls.any { pattern -> matcher.match(pattern, url) }
     }
 
     private fun resolveToken(request: HttpServletRequest): String? {
