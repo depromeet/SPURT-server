@@ -12,13 +12,15 @@ import java.io.Serializable
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class OIDCPublicKeyList(
     @JsonProperty("keys")
-    val keys: List<OIDCPublicKey>
+    val keys: List<OIDCPublicKey>,
 ) : Serializable {
-
     /**
      * 주어진 kid(Key ID)와 alg(알고리즘)에 해당하는 OIDC 공개키를 찾아 반환
      */
-    fun getMatchedKey(kid: String, alg: String): OIDCPublicKey =
+    fun getMatchedKey(
+        kid: String,
+        alg: String,
+    ): OIDCPublicKey =
         keys.find { it.kid == kid && it.alg == alg }
             ?: throw ApplicationException(OIDC_PUBLIC_KEY_NOT_FOUND)
 }
@@ -36,5 +38,5 @@ data class OIDCPublicKey(
     @JsonProperty("n")
     val n: String,
     @JsonProperty("e")
-    val e: String
+    val e: String,
 ) : Serializable

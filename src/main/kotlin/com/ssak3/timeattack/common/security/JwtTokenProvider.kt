@@ -19,17 +19,17 @@ import io.jsonwebtoken.security.SignatureException
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import java.security.Key
-import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Date
 
 @Component
 class JwtTokenProvider(
     val jwtProperties: JwtProperties,
 ) {
-
     // accessToken, refreshToken 생성
     fun generateTokens(memberId: Long): JwtTokenDto {
-        val now = Date.from(Instant.now())
+        val now = LocalDateTime.now()
         val accessToken = generateToken(memberId, now, jwtProperties.accessTokenValidityInSeconds)
         val refreshToken = generateToken(memberId, now, jwtProperties.refreshTokenValidityInSeconds)
 
@@ -49,13 +49,19 @@ class JwtTokenProvider(
     }
 
     // 토큰 생성
-    private fun generateToken(memberId: Long, now: Date, validity: Long): String =
-        Jwts.builder()
+    private fun generateToken(
+        memberId: Long,
+        now: LocalDateTime,
+        validityInSeconds: Long,
+    ): String {
+        val expiration = now.plusSeconds(validityInSeconds)
+        return Jwts.builder()
             .setSubject(memberId.toString())
-            .setIssuedAt(now)
-            .setExpiration(Date(now.time + validity))
+            .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
+            .setExpiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
             .signWith(jwtProperties.key)
             .compact()
+    }
 
     // token에서 claim 정보 추출하기
     private fun getClaims(token: String): Jws<Claims> =

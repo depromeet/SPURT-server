@@ -3,10 +3,10 @@ package com.ssak3.timeattack.global.exception
 import org.springframework.http.HttpStatus
 import java.text.MessageFormat
 
-enum class ApplicationExceptionType (
+enum class ApplicationExceptionType(
     val httpStatus: HttpStatus,
     val exceptionCode: String,
-    private val errorMessage: String
+    private val errorMessage: String,
 ) {
     /**
      * - {0} : Member ID
@@ -49,13 +49,14 @@ enum class ApplicationExceptionType (
     JWT_GENERAL_ERR(HttpStatus.BAD_REQUEST, "ERR_JWT_999", "예상하지 못한 JWT 에러입니다. : {0}"),
 
     OIDC_PUBLIC_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_OIDC_001", "일치하는 공개키를 찾을 수 없습니다."),
+
     /**
      * - {0} : Custom Exception Message
      */
-    UNDEFINED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_GLOBAL_999", "정의되지 않은 에러입니다. : {0}");
+    UNDEFINED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_GLOBAL_999", "정의되지 않은 에러입니다. : {0}"),
+    ;
 
     fun getErrorMessage(vararg args: Any): String {
         return MessageFormat.format(errorMessage, *args)
     }
-
 }

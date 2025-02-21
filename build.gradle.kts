@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.9.25"
+    id("org.jlleitschuh.gradle.ktlint").version("12.1.0")
     kotlin("kapt") version "1.9.25"
 }
 
@@ -32,7 +33,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
-
 
     // QueryDSL 추가
     implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")

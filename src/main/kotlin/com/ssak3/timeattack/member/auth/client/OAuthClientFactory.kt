@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component
 class OAuthClientFactory(
     private val kakaoOAuthClient: KakaoOAuthClient,
 ) {
-
     fun getClient(provider: OAuthProvider): OAuthClient {
         return when (provider) {
             OAuthProvider.KAKAO -> kakaoOAuthClient

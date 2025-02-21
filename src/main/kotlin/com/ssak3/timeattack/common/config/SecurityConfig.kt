@@ -23,7 +23,6 @@ class SecurityConfig(
     private val securityProperties: SecurityProperties,
     private val memberService: MemberService,
 ) {
-
     @Bean
     fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
         return JwtAuthenticationFilter(jwtTokenProvider, memberService, securityProperties)
@@ -31,12 +30,13 @@ class SecurityConfig(
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration().apply {
-            corsProperties.allowedOrigins.forEach { addAllowedOrigin(it) }
-            corsProperties.allowedHeaders.forEach { addAllowedHeader(it) }
-            corsProperties.allowedMethods.forEach { addAllowedMethod(it) }
-            allowCredentials = corsProperties.allowCredentials
-        }
+        val configuration =
+            CorsConfiguration().apply {
+                corsProperties.allowedOrigins.forEach { addAllowedOrigin(it) }
+                corsProperties.allowedHeaders.forEach { addAllowedHeader(it) }
+                corsProperties.allowedMethods.forEach { addAllowedMethod(it) }
+                allowCredentials = corsProperties.allowCredentials
+            }
 
         // 모든 URL 패턴(**)에 위 설정 적용
         val source = UrlBasedCorsConfigurationSource()
@@ -49,21 +49,17 @@ class SecurityConfig(
         http
             .cors { it.configurationSource(corsConfigurationSource()) }
             .csrf { it.disable() }
-
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers(*securityProperties.permitUrls.toTypedArray()).permitAll()
                     .anyRequest().authenticated()
             }
-
             .formLogin { it.disable() }
-
             .addFilterBefore(
                 jwtAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter::class.java
+                UsernamePasswordAuthenticationFilter::class.java,
             )
 
         return http.build()

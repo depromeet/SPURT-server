@@ -5,5 +5,5 @@ enum class TaskStatus {
     WARMING_UP,
     FOCUSED,
     COMPLETE,
-    FAIL
+    FAIL,
 }

@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalControllerAdvice {
-
     @ExceptionHandler(ApplicationException::class)
     fun handleApplicationException(exception: ApplicationException): ResponseEntity<ExceptionResponse> {
         return ResponseEntity.status(exception.exceptionType.httpStatus).body(ExceptionResponse.from(exception))
-
     }
 
     @ExceptionHandler(Exception::class)
     fun handleException(exception: Exception): ResponseEntity<ExceptionResponse> {
         val exceptionType = ApplicationExceptionType.UNDEFINED_EXCEPTION
-        return ResponseEntity.status(exceptionType.httpStatus).body(ExceptionResponse.from(exceptionType, exception.localizedMessage))
+        return ResponseEntity.status(
+            exceptionType.httpStatus,
+        ).body(ExceptionResponse.from(exceptionType, exception.localizedMessage))
     }
 }

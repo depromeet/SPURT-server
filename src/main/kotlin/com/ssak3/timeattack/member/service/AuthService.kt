@@ -19,7 +19,6 @@ class AuthService(
     private val memberRepository: MemberRepository,
     private val jwtTokenProvider: JwtTokenProvider,
 ) {
-
     fun authenticateAndRegister(request: LoginRequest): JwtTokenDto {
         // id token 요청
         val oAuthClient = oAuthClientFactory.getClient(request.provider)
@@ -41,13 +40,16 @@ class AuthService(
         return jwtTokenProvider.generateTokens(member.id!!)
     }
 
-    private fun createMember(oidcPayload: OIDCPayload, provider: OAuthProvider): Member =
+    private fun createMember(
+        oidcPayload: OIDCPayload,
+        provider: OAuthProvider,
+    ): Member =
         memberRepository.save(
             Member(
                 nickname = oidcPayload.name,
                 email = oidcPayload.email,
                 profileImageUrl = oidcPayload.picture,
-                oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject)
-            )
+                oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
+            ),
         )
 }

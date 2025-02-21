@@ -14,7 +14,6 @@ class TaskModeEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_mode_id")
     val id: Int? = null,
-
     @Column(name = "name", unique = true, length = 20)
-    val name: String
+    val name: String,
 )

@@ -8,10 +8,8 @@ data class OAuthProviderInfo(
     @Enumerated(EnumType.STRING)
     @Column(name = "oauth_provider", length = 20)
     val oauthProvider: OAuthProvider,
-
     @Column(name = "subject", length = 255)
     val subject: String,
 ) {
     constructor() : this(OAuthProvider.KAKAO, "")
 }
-

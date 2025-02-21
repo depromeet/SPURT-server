@@ -22,27 +22,29 @@ class RedisConfig(
 ) {
     @Bean
     fun redisConnectionFactory(): RedisConnectionFactory {
-        val redisStandaloneConfiguration = RedisStandaloneConfiguration().apply {
-            hostName = redisProperties.host
-            port = redisProperties.port
-            password = RedisPassword.of(redisProperties.password)
-        }
+        val redisStandaloneConfiguration =
+            RedisStandaloneConfiguration().apply {
+                hostName = redisProperties.host
+                port = redisProperties.port
+                password = RedisPassword.of(redisProperties.password)
+            }
 
         return LettuceConnectionFactory(redisStandaloneConfiguration)
     }
 
     @Bean
     fun redisCacheManager(redisConnectionFactory: RedisConnectionFactory): RedisCacheManager {
-        val configuration = RedisCacheConfiguration.defaultCacheConfig()
-            .entryTtl(Duration.ofDays(7))
-            .serializeKeysWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer())
-            )
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    GenericJackson2JsonRedisSerializer()
+        val configuration =
+            RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofDays(7))
+                .serializeKeysWith(
+                    RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()),
                 )
-            )
+                .serializeValuesWith(
+                    RedisSerializationContext.SerializationPair.fromSerializer(
+                        GenericJackson2JsonRedisSerializer(),
+                    ),
+                )
 
         return RedisCacheManager.builder(redisConnectionFactory)
             .cacheDefaults(configuration)

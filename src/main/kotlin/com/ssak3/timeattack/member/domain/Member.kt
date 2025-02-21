@@ -11,26 +11,20 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "member")
-class Member (
+class Member(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     val id: Long? = null,
-
     @Column(name = "nickname", length = 100)
     var nickname: String,
-
     @Column(name = "email", length = 100)
     var email: String,
-
     @Column(name = "profile_image_url", length = 500)
     var profileImageUrl: String,
-
     @Embedded
     val oAuthProviderInfo: OAuthProviderInfo,
-
     @Column(name = "default_trigger_action", length = 100)
     var defaultTriggerAction: String? = null,
-
 ) : BaseEntity()
 
 // OAuth Provider Enum
