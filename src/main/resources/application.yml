@@ -52,9 +52,6 @@ security:
     - ${SECURITY_PERMIT_URLS_03}
     - ${SECURITY_PERMIT_URLS_04}
 
-server:
-  url: ${SERVER_URL}
-
 springdoc:
   swagger-ui:
     path: ${SPRINGDOC_SWAGGER_UI_PATH}
