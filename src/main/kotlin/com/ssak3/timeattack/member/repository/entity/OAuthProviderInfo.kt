@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.domain
+package com.ssak3.timeattack.member.repository.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.EnumType

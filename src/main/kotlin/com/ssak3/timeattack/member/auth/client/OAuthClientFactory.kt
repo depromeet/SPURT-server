@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.auth.client
 
-import com.ssak3.timeattack.member.domain.OAuthProvider
+import com.ssak3.timeattack.member.repository.entity.OAuthProvider
 import org.springframework.stereotype.Component
 
 @Component
