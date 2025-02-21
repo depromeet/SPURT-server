@@ -8,4 +8,6 @@ interface MemberRepositoryCustom {
         oauthProvider: OAuthProvider,
         subject: String,
     ): MemberEntity?
+
+    fun findByIdOrThrow(id: Long): MemberEntity
 }
