@@ -18,13 +18,11 @@ import org.springframework.context.annotation.Configuration
     type = SecuritySchemeType.APIKEY,
     `in` = SecuritySchemeIn.COOKIE,
     paramName = "accessToken",
-    description = "JWT Token stored in cookie"
+    description = "JWT Token stored in cookie",
 )
 class SwaggerConfig {
-
     @Value("\${server.url}")
     private val serverUrl: String? = null
-
 
     @Bean
     fun openAPI(): OpenAPI {

@@ -39,7 +39,7 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")
 
     // Swagger
-    implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
