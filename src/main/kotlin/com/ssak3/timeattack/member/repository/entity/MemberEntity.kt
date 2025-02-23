@@ -24,8 +24,6 @@ class MemberEntity(
     val profileImageUrl: String,
     @Embedded
     val oAuthProviderInfo: OAuthProviderInfo,
-    @Column(name = "default_trigger_action", length = 100)
-    val defaultTriggerAction: String? = null,
     val isDeleted: Boolean = false,
 ) : BaseEntity() {
     fun toDomain() =
@@ -35,7 +33,6 @@ class MemberEntity(
             email = email,
             profileImageUrl = profileImageUrl,
             oAuthProviderInfo = oAuthProviderInfo,
-            defaultTriggerAction = defaultTriggerAction,
             isDeleted = isDeleted,
         )
 }

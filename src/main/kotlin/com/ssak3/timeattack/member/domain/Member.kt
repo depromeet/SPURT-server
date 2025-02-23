@@ -9,7 +9,6 @@ data class Member(
     val email: String,
     val profileImageUrl: String,
     val oAuthProviderInfo: OAuthProviderInfo,
-    val defaultTriggerAction: String? = null,
     val isDeleted: Boolean = false,
 ) {
     fun toEntity() =
@@ -19,7 +18,6 @@ data class Member(
             email = email,
             profileImageUrl = profileImageUrl,
             oAuthProviderInfo = oAuthProviderInfo,
-            defaultTriggerAction = defaultTriggerAction,
             isDeleted = isDeleted,
         )
 }
