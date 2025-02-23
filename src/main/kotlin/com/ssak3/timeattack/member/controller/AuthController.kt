@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
-import com.ssak3.timeattack.common.utils.JwtCookieUtil.Companion.setJwtTokenCookies
+import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.service.AuthService
 import jakarta.servlet.http.HttpServletResponse
@@ -21,14 +21,11 @@ class AuthController(
     fun socialLogin(
         @RequestBody loginRequest: LoginRequest,
         response: HttpServletResponse,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<JwtTokenDto> {
         // 소셜 로그인 후, JWT 토큰 반환
         val tokens = authService.authenticateAndRegister(loginRequest)
 
-        // access, refresh 토큰을 cookie에 저장
-        setJwtTokenCookies(tokens, response)
-
-        return ResponseEntity.ok("success")
+        return ResponseEntity.ok(tokens)
     }
 
     // SecurityContextHolder & JwtAuthenticationFilter 동작 확인 API

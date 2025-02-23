@@ -30,7 +30,7 @@ class JwtAuthenticationFilter(
             return
         }
 
-        // 쿠키에서 accessToken 가져오기
+        // header에서 accessToken 가져오기
         val accessToken = resolveToken(request) ?: throw ApplicationException(JWT_NOT_FOUND)
 
         // accessToken 유효성 검증
@@ -46,8 +46,10 @@ class JwtAuthenticationFilter(
     }
 
     private fun resolveToken(request: HttpServletRequest): String? {
-        request.cookies?.forEach { cookie ->
-            if (cookie.name == "accessToken") return cookie.value
+        request.getHeader("Authorization")?.let {
+            if (it.startsWith("Bearer ")) {
+                return it.substring(7)
+            }
         }
         return null
     }
