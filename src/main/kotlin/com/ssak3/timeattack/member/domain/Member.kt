@@ -33,3 +33,9 @@ data class Member(
             )
     }
 }
+
+// OAuth Provider Enum
+enum class OAuthProvider {
+    KAKAO,
+    GOOGLE,
+}

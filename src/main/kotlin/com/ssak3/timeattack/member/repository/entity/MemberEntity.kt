@@ -25,9 +25,3 @@ class MemberEntity(
     val oAuthProviderInfo: OAuthProviderInfo,
     val isDeleted: Boolean = false,
 ) : BaseEntity()
-
-// OAuth Provider Enum
-enum class OAuthProvider {
-    KAKAO,
-    GOOGLE,
-}
