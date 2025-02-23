@@ -12,11 +12,12 @@ import org.springframework.stereotype.Repository
 class MemberRepositoryCustomImpl(
     private val queryFactory: JPAQueryFactory,
 ) : MemberRepositoryCustom {
+    private val qMemberEntity: QMemberEntity = QMemberEntity.memberEntity
+
     override fun findByProviderAndSubject(
         oauthProvider: OAuthProvider,
         subject: String,
     ): MemberEntity? {
-        val qMemberEntity = QMemberEntity.memberEntity
         return queryFactory
             .select(qMemberEntity)
             .from(qMemberEntity)
@@ -28,7 +29,6 @@ class MemberRepositoryCustomImpl(
     }
 
     override fun findByIdOrThrow(id: Long): MemberEntity {
-        val qMemberEntity = QMemberEntity.memberEntity
         return queryFactory
             .select(qMemberEntity)
             .from(qMemberEntity)
