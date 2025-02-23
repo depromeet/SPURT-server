@@ -1,14 +1,11 @@
 spring:
-
   profiles:
     active: local
-
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${MYSQL_URL}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-
   jpa:
     open-in-view: false
     hibernate:
@@ -17,24 +14,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
   data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
-
 kakao:
   client-id: ${KAKAO_CLIENT_ID}
   client-secret: ${KAKAO_CLIENT_SECRET}
   redirect-uri: ${KAKAO_REDIRECT_URI}
-
-
 jwt:
   secret: ${JWT_SECRET}
   access-token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY}
-
+fcm:
+  secret-key: ${FIREBASE_SECRET_KEY}
 cors:
   allowed-origins:
     - ${CORS_ALLOWED_ORIGINS_01}
@@ -44,7 +38,6 @@ cors:
   allowed-methods:
     - ${CORS_ALLOWED_METHODS}
   allow-credentials: ${CORS_ALLOW_CREDENTIALS}
-
 security:
   permit-urls:
     - ${SECURITY_PERMIT_URLS_01}
