@@ -1,8 +1,8 @@
 package com.ssak3.timeattack.member.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
-import com.ssak3.timeattack.member.repository.entity.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.QMemberEntity
 import org.springframework.stereotype.Repository
 

@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
-import com.ssak3.timeattack.member.repository.entity.OAuthProvider
+import com.ssak3.timeattack.member.domain.OAuthProvider
 
 data class LoginRequest(
     val authCode: String,

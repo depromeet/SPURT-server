@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.member.repository
 
+import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
-import com.ssak3.timeattack.member.repository.entity.OAuthProvider
 
 interface MemberRepositoryCustom {
     fun findByProviderAndSubject(

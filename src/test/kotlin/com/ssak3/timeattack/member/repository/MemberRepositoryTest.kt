@@ -1,8 +1,8 @@
 package com.ssak3.timeattack.member.repository
 
 import com.ssak3.timeattack.common.config.QueryDslConfig
+import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
-import com.ssak3.timeattack.member.repository.entity.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
