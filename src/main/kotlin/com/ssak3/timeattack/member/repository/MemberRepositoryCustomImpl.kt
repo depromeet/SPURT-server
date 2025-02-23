@@ -9,7 +9,7 @@ import com.ssak3.timeattack.member.repository.entity.QMemberEntity
 import org.springframework.stereotype.Repository
 
 @Repository
-class MemberRepositoryImpl(
+class MemberRepositoryCustomImpl(
     private val queryFactory: JPAQueryFactory,
 ) : MemberRepositoryCustom {
     override fun findByProviderAndSubject(
