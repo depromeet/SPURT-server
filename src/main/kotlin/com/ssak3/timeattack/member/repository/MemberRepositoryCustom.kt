@@ -9,5 +9,5 @@ interface MemberRepositoryCustom {
         subject: String,
     ): MemberEntity?
 
-    fun findByIdOrThrow(id: Long): MemberEntity
+    fun findByIdOrThrow(id: Long): MemberEntity?
 }

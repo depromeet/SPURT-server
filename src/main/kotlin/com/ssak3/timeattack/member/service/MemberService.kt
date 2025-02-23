@@ -8,5 +8,8 @@ import org.springframework.stereotype.Service
 class MemberService(
     private val memberRepository: MemberRepository,
 ) {
-    fun getMemberById(id: Long): Member = memberRepository.findByIdOrThrow(id).toDomain()
+    fun getMemberById(id: Long): Member =
+        memberRepository.findByIdOrThrow(id)?.let {
+            Member.toDomain(it)
+        } ?: throw IllegalArgumentException("Member not found")
 }

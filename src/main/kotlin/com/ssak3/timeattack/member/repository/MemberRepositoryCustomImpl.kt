@@ -1,8 +1,6 @@
 package com.ssak3.timeattack.member.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.member.repository.entity.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.QMemberEntity
@@ -28,12 +26,11 @@ class MemberRepositoryCustomImpl(
             .fetchOne()
     }
 
-    override fun findByIdOrThrow(id: Long): MemberEntity {
+    override fun findByIdOrThrow(id: Long): MemberEntity? {
         return queryFactory
             .select(qMemberEntity)
             .from(qMemberEntity)
             .where(qMemberEntity.id.eq(id))
             .fetchOne()
-            ?: throw ApplicationException(ApplicationExceptionType.MEMBER_NOT_FOUND_BY_ID)
     }
 }
