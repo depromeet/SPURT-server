@@ -73,4 +73,21 @@ class MemberRepositoryTest
             // then
             assertThat(findMember).isNull()
         }
+
+        @Test
+        @DisplayName("자동으로 생성된 BaseEntity의 audit 정보가 정상적으로 저장되는지 확인")
+        fun test_baseEntityAudit() {
+            // given
+            memberRepository.saveAndFlush(member)
+
+            // when
+            val findMember =
+                memberRepository.findByProviderAndSubject(
+                    member.oAuthProviderInfo.oauthProvider,
+                    member.oAuthProviderInfo.subject,
+                )
+
+            // then
+            println("createdAt: ${findMember?.createdAt}, updatedAt: ${findMember?.updatedAt}")
+        }
     }
