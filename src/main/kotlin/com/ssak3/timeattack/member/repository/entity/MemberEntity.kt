@@ -1,7 +1,6 @@
 package com.ssak3.timeattack.member.repository.entity
 
 import com.ssak3.timeattack.common.domain.BaseEntity
-import com.ssak3.timeattack.member.domain.Member
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -25,17 +24,7 @@ class MemberEntity(
     @Embedded
     val oAuthProviderInfo: OAuthProviderInfo,
     val isDeleted: Boolean = false,
-) : BaseEntity() {
-    fun toDomain() =
-        Member(
-            id = id,
-            nickname = nickname,
-            email = email,
-            profileImageUrl = profileImageUrl,
-            oAuthProviderInfo = oAuthProviderInfo,
-            isDeleted = isDeleted,
-        )
-}
+) : BaseEntity()
 
 // OAuth Provider Enum
 enum class OAuthProvider {

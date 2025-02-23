@@ -20,4 +20,16 @@ data class Member(
             oAuthProviderInfo = oAuthProviderInfo,
             isDeleted = isDeleted,
         )
+
+    companion object {
+        fun toDomain(memberEntity: MemberEntity) =
+            Member(
+                id = memberEntity.id,
+                nickname = memberEntity.nickname,
+                email = memberEntity.email,
+                profileImageUrl = memberEntity.profileImageUrl,
+                oAuthProviderInfo = memberEntity.oAuthProviderInfo,
+                isDeleted = memberEntity.isDeleted,
+            )
+    }
 }

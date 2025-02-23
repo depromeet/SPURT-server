@@ -30,12 +30,11 @@ class AuthService(
         // id token 파싱
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
 
-        // 유저 존재 여부 확인
-        val memberEntity =
+        // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
+        val member =
             memberRepository.findByProviderAndSubject(request.provider, oidcPayload.subject)
-
-        // 없으면 유저 생성 (= 자동 회원가입)
-        val member = memberEntity?.toDomain() ?: createMember(oidcPayload, request.provider)
+                ?.let { Member.toDomain(it) }
+                ?: createMember(oidcPayload, request.provider)
 
         // JWT 토큰 생성 & 반환
         // member 객체 무조건 존재하기에 !! 사용
@@ -46,12 +45,14 @@ class AuthService(
         oidcPayload: OIDCPayload,
         provider: OAuthProvider,
     ): Member =
-        memberRepository.save(
-            Member(
-                nickname = oidcPayload.name,
-                email = oidcPayload.email,
-                profileImageUrl = oidcPayload.picture,
-                oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
-            ).toEntity(),
-        ).toDomain()
+        Member.toDomain(
+            memberRepository.save(
+                Member(
+                    nickname = oidcPayload.name,
+                    email = oidcPayload.email,
+                    profileImageUrl = oidcPayload.picture,
+                    oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
+                ).toEntity(),
+            ),
+        )
 }
