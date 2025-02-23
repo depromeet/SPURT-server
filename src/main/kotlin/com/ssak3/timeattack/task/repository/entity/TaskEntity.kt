@@ -41,7 +41,6 @@ class TaskEntity(
     @ManyToOne
     @JoinColumn(name = "member_id")
     val member: MemberEntity,
-    // TODO: MemberEntity로 변경
     @ManyToOne
     @JoinColumn(name = "persona_id")
     val persona: PersonaEntity,
