@@ -32,6 +32,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
 
     // QueryDSL 추가
