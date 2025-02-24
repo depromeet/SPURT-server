@@ -39,7 +39,7 @@ class AuthController(
         @AuthenticationPrincipal member: Member,
     ): Member = member
 
-    @PostMapping("/refresh")
+    @PostMapping("/token/refresh")
     fun refreshAccessToken(request: HttpServletRequest): JwtTokenDto {
         val refreshToken =
             request.getHeader("Authorization")?.substring(7) ?: throw ApplicationException(
