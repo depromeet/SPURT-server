@@ -2,7 +2,7 @@ package com.ssak3.timeattack.common.security
 
 import com.ssak3.timeattack.common.config.SecurityProperties
 import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_NOT_FOUND
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_ACCESS_NOT_FOUND_IN_HEADER
 import com.ssak3.timeattack.member.service.MemberService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -32,7 +32,7 @@ class JwtAuthenticationFilter(
         }
 
         // header에서 accessToken 가져오기
-        val accessToken = resolveToken(request) ?: throw ApplicationException(JWT_NOT_FOUND)
+        val accessToken = resolveToken(request) ?: throw ApplicationException(JWT_ACCESS_NOT_FOUND_IN_HEADER)
 
         // accessToken 유효성 검증
         if (jwtTokenProvider.validateToken(accessToken)) {

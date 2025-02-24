@@ -39,9 +39,24 @@ enum class ApplicationExceptionType(
     JWT_UNSUPPORTED(HttpStatus.BAD_REQUEST, "ERR_JWT_004", "지원하지 않는 JWT 형식입니다. : {0}"),
 
     /**
-     * Cookie에 JWT 토큰 없는 경우
+     * 헤더에 Access 토큰 없는 경우
      */
-    JWT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "ERR_JWT_005", "쿠키에 JWT 토큰이 존재하지 않습니다."),
+    JWT_ACCESS_NOT_FOUND_IN_HEADER(HttpStatus.UNAUTHORIZED, "ERR_JWT_005", "헤더에 Access 토큰이 존재하지 않습니다."),
+
+    /**
+     * 헤더에 Access 토큰 없는 경우
+     */
+    JWT_REFRESH_NOT_FOUND_IN_HEADER(HttpStatus.UNAUTHORIZED, "ERR_JWT_006", "헤더에 REFRESH 토큰이 존재하지 않습니다."),
+
+    /**
+     * Redis에 Refresh token 없는 경우
+     */
+    JWT_REFRESH_NOT_FOUND_IN_REDIS(HttpStatus.UNAUTHORIZED, "ERR_JWT_007", "존재하지 않는 Refresh 토큰입니다."),
+
+    /**
+     * Redis에 저장된 Refresh token과 일치하지 않는 경우
+     */
+    JWT_REFRESH_INVALID(HttpStatus.UNAUTHORIZED, "ERR_JWT_008", "저장된 Refresh 토큰과 일치하지 않습니다."),
 
     /**
      * {0} : JWT 파싱 에러 중 발생할 수 있는 모든 에러
