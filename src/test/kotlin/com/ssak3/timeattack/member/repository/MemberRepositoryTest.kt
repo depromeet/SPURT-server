@@ -75,7 +75,7 @@ class MemberRepositoryTest
         }
 
         @Test
-        @DisplayName("자동으로 생성된 BaseEntity의 audit 정보가 정상적으로 저장되는지 확인")
+        @DisplayName("Spring Audit 기능을 통해 createdAt, updatedAt에 자동으로 값이 설정되는지 확인")
         fun test_baseEntityAudit() {
             // given
             memberRepository.saveAndFlush(member)
@@ -88,6 +88,7 @@ class MemberRepositoryTest
                 )
 
             // then
-            println("createdAt: ${findMember?.createdAt}, updatedAt: ${findMember?.updatedAt}")
+            assertThat(findMember?.createdAt).isNotNull
+            assertThat(findMember?.updatedAt).isNotNull
         }
     }
