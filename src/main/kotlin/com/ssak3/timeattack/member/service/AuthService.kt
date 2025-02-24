@@ -2,6 +2,7 @@ package com.ssak3.timeattack.member.service
 
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.JwtTokenProvider
+import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
@@ -18,6 +19,7 @@ class AuthService(
     private val oidcTokenVerification: OIDCTokenVerification,
     private val memberRepository: MemberRepository,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val refreshTokenService: RefreshTokenService,
 ) {
     fun authenticateAndRegister(request: LoginRequest): JwtTokenDto {
         // id token 요청
@@ -38,7 +40,12 @@ class AuthService(
 
         // JWT 토큰 생성 & 반환
         // member 객체 무조건 존재하기에 !! 사용
-        return jwtTokenProvider.generateTokens(member.id!!)
+        val tokens = jwtTokenProvider.generateTokens(member.id!!)
+
+        // refresh token 저장
+        refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
+
+        return tokens
     }
 
     private fun createMember(
