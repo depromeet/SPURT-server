@@ -1,6 +1,8 @@
 package com.ssak3.timeattack.common.security
 
 import com.ssak3.timeattack.common.config.SecurityProperties
+import com.ssak3.timeattack.common.constant.SecurityConst.AUTHORIZATION_HEADER
+import com.ssak3.timeattack.common.constant.SecurityConst.BEARER_PREFIX
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_ACCESS_NOT_FOUND_IN_HEADER
 import com.ssak3.timeattack.member.service.MemberService
@@ -52,8 +54,8 @@ class JwtAuthenticationFilter(
     }
 
     private fun resolveToken(request: HttpServletRequest): String? {
-        request.getHeader("Authorization")?.let {
-            if (it.startsWith("Bearer ")) {
+        request.getHeader(AUTHORIZATION_HEADER)?.let {
+            if (it.startsWith(BEARER_PREFIX)) {
                 return it.substring(7)
             }
         }

@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.auth.client
 
-import com.ssak3.timeattack.common.constant.Cache
+import com.ssak3.timeattack.common.constant.CacheConst.OIDC_PUBLIC_KEYS
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cloud.openfeign.FeignClient
@@ -32,6 +32,6 @@ interface KakaoFeignClient {
      * 조회 결과 Redis에 캐시
      */
     @GetMapping("/.well-known/jwks.json")
-    @Cacheable(value = [Cache.OIDC_PUBLIC_KEYS], key = "'kakao'")
+    @Cacheable(value = [OIDC_PUBLIC_KEYS], key = "'kakao'")
     fun getPublicKeys(): OIDCPublicKeyList
 }
