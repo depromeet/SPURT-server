@@ -34,6 +34,9 @@ dependencies {
 
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.2.0")
 
+    // firebase
+    implementation("com.google.firebase:firebase-admin:9.4.3")
+
     // QueryDSL 추가
     implementation("com.querydsl:querydsl-jpa:$querydslVersion:jakarta")
     kapt("com.querydsl:querydsl-apt:$querydslVersion:jakarta")

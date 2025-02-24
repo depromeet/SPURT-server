@@ -1,8 +1,9 @@
 package com.ssak3.timeattack.notifications.controller
 
-import com.ssak3.timeattack.notifications.controller.dto.PushNotificationCreateRequest
-import com.ssak3.timeattack.notifications.domain.PushNotification
-import com.ssak3.timeattack.notifications.service.PushNotificationService
+import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
+import com.ssak3.timeattack.notifications.controller.dto.PushNotificationSendRequest
+import com.ssak3.timeattack.notifications.domain.FcmMessage
+import com.ssak3.timeattack.notifications.service.FcmPushNotificationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -12,23 +13,24 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/push-notifications")
 class PushNotificationController(
-    private val pushNotificationService: PushNotificationService,
+    private val fcmPushNotificationService: FcmPushNotificationService,
 ) {
-    // TODO("Swagger 설정 후 반영 예정")
-    @PostMapping("/create")
-    fun createNotifications(
-        @RequestBody body: PushNotificationCreateRequest,
-    ): ResponseEntity<Boolean> {
-        val pushNotifications: List<PushNotification> =
-            body.scheduledDates.map { date ->
-                PushNotification(
-                    memberId = body.memberId,
-                    taskId = body.taskId,
-                    scheduledAt = date,
-                )
-            }
+    // 프론트 푸시 알림 테스트용 api 제공
+    @PostMapping("/send")
+    fun sendNotifications(
+        @RequestBody request: PushNotificationSendRequest,
+    ): ResponseEntity<String> {
+        val response =
+            fcmPushNotificationService.sendNotification(
+                FcmMessage(
+                    token = request.token,
+                    platform = DevicePlatform.valueOf(request.platform),
+                    title = request.title,
+                    body = request.body,
+                    route = request.route,
+                ),
+            )
 
-        val result = pushNotificationService.upsertAll(pushNotifications)
-        return ResponseEntity.ok(result)
+        return ResponseEntity.ok(response)
     }
 }
