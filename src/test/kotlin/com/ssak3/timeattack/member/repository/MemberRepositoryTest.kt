@@ -73,4 +73,22 @@ class MemberRepositoryTest
             // then
             assertThat(findMember).isNull()
         }
+
+        @Test
+        @DisplayName("Spring Audit 기능을 통해 createdAt, updatedAt에 자동으로 값이 설정되는지 확인")
+        fun test_baseEntityAudit() {
+            // given
+            memberRepository.saveAndFlush(member)
+
+            // when
+            val findMember =
+                memberRepository.findByProviderAndSubject(
+                    member.oAuthProviderInfo.oauthProvider,
+                    member.oAuthProviderInfo.subject,
+                )
+
+            // then
+            assertThat(findMember?.createdAt).isNotNull
+            assertThat(findMember?.updatedAt).isNotNull
+        }
     }
