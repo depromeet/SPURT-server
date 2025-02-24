@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JwtAuthenticationFilter(
@@ -25,7 +26,7 @@ class JwtAuthenticationFilter(
         val requestUri = request.requestURI
 
         // 공개 엔드포인트인 경우 토큰 체크를 하지 않고 필터 체인 진행
-        if (securityProperties.permitUrls.contains(requestUri)) {
+        if (isPermittedUrl(requestUri)) {
             filterChain.doFilter(request, response)
             return
         }
@@ -43,6 +44,11 @@ class JwtAuthenticationFilter(
         // 유효기간 지난 경우, getClaims()에서 JWT_EXPIRED 예외 발생
 
         filterChain.doFilter(request, response)
+    }
+
+    private fun isPermittedUrl(url: String): Boolean {
+        val matcher = AntPathMatcher()
+        return securityProperties.permitUrls.any { pattern -> matcher.match(pattern, url) }
     }
 
     private fun resolveToken(request: HttpServletRequest): String? {
