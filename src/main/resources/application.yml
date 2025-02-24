@@ -49,3 +49,11 @@ security:
   permit-urls:
     - ${SECURITY_PERMIT_URLS_01}
     - ${SECURITY_PERMIT_URLS_02}
+    - ${SECURITY_PERMIT_URLS_03}
+    - ${SECURITY_PERMIT_URLS_04}
+
+springdoc:
+  swagger-ui:
+    path: ${SPRINGDOC_SWAGGER_UI_PATH}
+  api-docs:
+    path: ${SPRINGDOC_API_DOCS_PATH}

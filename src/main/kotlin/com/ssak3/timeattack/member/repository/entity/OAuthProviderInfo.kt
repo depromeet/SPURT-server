@@ -1,5 +1,6 @@
-package com.ssak3.timeattack.member.domain
+package com.ssak3.timeattack.member.repository.entity
 
+import com.ssak3.timeattack.member.domain.OAuthProvider
 import jakarta.persistence.Column
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
