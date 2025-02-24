@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.common.security.token.domain
+package com.ssak3.timeattack.common.security.refreshtoken
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash

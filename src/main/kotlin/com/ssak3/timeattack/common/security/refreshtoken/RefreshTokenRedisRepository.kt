@@ -1,6 +1,5 @@
-package com.ssak3.timeattack.common.security.token.repository
+package com.ssak3.timeattack.common.security.refreshtoken
 
-import com.ssak3.timeattack.common.security.token.domain.RefreshToken
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
