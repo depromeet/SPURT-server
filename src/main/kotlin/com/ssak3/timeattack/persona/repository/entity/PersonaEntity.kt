@@ -1,9 +1,5 @@
 package com.ssak3.timeattack.persona.repository.entity
 
-import com.ssak3.timeattack.persona.domain.Persona
-import com.ssak3.timeattack.persona.domain.TaskKeywordsCombination
-import com.ssak3.timeattack.task.domain.TaskMode
-import com.ssak3.timeattack.task.domain.TaskType
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import jakarta.persistence.Column

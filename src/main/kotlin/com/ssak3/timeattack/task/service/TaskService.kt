@@ -48,13 +48,14 @@ class TaskService(
         )
 
         // 2. Persona 가져오기
-        val persona = Persona.fromEntity(
+        val persona =
+            Persona.fromEntity(
                 personaSpringDataRepository.findByTaskTypeEntityAndTaskModeEntity(taskTypeEntity, taskModeEntity)
                     ?: throw ApplicationException(
                         ApplicationExceptionType.PERSONA_NOT_FOUND_BY_TASK_KEYWORD_COMBINATION,
                         taskTypeEntity.name,
                         taskModeEntity.name,
-                    )
+                    ),
             )
 
         // 3. Task 생성
