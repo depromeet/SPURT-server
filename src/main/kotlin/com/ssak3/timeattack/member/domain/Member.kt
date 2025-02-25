@@ -25,7 +25,7 @@ data class Member(
         )
 
     companion object {
-        fun toDomain(memberEntity: MemberEntity) =
+        fun fromEntity(memberEntity: MemberEntity) =
             Member(
                 id = memberEntity.id,
                 nickname = memberEntity.nickname,

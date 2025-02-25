@@ -10,6 +10,6 @@ class MemberService(
 ) {
     fun getMemberById(id: Long): Member =
         memberRepository.findByIdOrThrow(id)?.let {
-            Member.toDomain(it)
+            Member.fromEntity(it)
         } ?: throw IllegalArgumentException("Member not found")
 }
