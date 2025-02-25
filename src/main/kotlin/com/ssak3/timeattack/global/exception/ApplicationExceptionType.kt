@@ -44,11 +44,6 @@ enum class ApplicationExceptionType(
     JWT_ACCESS_NOT_FOUND_IN_HEADER(HttpStatus.UNAUTHORIZED, "ERR_JWT_005", "헤더에 Access 토큰이 존재하지 않습니다."),
 
     /**
-     * 헤더에 Access 토큰 없는 경우
-     */
-    JWT_REFRESH_NOT_FOUND_IN_HEADER(HttpStatus.UNAUTHORIZED, "ERR_JWT_006", "헤더에 REFRESH 토큰이 존재하지 않습니다."),
-
-    /**
      * Redis에 Refresh token 없는 경우
      */
     JWT_REFRESH_NOT_FOUND_IN_REDIS(HttpStatus.UNAUTHORIZED, "ERR_JWT_007", "존재하지 않는 Refresh 토큰입니다."),
