@@ -39,8 +39,8 @@ class AuthService(
                 ?: createMember(oidcPayload, request.provider)
 
         // JWT 토큰 생성 & 반환
-        // member 객체 무조건 존재하기에 !! 사용
-        val tokens = jwtTokenProvider.generateTokens(member.id!!)
+        checkNotNull(member.id) { "Member ID must not be null" }
+        val tokens = jwtTokenProvider.generateTokens(member.id)
 
         // refresh token 저장
         refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
