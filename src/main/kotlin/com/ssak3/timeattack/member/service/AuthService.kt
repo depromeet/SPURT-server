@@ -2,14 +2,15 @@ package com.ssak3.timeattack.member.service
 
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.JwtTokenProvider
+import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
 import com.ssak3.timeattack.member.controller.LoginRequest
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
-import com.ssak3.timeattack.member.domain.OAuthProviderInfo
 import com.ssak3.timeattack.member.repository.MemberRepository
+import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,6 +19,7 @@ class AuthService(
     private val oidcTokenVerification: OIDCTokenVerification,
     private val memberRepository: MemberRepository,
     private val jwtTokenProvider: JwtTokenProvider,
+    private val refreshTokenService: RefreshTokenService,
 ) {
     fun authenticateAndRegister(request: LoginRequest): JwtTokenDto {
         // id token 요청
@@ -33,23 +35,31 @@ class AuthService(
         // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
         val member =
             memberRepository.findByProviderAndSubject(request.provider, oidcPayload.subject)
+                ?.let { Member.fromEntity(it) }
                 ?: createMember(oidcPayload, request.provider)
 
         // JWT 토큰 생성 & 반환
-        // member 객체 무조건 존재하기에 !! 사용
-        return jwtTokenProvider.generateTokens(member.id!!)
+        checkNotNull(member.id) { "Member ID must not be null" }
+        val tokens = jwtTokenProvider.generateTokens(member.id)
+
+        // refresh token 저장
+        refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
+
+        return tokens
     }
 
     private fun createMember(
         oidcPayload: OIDCPayload,
         provider: OAuthProvider,
     ): Member =
-        memberRepository.save(
-            Member(
-                nickname = oidcPayload.name,
-                email = oidcPayload.email,
-                profileImageUrl = oidcPayload.picture,
-                oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
+        Member.fromEntity(
+            memberRepository.save(
+                Member(
+                    nickname = oidcPayload.name,
+                    email = oidcPayload.email,
+                    profileImageUrl = oidcPayload.picture,
+                    oAuthProviderInfo = OAuthProviderInfo(provider, oidcPayload.subject),
+                ).toEntity(),
             ),
         )
 }

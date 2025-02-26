@@ -4,7 +4,6 @@ spring:
     url: ${DEV_MYSQL_URL}
     username: ${DEV_MYSQL_USERNAME}
     password: ${DEV_MYSQL_PASSWORD}
-
   jpa:
     open-in-view: false
     hibernate:
@@ -13,23 +12,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
   data:
     redis:
       host: ${DEV_REDIS_HOST}
       port: ${DEV_REDIS_PORT}
       password: ${DEV_REDIS_PASSWORD}
-
 kakao:
   client-id: ${DEV_KAKAO_CLIENT_ID}
   client-secret: ${DEV_KAKAO_CLIENT_SECRET}
   redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
-
 jwt:
   secret: ${DEV_JWT_SECRET}
   access-token-validity-in-seconds: ${DEV_JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${DEV_JWT_REFRESH_TOKEN_VALIDITY}
-
+fcm:
+  secret-key: ${FIREBASE_SECRET_KEY}
 cors:
   allowed-origins:
     - ${DEV_CORS_ALLOWED_ORIGINS_01}
@@ -39,7 +36,6 @@ cors:
   allowed-methods:
     - ${DEV_CORS_ALLOWED_METHODS}
   allow-credentials: ${DEV_CORS_ALLOW_CREDENTIALS}
-
 security:
   permit-urls:
     - ${DEV_SECURITY_PERMIT_URLS_01}

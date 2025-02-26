@@ -1,9 +1,9 @@
 package com.ssak3.timeattack.member.repository
 
 import com.ssak3.timeattack.common.config.QueryDslConfig
-import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
-import com.ssak3.timeattack.member.domain.OAuthProviderInfo
+import com.ssak3.timeattack.member.repository.entity.MemberEntity
+import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,7 +21,7 @@ class MemberRepositoryTest
     constructor(
         private val memberRepository: MemberRepository,
     ) {
-        private lateinit var member: Member
+        private lateinit var member: MemberEntity
 
         @BeforeEach
         fun setMember() {
@@ -30,7 +30,7 @@ class MemberRepositoryTest
             val subject = "1234567890"
             val nickname = "testUser"
             member =
-                Member(
+                MemberEntity(
                     nickname = nickname,
                     email = "test@test.com",
                     profileImageUrl = "https://test.com",
@@ -72,5 +72,23 @@ class MemberRepositoryTest
 
             // then
             assertThat(findMember).isNull()
+        }
+
+        @Test
+        @DisplayName("Spring Audit 기능을 통해 createdAt, updatedAt에 자동으로 값이 설정되는지 확인")
+        fun test_baseEntityAudit() {
+            // given
+            memberRepository.saveAndFlush(member)
+
+            // when
+            val findMember =
+                memberRepository.findByProviderAndSubject(
+                    member.oAuthProviderInfo.oauthProvider,
+                    member.oAuthProviderInfo.subject,
+                )
+
+            // then
+            assertThat(findMember?.createdAt).isNotNull
+            assertThat(findMember?.updatedAt).isNotNull
         }
     }

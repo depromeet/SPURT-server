@@ -27,8 +27,7 @@ class Task(
             triggerAction = triggerAction,
             estimatedTime = estimatedTime,
             status = status,
-            // TODO: MemberEntity로 변경
-            member = member,
+            member = member.toEntity(),
             persona = persona.toEntity(),
         )
 
@@ -42,7 +41,7 @@ class Task(
                 triggerAction = entity.triggerAction,
                 estimatedTime = entity.estimatedTime,
                 status = entity.status,
-                member = entity.member,
+                member = Member.fromEntity(entity.member),
                 persona = Persona.fromEntity(entity.persona),
                 createdAt = entity.createdAt,
                 updatedAt = entity.updatedAt,

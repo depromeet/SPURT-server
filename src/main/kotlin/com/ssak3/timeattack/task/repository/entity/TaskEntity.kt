@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.task.repository.entity
 
 import com.ssak3.timeattack.common.domain.BaseEntity
-import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
@@ -17,6 +17,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.ColumnDefault
 import java.time.LocalDateTime
 
 @Entity
@@ -42,10 +43,11 @@ class TaskEntity(
     val status: TaskStatus,
     @ManyToOne
     @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val member: Member,
-    // TODO: MemberEntity로 변경
+    val member: MemberEntity,
     @ManyToOne
     @JoinColumn(name = "persona_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val persona: PersonaEntity,
-    // TODO: BaseEntity 수정 후 isDeleted 필드 추가
+    @Column(name =  "is_deleted")
+    @ColumnDefault("false")
+    val isDeleted: Boolean = false,
 ) : BaseEntity()
