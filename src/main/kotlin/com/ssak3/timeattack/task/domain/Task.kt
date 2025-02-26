@@ -17,7 +17,7 @@ class Task(
     val persona: Persona,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
-    val isDeleted: Boolean? = null,
+    val isDeleted: Boolean = false,
 ) {
     fun toEntity() =
         TaskEntity(

@@ -2,6 +2,7 @@ package com.ssak3.timeattack.task.service
 
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
+import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaSpringDataRepository
@@ -25,12 +26,9 @@ class TaskService(
 ) {
     @Transactional
     fun createUrgentTask(
-        memberId: Long,
+        member: Member,
         urgentTaskRequest: UrgentTaskRequest,
     ): Task {
-        val member =
-            memberRepository.findById(memberId)
-                .orElseThrow { throw ApplicationException(ApplicationExceptionType.MEMBER_NOT_FOUND_BY_ID, memberId) }
         // 1. 키워드 검증 진행
         val taskTypeEntity = (
             taskTypeSpringDataRepository.findByName(urgentTaskRequest.taskType)
