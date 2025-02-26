@@ -6,15 +6,18 @@ import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
 import jakarta.persistence.Column
+import jakarta.persistence.ConstraintMode
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.ForeignKey
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.ColumnDefault
 import java.time.LocalDateTime
 
 @Entity
@@ -39,10 +42,12 @@ class TaskEntity(
     @Column(name = "status")
     val status: TaskStatus,
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val member: MemberEntity,
     @ManyToOne
-    @JoinColumn(name = "persona_id")
+    @JoinColumn(name = "persona_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val persona: PersonaEntity,
-    // TODO: BaseEntity 수정 후 isDeleted 필드 추가
+    @Column(name = "is_deleted")
+    @ColumnDefault("false")
+    val isDeleted: Boolean = false,
 ) : BaseEntity()

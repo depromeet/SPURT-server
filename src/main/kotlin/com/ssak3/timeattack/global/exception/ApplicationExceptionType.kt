@@ -13,6 +13,30 @@ enum class ApplicationExceptionType(
      */
     MEMBER_NOT_FOUND_BY_ID(HttpStatus.BAD_REQUEST, "ERR_MEMBER_001", "해당 ID의 회원을 찾을 수 없습니다. : {0}"),
 
+    // ======================== [START] TASK ========================
+
+    /**
+     * - {0} : Task Type Name
+     */
+    TASK_TYPE_NOT_FOUND_BY_NAME(HttpStatus.BAD_REQUEST, "ERR_TASK_001", "해당 이름의 Task Type을 찾을 수 없습니다. : {0}"),
+
+    /**
+     * - {0} : Task Mode Name
+     */
+    TASK_MODE_NOT_FOUND_BY_NAME(HttpStatus.BAD_REQUEST, "ERR_TASK_002", "해당 이름의 Task Mode를 찾을 수 없습니다. : {0}"),
+
+    /**
+     * - {0} : Task Type Name
+     * - {1} : Task Mode Name
+     */
+    PERSONA_NOT_FOUND_BY_TASK_KEYWORD_COMBINATION(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_003",
+        "해당 Task Type({0})와 Task Mode({1})의 Persona를 찾을 수 없습니다.",
+    ),
+
+    // ======================== [END] TASK ========================
+
     /**
      * - {0} : BindException 에러 메시지
      */

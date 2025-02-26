@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.persona.repository.entity
 
+import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import jakarta.persistence.Column
 import jakarta.persistence.ConstraintMode
@@ -34,5 +35,5 @@ class PersonaEntity(
     val taskTypeEntity: TaskTypeEntity,
     @ManyToOne
     @JoinColumn(name = "task_mode_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val taskModeEntity: TaskTypeEntity,
+    val taskModeEntity: TaskModeEntity,
 )

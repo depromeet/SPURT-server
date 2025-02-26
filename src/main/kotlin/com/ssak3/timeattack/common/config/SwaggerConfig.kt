@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.common.config
 
+import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.security.SecurityScheme
@@ -10,10 +10,14 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @OpenAPIDefinition(info = Info(title = "SPURT API", version = "1.0"))
 @SecurityScheme(
-    name = "CookieAuth",
-    type = SecuritySchemeType.APIKEY,
-    `in` = SecuritySchemeIn.COOKIE,
-    paramName = "accessToken",
-    description = "JWT Token stored in cookie",
+    name = SECURITY_SCHEME_NAME,
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT",
+    description = "Token Authentication",
 )
-class SwaggerConfig
+class SwaggerConfig {
+    companion object {
+        const val SECURITY_SCHEME_NAME = "BearerAuth"
+    }
+}

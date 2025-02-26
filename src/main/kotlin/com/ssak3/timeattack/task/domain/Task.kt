@@ -2,10 +2,11 @@ package com.ssak3.timeattack.task.domain
 
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
+import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import java.time.LocalDateTime
 
-data class Task(
-    val id: Long,
+class Task(
+    val id: Long? = null,
     val name: String,
     val category: TaskCategory,
     val dueDatetime: LocalDateTime,
@@ -14,7 +15,37 @@ data class Task(
     val status: TaskStatus,
     val member: Member,
     val persona: Persona,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
-    val isDeleted: Boolean,
-)
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null,
+    val isDeleted: Boolean = false,
+) {
+    fun toEntity() =
+        TaskEntity(
+            name = name,
+            category = category,
+            dueDatetime = dueDatetime,
+            triggerAction = triggerAction,
+            estimatedTime = estimatedTime,
+            status = status,
+            member = member.toEntity(),
+            persona = persona.toEntity(),
+        )
+
+    companion object {
+        fun fromEntity(entity: TaskEntity) =
+            Task(
+                id = entity.id,
+                name = entity.name,
+                category = entity.category,
+                dueDatetime = entity.dueDatetime,
+                triggerAction = entity.triggerAction,
+                estimatedTime = entity.estimatedTime,
+                status = entity.status,
+                member = Member.fromEntity(entity.member),
+                persona = Persona.fromEntity(entity.persona),
+                createdAt = entity.createdAt,
+                updatedAt = entity.updatedAt,
+                isDeleted = entity.isDeleted,
+            )
+    }
+}
