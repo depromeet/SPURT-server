@@ -47,7 +47,7 @@ class TaskEntity(
     @ManyToOne
     @JoinColumn(name = "persona_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val persona: PersonaEntity,
-    @Column(name =  "is_deleted")
+    @Column(name = "is_deleted")
     @ColumnDefault("false")
     val isDeleted: Boolean = false,
 ) : BaseEntity()
