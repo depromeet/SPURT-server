@@ -7,11 +7,11 @@ import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
 import com.ssak3.timeattack.member.controller.LoginRequest
-import com.ssak3.timeattack.member.domain.DeviceRegisterEvent
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
+import com.ssak3.timeattack.member.service.events.DeviceRegisterEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
