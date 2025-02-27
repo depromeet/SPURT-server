@@ -32,35 +32,10 @@ class TaskService(
         member: Member,
         urgentTaskRequest: UrgentTaskRequest,
     ): Task {
-        // TODO: 페르소나 가져오는 메서드 사용하기
-        // 1. 키워드 검증 진행
-        val taskTypeEntity = (
-            taskTypeRepository.findByName(urgentTaskRequest.taskType)
-                ?: throw ApplicationException(
-                    ApplicationExceptionType.TASK_TYPE_NOT_FOUND_BY_NAME,
-                    urgentTaskRequest.taskType,
-                )
-        )
-        val taskModeEntity = (
-            taskModeRepository.findByName(urgentTaskRequest.taskMode)
-                ?: throw ApplicationException(
-                    ApplicationExceptionType.TASK_MODE_NOT_FOUND_BY_NAME,
-                    urgentTaskRequest.taskMode,
-                )
-        )
+        // 1. Persona 가져오기
+        val persona = findPersonaByTaskTypeAndTaskMode(urgentTaskRequest.taskType, urgentTaskRequest.taskMode)
 
-        // 2. Persona 가져오기
-        val persona =
-            Persona.fromEntity(
-                personaRepository.findByTaskTypeAndTaskMode(taskTypeEntity, taskModeEntity)
-                    ?: throw ApplicationException(
-                        ApplicationExceptionType.PERSONA_NOT_FOUND_BY_TASK_KEYWORD_COMBINATION,
-                        taskTypeEntity.name,
-                        taskModeEntity.name,
-                    ),
-            )
-
-        // 3. Task 생성
+        // 2. Task 생성
         val task =
             Task(
                 name = urgentTaskRequest.name,
@@ -70,10 +45,10 @@ class TaskService(
                 member = member,
                 persona = persona,
             )
-        // 4. Task 저장
+        // 3. Task 저장
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
-        // 5. Task 반환
+        // 4. Task 반환
         return Task.fromEntity(savedTaskEntity)
     }
 
