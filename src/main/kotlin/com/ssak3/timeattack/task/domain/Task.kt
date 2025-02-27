@@ -14,7 +14,7 @@ class Task(
     val dueDatetime: LocalDateTime,
     val triggerAction: String? = null,
     val estimatedTime: Int? = null,
-    val status: TaskStatus,
+    var status: TaskStatus,
     val member: Member,
     val persona: Persona,
     val createdAt: LocalDateTime? = null,
@@ -23,6 +23,7 @@ class Task(
 ) {
     fun toEntity() =
         TaskEntity(
+            id = id,
             name = name,
             category = category,
             dueDatetime = dueDatetime,
@@ -48,6 +49,33 @@ class Task(
                 triggerActionAlarmTime,
                 dueDatetime,
                 estimatedTime
+            )
+        }
+    }
+
+    /**
+     * Task의 상태를 변경한다.
+     */
+    fun changeStatus(newStatus: TaskStatus) {
+        if (this.status == newStatus) return
+
+        // 현재 상태에서 전환 가능한 상태인지 확인
+        if (!this.status.canTransitionTo(newStatus)) {
+            throw ApplicationException(ApplicationExceptionType.TASK_INVALID_STATE_TRANSITION, this.status, newStatus)
+        }
+
+        this.status = newStatus
+    }
+
+    /**
+     * Task 수정 가능한지 확인한다.
+     */
+    fun assertModifiableBy(memberId: Long) {
+        if (this.member.id != memberId) {
+            throw ApplicationException(
+                ApplicationExceptionType.TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER,
+                this.member.id.toString(),
+                memberId,
             )
         }
     }

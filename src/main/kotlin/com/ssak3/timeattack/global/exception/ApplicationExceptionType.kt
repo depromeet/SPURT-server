@@ -35,20 +35,55 @@ enum class ApplicationExceptionType(
         "해당 Task Type({0})와 Task Mode({1})의 Persona를 찾을 수 없습니다.",
     ),
 
+    /**
+     * - {0} : Task ID
+     */
+    TASK_NOT_FOUND_BY_ID(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_004",
+        "해당 ID로 Task를 찾을 수 없습니다. : {0}",
+    ),
 
-    // TODO: 머지된 코드와 번호 확인하기
+    /**
+     * - {0} : 현재 Task Status
+     * - {1} : 시도하려는 Task Status
+     */
+    TASK_INVALID_STATE_TRANSITION(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_005",
+        "현재 상태({0})에서 요청한 상태({1})로 변경할 수 없습니다. 유효한 상태 전환만 허용됩니다.",
+    ),
+
+    /**
+     * - {0} : Task ID
+     * - {1} : Member ID
+     */
+    TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_006",
+        "해당 Task({0})는 회원({1})이 수정할 수 없습니다.",
+    ),
+
     /**
      * - {0} : Trigger Action Alarm Time
      * - {1} : Task due datetime
      * - {2} : Estimated Time
      */
-    INVALID_TRIGGER_ACTION_ALARM_TIME(HttpStatus.BAD_REQUEST, "ERR_TASK_007", "작은 행동 알림 시간({0})으로부터 마감({1})까지 남은 시간이 예상 소요 시간({2}분)보다 적습니다."),
+    INVALID_TRIGGER_ACTION_ALARM_TIME(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_007",
+        "작은 행동 알림 시간({0})으로부터 마감({1})까지 남은 시간이 예상 소요 시간({2}분)보다 적습니다."
+    ),
 
     /**
      * TaskCategory는 서버측에서 관리하기 때문에 오류가 났다면 서버 로직 오류일 가능성이 높다.
      * - {0} : Task Category
      */
-    TASK_CATEGORY_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_TASK_008", "잘못된 Task Category입니다. : {0}"),
+    TASK_CATEGORY_MISMATCH(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "ERR_TASK_008",
+        "잘못된 Task Category입니다. : {0}"
+    ),
 
     // ======================== [END] TASK ========================
 
@@ -56,6 +91,8 @@ enum class ApplicationExceptionType(
      * - {0} : BindException 에러 메시지
      */
     BIND_EXCEPTION(HttpStatus.BAD_REQUEST, "ERR_GLOBAL_001", "Request 데이터 처리 중 오류가 발생했습니다. : {0}"),
+
+    // ======================== [START] JWT ========================
 
     /**
      * {0} : JWT 파싱 에러 중 서명 검증 실패 메시지
@@ -97,7 +134,18 @@ enum class ApplicationExceptionType(
      */
     JWT_GENERAL_ERR(HttpStatus.BAD_REQUEST, "ERR_JWT_999", "예상하지 못한 JWT 에러입니다. : {0}"),
 
+    // ======================== [END] JWT ========================
+
+    // ======================== [START] AUTHENTICATION ========================
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR_AUTH_001", "인증된 사용자 정보가 없습니다."),
+
+    // ======================== [END] AUTHENTICATION ========================
+
+    // ======================== [START] OIDC ========================
+
     OIDC_PUBLIC_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_OIDC_001", "일치하는 공개키를 찾을 수 없습니다."),
+
+    // ======================== [END] OIDC ========================
 
     /**
      * - {0} : Custom Exception Message
