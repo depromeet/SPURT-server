@@ -38,7 +38,11 @@ enum class ApplicationExceptionType(
     /**
      * - {0} : Task ID
      */
-    TASK_NOT_FOUND_BY_ID(HttpStatus.BAD_REQUEST, "ERR_TASK_004", "해당 ID로 Task를 찾을 수 없습니다. : {0}"),
+    TASK_NOT_FOUND_BY_ID(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_004",
+        "해당 ID로 Task를 찾을 수 없습니다. : {0}",
+    ),
 
     /**
      * - {0} : 현재 Task Status
@@ -50,12 +54,24 @@ enum class ApplicationExceptionType(
         "현재 상태({0})에서 요청한 상태({1})로 변경할 수 없습니다. 유효한 상태 전환만 허용됩니다.",
     ),
 
+    /**
+     * - {0} : Task ID
+     * - {1} : Member ID
+     */
+    TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_006",
+        "해당 Task({0})는 회원({1})이 수정할 수 없습니다.",
+    ),
+
     // ======================== [END] TASK ========================
 
     /**
      * - {0} : BindException 에러 메시지
      */
     BIND_EXCEPTION(HttpStatus.BAD_REQUEST, "ERR_GLOBAL_001", "Request 데이터 처리 중 오류가 발생했습니다. : {0}"),
+
+    // ======================== [START] JWT ========================
 
     /**
      * {0} : JWT 파싱 에러 중 서명 검증 실패 메시지
@@ -97,7 +113,18 @@ enum class ApplicationExceptionType(
      */
     JWT_GENERAL_ERR(HttpStatus.BAD_REQUEST, "ERR_JWT_999", "예상하지 못한 JWT 에러입니다. : {0}"),
 
+    // ======================== [END] JWT ========================
+
+    // ======================== [START] AUTHENTICATION ========================
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR_AUTH_001", "인증된 사용자 정보가 없습니다."),
+
+    // ======================== [END] AUTHENTICATION ========================
+
+    // ======================== [START] OIDC ========================
+
     OIDC_PUBLIC_KEY_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_OIDC_001", "일치하는 공개키를 찾을 수 없습니다."),
+
+    // ======================== [END] OIDC ========================
 
     /**
      * - {0} : Custom Exception Message
