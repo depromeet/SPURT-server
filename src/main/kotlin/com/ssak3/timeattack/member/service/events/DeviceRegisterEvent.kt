@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.service.events
 
-import com.ssak3.timeattack.member.domain.DeviceType
+import com.ssak3.timeattack.common.domain.DeviceType
 
 data class DeviceRegisterEvent(
     val memberId: Long,

@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.domain
+package com.ssak3.timeattack.common.domain
 
 enum class DeviceType {
     ANDROID,

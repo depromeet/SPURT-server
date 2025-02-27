@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
-import com.ssak3.timeattack.member.domain.DeviceType
+import com.ssak3.timeattack.common.domain.DeviceType
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
