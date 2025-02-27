@@ -45,7 +45,7 @@ class TaskController(
         @RequestBody @Valid scheduledTaskRequest: ScheduledTaskCreateRequest,
     ): ResponseEntity<ScheduledTaskCreateResponse> {
         val createdScheduledTask = taskService.createScheduledTask(member, scheduledTaskRequest)
-        return ResponseEntity.ok(ScheduledTaskCreateResponse.from(createdScheduledTask))
+        return ResponseEntity.ok(ScheduledTaskCreateResponse.fromTask(createdScheduledTask))
     }
 
     @Operation(summary = "작업 상태 변경", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])

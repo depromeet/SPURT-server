@@ -17,7 +17,7 @@ data class ScheduledTaskCreateResponse(
     val createdAt: LocalDateTime,
 ) {
     companion object {
-        fun from(task: Task): ScheduledTaskCreateResponse {
+        fun fromTask(task: Task): ScheduledTaskCreateResponse {
             return ScheduledTaskCreateResponse(
                 id = task.id ?: throw IllegalStateException("id must not be null"),
                 name = task.name,

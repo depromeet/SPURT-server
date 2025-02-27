@@ -80,10 +80,9 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         // 4. Task 이벤트 발행
-        // savedTaskEntity id 값이 null이 될 수 없으므로 !! 연산자 사용
         val scheduledTaskSaveEvent =
             ScheduledTaskSaveEvent(
-                savedTaskEntity.id!!,
+                checkNotNull(savedTaskEntity.id),
                 savedTaskEntity.category,
                 scheduledTaskRequest.triggerActionAlarmTime,
             )
@@ -93,7 +92,7 @@ class TaskService(
         return Task.fromEntity(savedTaskEntity)
     }
 
-    fun findPersonaByTaskTypeAndTaskMode(
+    private fun findPersonaByTaskTypeAndTaskMode(
         taskType: String,
         taskMode: String,
     ): Persona {
