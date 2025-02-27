@@ -7,20 +7,15 @@ import java.time.LocalDateTime
 data class TaskStatusResponse(
     val id: Long,
     val name: String,
-    val currentStatus: TaskStatus,
-    val beforeStatus: TaskStatus,
+    val status: TaskStatus,
     val updatedAt: LocalDateTime,
 ) {
     companion object {
-        fun from(
-            task: Task,
-            beforeStatus: TaskStatus,
-        ): TaskStatusResponse {
+        fun from(task: Task): TaskStatusResponse {
             return TaskStatusResponse(
                 id = task.id ?: throw IllegalStateException("id must not be null"),
                 name = task.name,
-                currentStatus = task.status,
-                beforeStatus = beforeStatus,
+                status = task.status,
                 updatedAt = task.updatedAt ?: throw IllegalStateException("updatedAt must not be null"),
             )
         }
