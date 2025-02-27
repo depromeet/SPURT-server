@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 
 @SpringBootTest
 @ActiveProfiles("test")
-class TaskServiceTest (
+class TaskServiceTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,
     @Autowired private val taskTypeRepository: TaskTypeRepository,
@@ -50,23 +50,27 @@ class TaskServiceTest (
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
         val taskType = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
         val taskMode = taskModeRepository.saveAndFlush(TaskModeEntity(name = "즐거운"))
-        personaRepository.saveAndFlush(PersonaEntity(
-            name = "Happy Programmer",
-            personaImageUrl = "https://testimage.com",
-            taskType = taskType,
-            taskMode = taskMode))
+        personaRepository.saveAndFlush(
+            PersonaEntity(
+                name = "Happy Programmer",
+                personaImageUrl = "https://testimage.com",
+                taskType = taskType,
+                taskMode = taskMode,
+            ),
+        )
     }
 
     @Test
     @DisplayName("urgent task 생성시 올바른 카테고리, Status, Persona를 가진 Task 생성된다.")
     fun createUrgentTaskTest() {
         // given
-        val taskRequest = UrgentTaskRequest(
-            "urgent task",
-            LocalDateTime.now().plusDays(1),
-            "프로그래밍",
-            "즐거운"
-        )
+        val taskRequest =
+            UrgentTaskRequest(
+                "urgent task",
+                LocalDateTime.now().plusDays(1),
+                "프로그래밍",
+                "즐거운",
+            )
 
         // when
         val task = taskService.createUrgentTask(member, taskRequest)
