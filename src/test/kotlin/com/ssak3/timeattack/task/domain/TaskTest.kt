@@ -70,10 +70,11 @@ class TaskTest {
     fun throwExceptionForInvalidTriggerActionAlarmTime() {
         // given
         val now = LocalDateTime.now()
-        val scheduledTask = Fixture.createScheduledTask(
-            dueDatetime = now.plusMinutes(100),
-            estimatedTime = 60
-        )
+        val scheduledTask =
+            Fixture.createScheduledTask(
+                dueDatetime = now.plusMinutes(100),
+                estimatedTime = 60,
+            )
         val triggerActionAlarmTime = now.plusMinutes(50)
 
         // when & then
@@ -89,10 +90,11 @@ class TaskTest {
     fun allowValidTriggerActionAlarmTime() {
         // given
         val now = LocalDateTime.now()
-        val scheduledTask = Fixture.createScheduledTask(
-            dueDatetime = now.plusMinutes(100),
-            estimatedTime = 60
-        )
+        val scheduledTask =
+            Fixture.createScheduledTask(
+                dueDatetime = now.plusMinutes(100),
+                estimatedTime = 60,
+            )
         val triggerActionAlarmTime = now.plusMinutes(30)
 
         // when & then

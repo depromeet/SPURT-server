@@ -45,7 +45,7 @@ class TaskServiceTest(
     @Autowired private val taskTypeRepository: TaskTypeRepository,
     @Autowired private val taskModeRepository: TaskModeRepository,
     @Autowired private val personaRepository: PersonaRepository,
-    @Autowired private val eventPublisher: ApplicationEventPublisher
+    @Autowired private val eventPublisher: ApplicationEventPublisher,
 ) {
     private lateinit var member: Member
 
@@ -127,15 +127,12 @@ class TaskServiceTest(
         assertEquals(savedTaskKeywordsCombination.taskMode.name, "긴급한")
 
         verify { eventPublisher.publishEvent(any<ScheduledTaskSaveEvent>()) }
-
     }
 
     @TestConfiguration
     class MockitoPublisherConfiguration {
-
         @Bean
         @Primary
         fun publisher(): ApplicationEventPublisher = mockk(relaxed = true)
     }
-
 }

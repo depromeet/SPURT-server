@@ -5,7 +5,7 @@ import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
 import java.time.LocalDateTime
 
-data class ScheduledTaskCreateResponse (
+data class ScheduledTaskCreateResponse(
     val id: Long,
     val name: String,
     val category: String,

@@ -48,7 +48,7 @@ class Task(
                 ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME,
                 triggerActionAlarmTime,
                 dueDatetime,
-                estimatedTime
+                estimatedTime,
             )
         }
     }

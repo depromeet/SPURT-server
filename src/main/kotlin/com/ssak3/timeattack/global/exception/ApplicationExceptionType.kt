@@ -72,7 +72,7 @@ enum class ApplicationExceptionType(
     INVALID_TRIGGER_ACTION_ALARM_TIME(
         HttpStatus.BAD_REQUEST,
         "ERR_TASK_007",
-        "작은 행동 알림 시간({0})으로부터 마감({1})까지 남은 시간이 예상 소요 시간({2}분)보다 적습니다."
+        "작은 행동 알림 시간({0})으로부터 마감({1})까지 남은 시간이 예상 소요 시간({2}분)보다 적습니다.",
     ),
 
     /**
@@ -82,7 +82,7 @@ enum class ApplicationExceptionType(
     TASK_CATEGORY_MISMATCH(
         HttpStatus.INTERNAL_SERVER_ERROR,
         "ERR_TASK_008",
-        "잘못된 Task Category입니다. : {0}"
+        "잘못된 Task Category입니다. : {0}",
     ),
 
     // ======================== [END] TASK ========================

@@ -26,7 +26,6 @@ class TaskService(
     private val taskTypeRepository: TaskTypeRepository,
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
-
     private val eventPublisher: ApplicationEventPublisher,
 ) : Logger {
     @Transactional
@@ -55,7 +54,10 @@ class TaskService(
     }
 
     @Transactional
-    fun createScheduledTask(member: Member, scheduledTaskRequest: ScheduledTaskCreateRequest): Task {
+    fun createScheduledTask(
+        member: Member,
+        scheduledTaskRequest: ScheduledTaskCreateRequest,
+    ): Task {
         // 1. Persona 가져오기
         val persona = findPersonaByTaskTypeAndTaskMode(scheduledTaskRequest.taskType, scheduledTaskRequest.taskMode)
 
@@ -79,15 +81,22 @@ class TaskService(
 
         // 4. Task 이벤트 발행
         // savedTaskEntity id 값이 null이 될 수 없으므로 !! 연산자 사용
-        val scheduledTaskSaveEvent = ScheduledTaskSaveEvent(savedTaskEntity.id!!, savedTaskEntity.category, scheduledTaskRequest.triggerActionAlarmTime)
+        val scheduledTaskSaveEvent =
+            ScheduledTaskSaveEvent(
+                savedTaskEntity.id!!,
+                savedTaskEntity.category,
+                scheduledTaskRequest.triggerActionAlarmTime,
+            )
         eventPublisher.publishEvent(scheduledTaskSaveEvent)
 
         // 5. Task 반환
         return Task.fromEntity(savedTaskEntity)
-
     }
 
-    fun findPersonaByTaskTypeAndTaskMode(taskType: String, taskMode: String): Persona {
+    fun findPersonaByTaskTypeAndTaskMode(
+        taskType: String,
+        taskMode: String,
+    ): Persona {
         // 작업 유형 키워드 존재 검증
         val taskTypeEntity = (
             taskTypeRepository.findByName(taskType)

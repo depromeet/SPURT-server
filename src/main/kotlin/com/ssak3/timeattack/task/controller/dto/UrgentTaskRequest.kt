@@ -25,7 +25,11 @@ data class UrgentTaskRequest(
     @field:FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val dueDatetime: LocalDateTime,
-    @Schema(title = "작업 유형", allowableValues = ["공부", "글쓰기", "운동", "프로그래밍", "그림∙디자인", "과제"], requiredMode = RequiredMode.REQUIRED)
+    @Schema(
+        title = "작업 유형",
+        allowableValues = ["공부", "글쓰기", "운동", "프로그래밍", "그림∙디자인", "과제"],
+        requiredMode = RequiredMode.REQUIRED,
+    )
     @field:NotBlank
     val taskType: String,
     @Schema(title = "작업 분위기", allowableValues = ["긴급한", "신나는", "감성적인", "조용한"], requiredMode = RequiredMode.REQUIRED)
