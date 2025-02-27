@@ -24,3 +24,31 @@ jwt:
   access-token-validity-in-seconds: 3600
   refresh-token-validity-in-seconds: 604800
   secret: dummyKeyForTestsdummyKeyForTestsdummyKeyForTests
+
+kakao:
+  client-id: ${DEV_KAKAO_CLIENT_ID}
+  client-secret: ${DEV_KAKAO_CLIENT_SECRET}
+  redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
+fcm:
+  secret-key: ${FIREBASE_SECRET_KEY}
+cors:
+  allowed-origins:
+    - ${DEV_CORS_ALLOWED_ORIGINS_01}
+    - ${DEV_CORS_ALLOWED_ORIGINS_02}
+  allowed-headers:
+    - ${DEV_CORS_ALLOWED_HEADERS}
+  allowed-methods:
+    - ${DEV_CORS_ALLOWED_METHODS}
+  allow-credentials: ${DEV_CORS_ALLOW_CREDENTIALS}
+security:
+  permit-urls:
+    - ${DEV_SECURITY_PERMIT_URLS_01}
+    - ${DEV_SECURITY_PERMIT_URLS_02}
+    - ${DEV_SECURITY_PERMIT_URLS_03}
+    - ${DEV_SECURITY_PERMIT_URLS_04}
+
+springdoc:
+  swagger-ui:
+    path: ${DEV_SPRINGDOC_SWAGGER_UI_PATH}
+  api-docs:
+    path: ${DEV_SPRINGDOC_API_DOCS_PATH}

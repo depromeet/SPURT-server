@@ -4,7 +4,7 @@ import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
-import com.ssak3.timeattack.persona.repository.PersonaSpringDataRepository
+import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.task.controller.dto.UpdateTaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
@@ -21,7 +21,7 @@ class TaskService(
     private val taskRepository: TaskRepository,
     private val taskTypeRepository: TaskTypeRepository,
     private val taskModeRepository: TaskModeRepository,
-    private val personaSpringDataRepository: PersonaSpringDataRepository,
+    private val personaRepository: PersonaRepository,
 ) {
     @Transactional
     fun createUrgentTask(
@@ -47,7 +47,7 @@ class TaskService(
         // 2. Persona 가져오기
         val persona =
             Persona.fromEntity(
-                personaSpringDataRepository.findByTaskTypeEntityAndTaskModeEntity(taskTypeEntity, taskModeEntity)
+                personaRepository.findByTaskTypeAndTaskMode(taskTypeEntity, taskModeEntity)
                     ?: throw ApplicationException(
                         ApplicationExceptionType.PERSONA_NOT_FOUND_BY_TASK_KEYWORD_COMBINATION,
                         taskTypeEntity.name,
