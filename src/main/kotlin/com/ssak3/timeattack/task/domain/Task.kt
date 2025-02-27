@@ -34,6 +34,25 @@ class Task(
             persona = persona.toEntity(),
         )
 
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
+        // 현재 버퍼타임에 대한 계산을 프론트에서 해서 보여주기 때문에 서버에서는 정확한 버퍼타임에 대한 배수는 검증하지 않음
+        // triggerActionAlarmTime은 마감 이전이어야 한다.
+        // triggerActionAlarmTime부터 dueDatetime까지의 시간이 estimatedTime보다 커야 한다.
+
+        if (category == TaskCategory.URGENT) {
+            throw ApplicationException(ApplicationExceptionType.TASK_CATEGORY_MISMATCH, category)
+        }
+        val checkedEstimatedTime = (checkNotNull(estimatedTime) { "estimatedTime must not be null" }).toLong()
+        if (triggerActionAlarmTime.plusMinutes(checkedEstimatedTime).isAfter(dueDatetime)) {
+            throw ApplicationException(
+                ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME,
+                triggerActionAlarmTime,
+                dueDatetime,
+                estimatedTime,
+            )
+        }
+    }
+
     /**
      * Task의 상태를 변경한다.
      */

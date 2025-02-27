@@ -74,13 +74,41 @@ object Fixture {
         personaImageUrl = personaImageUrl,
     )
 
-    fun createTask(
+    fun createUrgentTask(
         id: Long = 1L,
         name: String = "Test Task",
         category: TaskCategory = TaskCategory.URGENT,
         dueDatetime: LocalDateTime = now.plusDays(1),
         triggerAction: String? = null,
         estimatedTime: Int? = null,
+        status: TaskStatus = TaskStatus.BEFORE,
+        member: Member = createMember(),
+        persona: Persona = createPersona(),
+        createdAt: LocalDateTime = now,
+        updatedAt: LocalDateTime = now,
+        isDeleted: Boolean = false,
+    ) = Task(
+        id = id,
+        name = name,
+        category = category,
+        dueDatetime = dueDatetime,
+        triggerAction = triggerAction,
+        estimatedTime = estimatedTime,
+        status = status,
+        member = member,
+        persona = persona,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        isDeleted = isDeleted,
+    )
+
+    fun createScheduledTask(
+        id: Long = 1L,
+        name: String = "Test Task",
+        category: TaskCategory = TaskCategory.SCHEDULED,
+        dueDatetime: LocalDateTime = now.plusDays(1),
+        triggerAction: String = "Trigger Action",
+        estimatedTime: Int = 60,
         status: TaskStatus = TaskStatus.BEFORE,
         member: Member = createMember(),
         persona: Persona = createPersona(),

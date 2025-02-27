@@ -4,6 +4,8 @@ import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEM
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
+import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
@@ -34,6 +36,16 @@ class TaskController(
     ): ResponseEntity<UrgentTaskResponse> {
         val createdUrgentTask = taskService.createUrgentTask(member, urgentTaskRequest)
         return ResponseEntity.ok(UrgentTaskResponse.from(createdUrgentTask))
+    }
+
+    @Operation(summary = "여유 있게 시작 작업 생성", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @PostMapping("/scheduled")
+    fun createScheduledTask(
+        @AuthenticationPrincipal member: Member,
+        @RequestBody @Valid scheduledTaskRequest: ScheduledTaskCreateRequest,
+    ): ResponseEntity<ScheduledTaskCreateResponse> {
+        val createdScheduledTask = taskService.createScheduledTask(member, scheduledTaskRequest)
+        return ResponseEntity.ok(ScheduledTaskCreateResponse.fromTask(createdScheduledTask))
     }
 
     @Operation(summary = "작업 상태 변경", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])

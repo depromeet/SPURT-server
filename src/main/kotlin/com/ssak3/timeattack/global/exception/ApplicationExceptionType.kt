@@ -64,6 +64,27 @@ enum class ApplicationExceptionType(
         "해당 Task({0})는 회원({1})이 수정할 수 없습니다.",
     ),
 
+    /**
+     * - {0} : Trigger Action Alarm Time
+     * - {1} : Task due datetime
+     * - {2} : Estimated Time
+     */
+    INVALID_TRIGGER_ACTION_ALARM_TIME(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_007",
+        "작은 행동 알림 시간({0})으로부터 마감({1})까지 남은 시간이 예상 소요 시간({2}분)보다 적습니다.",
+    ),
+
+    /**
+     * TaskCategory는 서버측에서 관리하기 때문에 오류가 났다면 서버 로직 오류일 가능성이 높다.
+     * - {0} : Task Category
+     */
+    TASK_CATEGORY_MISMATCH(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "ERR_TASK_008",
+        "잘못된 Task Category입니다. : {0}",
+    ),
+
     // ======================== [END] TASK ========================
 
     /**
