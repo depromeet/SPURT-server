@@ -10,7 +10,7 @@ import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
-import com.ssak3.timeattack.task.controller.dto.ChangeTaskStatusRequest
+import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
@@ -101,7 +101,7 @@ class TaskServiceTest(
     fun changeTaskStatusFromBeforeToWarmingUpTest() {
         // given
         val taskId = createTestTask()
-        val request = ChangeTaskStatusRequest(status = WARMING_UP)
+        val request = TaskStatusRequest(status = WARMING_UP)
 
         // when
         taskService.changeTaskStatus(taskId, checkNotNull(member.id), request)
@@ -117,7 +117,7 @@ class TaskServiceTest(
     fun changeTaskStatusSkippingOneStateTest() {
         // given
         val taskId = createTestTask()
-        val request = ChangeTaskStatusRequest(status = TaskStatus.FOCUSED)
+        val request = TaskStatusRequest(status = TaskStatus.FOCUSED)
 
         // when
         taskService.changeTaskStatus(taskId, checkNotNull(member.id), request)
@@ -133,11 +133,11 @@ class TaskServiceTest(
     fun changeTaskStatusToPreviousStateThrowsExceptionTest() {
         // given
         val taskId = createTestTask()
-        val request = ChangeTaskStatusRequest(status = TaskStatus.FOCUSED)
+        val request = TaskStatusRequest(status = TaskStatus.FOCUSED)
 
         taskService.changeTaskStatus(taskId, checkNotNull(member.id), request)
 
-        val invalidRequest = ChangeTaskStatusRequest(status = WARMING_UP)
+        val invalidRequest = TaskStatusRequest(status = WARMING_UP)
 
         // when & then: FOCUSED -> WARMING_UP 로 변경 시도
         assertThrows<ApplicationException> {
@@ -164,7 +164,7 @@ class TaskServiceTest(
                     ),
             )
         val otherMember = Member.fromEntity(memberRepository.saveAndFlush(otherMemberEntity))
-        val request = ChangeTaskStatusRequest(status = WARMING_UP)
+        val request = TaskStatusRequest(status = WARMING_UP)
 
         // when & then
         assertThrows<ApplicationException> {
