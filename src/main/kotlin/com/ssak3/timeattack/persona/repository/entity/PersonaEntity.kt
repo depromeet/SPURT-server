@@ -32,8 +32,8 @@ class PersonaEntity(
     val personaImageUrl: String,
     @ManyToOne
     @JoinColumn(name = "task_type_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val taskTypeEntity: TaskTypeEntity,
+    val taskType: TaskTypeEntity,
     @ManyToOne
     @JoinColumn(name = "task_mode_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    val taskModeEntity: TaskModeEntity,
+    val taskMode: TaskModeEntity,
 )
