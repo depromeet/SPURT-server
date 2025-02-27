@@ -80,17 +80,16 @@ class TaskService(
         request: TaskStatusRequest,
     ): Task {
         // Task 가져오기
-        val taskEntity =
-            taskRepository.findById(taskId)
-                .orElseThrow {
-                    ApplicationException(
-                        ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
-                        taskId.toString(),
-                    )
-                }
-
-        // Task Entity -> Task Domain 변환
-        val task = Task.fromEntity(taskEntity)
+        val task =
+            Task.fromEntity(
+                taskRepository.findById(taskId)
+                    .orElseThrow {
+                        ApplicationException(
+                            ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
+                            taskId.toString(),
+                        )
+                    },
+            )
 
         // Task 수정 가능 여부 확인
         task.assertModifiableBy(memberId)
