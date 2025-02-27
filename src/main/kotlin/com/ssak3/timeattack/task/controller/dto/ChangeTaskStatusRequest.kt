@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED
 
 @Schema(description = "작업 상태 변경 요청")
-data class UpdateTaskStatusRequest(
+data class ChangeTaskStatusRequest(
     @Schema(title = "변경할 상태", example = "WARMING_UP | FOCUSED | COMPLETE", requiredMode = REQUIRED)
     val status: TaskStatus,
 )

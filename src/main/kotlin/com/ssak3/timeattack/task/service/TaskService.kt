@@ -5,7 +5,7 @@ import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
-import com.ssak3.timeattack.task.controller.dto.UpdateTaskStatusRequest
+import com.ssak3.timeattack.task.controller.dto.ChangeTaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
@@ -76,7 +76,7 @@ class TaskService(
     fun changeTaskStatus(
         taskId: Long,
         memberId: Long,
-        request: UpdateTaskStatusRequest,
+        request: ChangeTaskStatusRequest,
     ) {
         // Task 가져오기
         val taskEntity =
