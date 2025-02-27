@@ -47,6 +47,19 @@ class Task(
         this.status = newStatus
     }
 
+    /**
+     * Task 수정 가능한지 확인한다.
+     */
+    fun assertModifiableBy(memberId: Long) {
+        if (this.member.id != memberId) {
+            throw ApplicationException(
+                ApplicationExceptionType.TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER,
+                this.member.id.toString(),
+                memberId,
+            )
+        }
+    }
+
     companion object {
         fun fromEntity(entity: TaskEntity) =
             Task(
