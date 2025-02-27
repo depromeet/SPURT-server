@@ -23,6 +23,7 @@ class Task(
 ) {
     fun toEntity() =
         TaskEntity(
+            id = id,
             name = name,
             category = category,
             dueDatetime = dueDatetime,

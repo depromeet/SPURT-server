@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.service
 
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
@@ -22,7 +23,7 @@ class TaskService(
     private val taskTypeRepository: TaskTypeRepository,
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
-) {
+) : Logger {
     @Transactional
     fun createUrgentTask(
         member: Member,
@@ -96,6 +97,7 @@ class TaskService(
 
         // Task 상태 변경
         task.changeStatus(request.status)
+        logger.info("Task 상태 변경: ${task.status}")
 
         // Task 수정 반영
         taskRepository.save(task.toEntity())
