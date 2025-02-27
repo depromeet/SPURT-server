@@ -2,6 +2,8 @@ package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
+import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.service.TaskService
@@ -28,5 +30,15 @@ class TaskController(
     ): ResponseEntity<UrgentTaskResponse> {
         val createdUrgentTask = taskService.createUrgentTask(member, urgentTaskRequest)
         return ResponseEntity.ok(UrgentTaskResponse.from(createdUrgentTask))
+    }
+
+    @Operation(summary = "여유 있게 시작 작업 생성", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @PostMapping("/scheduled")
+    fun createScheduledTask(
+        @AuthenticationPrincipal member: Member,
+        @RequestBody @Valid scheduledTaskRequest: ScheduledTaskCreateRequest,
+    ): ResponseEntity<ScheduledTaskCreateResponse> {
+        val createdScheduledTask = taskService.createScheduledTask(member, scheduledTaskRequest)
+        return ResponseEntity.ok(ScheduledTaskCreateResponse.from(createdScheduledTask))
     }
 }
