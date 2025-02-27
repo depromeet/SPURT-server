@@ -9,7 +9,7 @@ data class TaskStatusRequest(
     @Schema(
         title = "변경할 상태",
         description = "클라이언트에서 BEFORE, FAIL로 상태를 변경할 수 없습니다.",
-        example = "WARMING_UP | FOCUSED | COMPLETE",
+        allowableValues = ["WARMING_UP", "FOCUSED", "COMPLETE"],
         requiredMode = REQUIRED,
     )
     val status: TaskStatus,
