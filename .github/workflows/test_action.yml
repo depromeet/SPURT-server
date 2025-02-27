@@ -25,6 +25,23 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Create environment variable file from ENV_LIST secret
+        run: |
+          echo "${{ secrets.TEST_ENV }}" > .env
+          echo "Environment variable file (.env) created:"
+
+      - name: Load environment variables from .env file
+        run: |
+          if [ -f .env ]; then
+            while IFS= read -r line; do
+              if [[ $line != \#* ]] && [[ $line == *"="* ]]; then
+                echo "$line" >> $GITHUB_ENV
+              fi
+            done < .env
+            echo "Environment variables loaded from .env"
+          else
+            echo ".env file not found!"
+          fi
       - name: Build and test with Gradle
         run: ./gradlew build
       - name: Run tests
