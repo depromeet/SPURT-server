@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.controller.dto
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import jakarta.validation.constraints.FutureOrPresent
@@ -11,19 +12,20 @@ import java.time.LocalDateTime
 
 @Schema(description = "여유 있게 시작 작업 생성 요청")
 data class ScheduledTaskCreateRequest (
-    @Schema(title = "작업 이름", description = "1이상 16자 이하", example = "urgent task", requiredMode = RequiredMode.REQUIRED)
+    @Schema(title = "작업 이름", description = "1이상 16자 이하", example = "scheduled task", requiredMode = RequiredMode.REQUIRED)
     @field:Size(min = 1, max = 16)
     val name: String,
 
     @Schema(
         title = "작업 마감 시간",
         description = "과거 시간을 입력할 수 없습니다.",
-        example = "25-12-31 00:00:00",
+        type = "string",
+        example = "2025-12-31 00:00:00",
         requiredMode = RequiredMode.REQUIRED,
     )
-
     @field:NotNull
     @field:FutureOrPresent
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val dueDatetime: LocalDateTime,
 
     @Schema(title = "작은 행동", description = "1이상 16자 이하", example = "trigger action", requiredMode = RequiredMode.REQUIRED)
@@ -34,7 +36,8 @@ data class ScheduledTaskCreateRequest (
     @field:Positive
     val estimatedTime: Int,
 
-    @Schema(title =  "작은 행동 알림 시간", example = "2025-03-15 20:30:00" ,requiredMode = RequiredMode.REQUIRED)
+    @Schema(title =  "작은 행동 알림 시간", type = "string", example = "2025-12-30 20:00:00" ,requiredMode = RequiredMode.REQUIRED)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @field:FutureOrPresent
     val triggerActionAlarmTime: LocalDateTime,
 
