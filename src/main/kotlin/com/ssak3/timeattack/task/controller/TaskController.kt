@@ -4,7 +4,8 @@ import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEM
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
-import com.ssak3.timeattack.task.controller.dto.ChangeTaskStatusRequest
+import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
+import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.service.TaskService
@@ -40,9 +41,11 @@ class TaskController(
     fun changeStatus(
         @PathVariable(required = true) taskId: Long,
         @AuthenticationPrincipal member: Member,
-        @RequestBody @Valid changeTaskStatusRequest: ChangeTaskStatusRequest,
-    ) {
+        @RequestBody @Valid taskStatusRequest: TaskStatusRequest,
+    ): ResponseEntity<TaskStatusResponse> {
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
-        taskService.changeTaskStatus(taskId, member.id, changeTaskStatusRequest)
+        val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest)
+
+        return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask, taskStatusRequest.status))
     }
 }
