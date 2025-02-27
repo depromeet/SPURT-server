@@ -1,6 +1,5 @@
 package com.ssak3.timeattack.task.service.events
 
-import com.ssak3.timeattack.task.domain.TaskCategory
 import java.time.LocalDateTime
 
 data class ReminderSaveEvent(
