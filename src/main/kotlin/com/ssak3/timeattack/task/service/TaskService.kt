@@ -1,10 +1,12 @@
 package com.ssak3.timeattack.task.service
 
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
+import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
@@ -21,7 +23,7 @@ class TaskService(
     private val taskTypeRepository: TaskTypeRepository,
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
-) {
+) : Logger {
     @Transactional
     fun createUrgentTask(
         member: Member,
@@ -68,6 +70,37 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         // 5. Task 반환
+        return Task.fromEntity(savedTaskEntity)
+    }
+
+    @Transactional
+    fun changeTaskStatus(
+        taskId: Long,
+        memberId: Long,
+        request: TaskStatusRequest,
+    ): Task {
+        // Task 가져오기
+        val task =
+            Task.fromEntity(
+                taskRepository.findById(taskId)
+                    .orElseThrow {
+                        ApplicationException(
+                            ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
+                            taskId.toString(),
+                        )
+                    },
+            )
+
+        // Task 수정 가능 여부 확인
+        task.assertModifiableBy(memberId)
+
+        // Task 상태 변경
+        task.changeStatus(request.status)
+
+        // Task 수정 반영
+        val savedTaskEntity = taskRepository.save(task.toEntity())
+
+        logger.info("Task 상태 변경 반영: ${request.status} -> ${savedTaskEntity.status}")
         return Task.fromEntity(savedTaskEntity)
     }
 }
