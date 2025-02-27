@@ -35,6 +35,21 @@ enum class ApplicationExceptionType(
         "해당 Task Type({0})와 Task Mode({1})의 Persona를 찾을 수 없습니다.",
     ),
 
+    /**
+     * - {0} : Task ID
+     */
+    TASK_NOT_FOUND_BY_ID(HttpStatus.BAD_REQUEST, "ERR_TASK_004", "해당 ID로 Task를 찾을 수 없습니다. : {0}"),
+
+    /**
+     * - {0} : 현재 Task Status
+     * - {1} : 시도하려는 Task Status
+     */
+    TASK_INVALID_STATE_TRANSITION(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_005",
+        "현재 상태({0})에서 요청한 상태({1})로 변경할 수 없습니다. 유효한 상태 전환만 허용됩니다.",
+    ),
+
     // ======================== [END] TASK ========================
 
     /**
