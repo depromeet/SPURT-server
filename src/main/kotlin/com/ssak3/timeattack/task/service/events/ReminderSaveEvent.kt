@@ -4,9 +4,9 @@ import com.ssak3.timeattack.task.domain.TaskCategory
 import java.time.LocalDateTime
 
 data class ReminderSaveEvent(
-    val alarmType: TaskCategory,
-    val alarmTimes: List<ReminderAlarm>,
+    val memberId: Long,
     val taskId: Long,
+    val alarmTimes: List<ReminderAlarm>,
 )
 
 data class ReminderAlarm(

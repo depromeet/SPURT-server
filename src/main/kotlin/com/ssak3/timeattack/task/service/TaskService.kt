@@ -82,8 +82,8 @@ class TaskService(
         // 4. Task 이벤트 발행
         val scheduledTaskSaveEvent =
             ScheduledTaskSaveEvent(
+                checkNotNull(member.id),
                 checkNotNull(savedTaskEntity.id),
-                savedTaskEntity.category,
                 scheduledTaskRequest.triggerActionAlarmTime,
             )
         eventPublisher.publishEvent(scheduledTaskSaveEvent)
