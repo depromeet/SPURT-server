@@ -15,8 +15,8 @@ class Persona(
             id = id,
             name = name,
             personaImageUrl = personaImageUrl,
-            taskTypeEntity = taskKeywordsCombination.taskType.toEntity(),
-            taskModeEntity = taskKeywordsCombination.taskMode.toEntity(),
+            taskType = taskKeywordsCombination.taskType.toEntity(),
+            taskMode = taskKeywordsCombination.taskMode.toEntity(),
         )
 
     companion object {
@@ -27,8 +27,8 @@ class Persona(
                 personaImageUrl = entity.personaImageUrl,
                 taskKeywordsCombination =
                     TaskKeywordsCombination(
-                        taskType = TaskType.fromEntity(entity.taskTypeEntity),
-                        taskMode = TaskMode.fromEntity(entity.taskModeEntity),
+                        taskType = TaskType.fromEntity(entity.taskType),
+                        taskMode = TaskMode.fromEntity(entity.taskMode),
                     ),
             )
     }
