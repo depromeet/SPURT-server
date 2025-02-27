@@ -35,6 +35,7 @@ class TaskController(
         return ResponseEntity.ok(UrgentTaskResponse.from(createdUrgentTask))
     }
 
+    @Operation(summary = "작업 상태 변경", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PatchMapping("/{taskId}/status")
     fun changeStatus(
         @PathVariable(required = true) taskId: Long,
