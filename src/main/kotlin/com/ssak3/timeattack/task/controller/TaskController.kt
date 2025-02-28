@@ -65,11 +65,11 @@ class TaskController(
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
 
-    @Operation(summary = "마감할 작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
-    @GetMapping
-    fun findTodoTasks(
+    @Operation(summary = "오늘 할 작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @GetMapping("/today")
+    fun findTodayTasks(
         @AuthenticationPrincipal member: Member,
-        @RequestParam(required = false) date: LocalDate,
+        @RequestParam(required = false) date: LocalDate?,
     ): ResponseEntity<List<TaskResponse>> {
         val todayTasks = taskService.findTodayTasks(member, date)
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })

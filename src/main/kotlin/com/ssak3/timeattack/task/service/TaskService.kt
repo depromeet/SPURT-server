@@ -19,6 +19,7 @@ import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 class TaskService(
@@ -153,5 +154,11 @@ class TaskService(
 
         logger.info("Task 상태 변경 반영: ${request.status} -> ${savedTaskEntity.status}")
         return Task.fromEntity(savedTaskEntity)
+    }
+
+    fun findTodayTasks(member: Member, date: LocalDate?): List<Task> {
+        // 1. date가 null이면 모든 날짜를 대상으로 조회
+        // 2. date가 null이 아니면 해당 날짜를 대상으로 조회
+        return listOf()
     }
 }
