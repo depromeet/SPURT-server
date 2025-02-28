@@ -4,7 +4,7 @@ import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import java.time.LocalDateTime
 
-data class Member(
+class Member(
     val id: Long? = null,
     var nickname: String,
     val email: String,

@@ -5,7 +5,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
-data class OAuthProviderInfo(
+class OAuthProviderInfo(
     @Enumerated(EnumType.STRING)
     @Column(name = "oauth_provider", length = 20)
     val oauthProvider: OAuthProvider,
