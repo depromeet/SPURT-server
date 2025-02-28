@@ -103,7 +103,7 @@ object Fixture {
     )
 
     fun createScheduledTask(
-        id: Long = 1L,
+        id: Long? = 1L,
         name: String = "Test Task",
         category: TaskCategory = TaskCategory.SCHEDULED,
         dueDatetime: LocalDateTime = now.plusDays(1),
