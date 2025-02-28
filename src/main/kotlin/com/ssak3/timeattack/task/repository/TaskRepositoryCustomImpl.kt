@@ -1,10 +1,11 @@
 package com.ssak3.timeattack.task.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.repository.entity.QTaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import org.springframework.stereotype.Repository
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Repository
 class TaskRepositoryCustomImpl(
@@ -13,22 +14,22 @@ class TaskRepositoryCustomImpl(
     private val qTask: QTaskEntity = QTaskEntity.taskEntity
 
     /**
-     * 날짜 범위 내의 할 일들 중 가장 빨리 마감되는 두 가지 할 일을 가져옵니다.
+     * 두 날짜 사이에 해야 할 일 목록 조회
      */
-    override fun getNextTwoTasksThisWeek(
+    override fun getTasksBetweenDates(
         memberId: Long,
-        start: LocalDate,
-        end: LocalDate,
+        start: LocalDateTime,
+        end: LocalDateTime,
     ): List<TaskEntity> {
         return queryFactory
             .select(qTask)
             .from(qTask)
             .where(
                 qTask.member.id.eq(memberId),
-                qTask.dueDatetime.between(start.atStartOfDay(), end.atTime(23, 59, 59)),
+                qTask.status.eq(BEFORE),
+                qTask.triggerActionAlarmTime.between(start, end),
             )
             .orderBy(qTask.dueDatetime.asc())
-            .limit(2)
             .fetch()
     }
 }
