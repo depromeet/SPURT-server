@@ -63,8 +63,17 @@ class TaskController(
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
 
+    @Operation(
+        summary = "이번 주 작업 목록 조회",
+        description = "오늘 할 일 목록을 제외하고 내일부터 일요일까지 할 일 목록 조회",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
     @GetMapping("/current-week")
     fun getCurrentWeekTasks(
         @AuthenticationPrincipal member: Member,
-    ) = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
+    ): ResponseEntity<List<TaskResponse>> {
+        val taskResponseList = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
+
+        return ResponseEntity.ok(taskResponseList)
+    }
 }
