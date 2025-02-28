@@ -6,6 +6,7 @@ import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZ
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
+import com.ssak3.timeattack.task.controller.dto.TaskResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -60,4 +62,9 @@ class TaskController(
 
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
+
+    @GetMapping("/current-week")
+    fun getCurrentWeekTasks(
+        @AuthenticationPrincipal member: Member,
+    ) = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
 }
