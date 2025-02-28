@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDate
 
 @RestController
 @RequestMapping("/v1/tasks")
@@ -72,5 +70,19 @@ class TaskController(
     ): ResponseEntity<List<TaskResponse>> {
         val todayTasks = taskService.findTodayTasks(member)
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
+    }
+
+    @Operation(
+        summary = "이번 주 작업 목록 조회",
+        description = "오늘 할 일 목록을 제외하고 내일부터 일요일까지 할 일 목록 조회",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @GetMapping("/current-week")
+    fun getCurrentWeekTasks(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<List<TaskResponse>> {
+        val taskResponseList = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
+
+        return ResponseEntity.ok(taskResponseList)
     }
 }

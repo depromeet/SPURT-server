@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.service
 
+import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -11,13 +12,16 @@ import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.repository.TaskModeRepository
+import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
+import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -32,8 +36,12 @@ import org.springframework.context.annotation.Primary
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.TemporalAdjusters
 
+@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -47,6 +55,8 @@ class TaskServiceTest(
     @Autowired private val personaRepository: PersonaRepository,
     @Autowired private val eventPublisher: ApplicationEventPublisher,
 ) {
+    @Autowired
+    private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
 
     @BeforeEach
@@ -127,6 +137,43 @@ class TaskServiceTest(
         assertEquals(savedTaskKeywordsCombination.taskMode.name, "긴급한")
 
         verify { eventPublisher.publishEvent(any<ScheduledTaskSaveEvent>()) }
+    }
+
+    @Test
+    @DisplayName("이번 주 할 일 목록을 조회한다.")
+    fun getTasksByDayOfWeekTest() {
+        // given: 이번 주 월요일~일요일에 할 일 1개씩 저장
+        val allTasks = mutableListOf<TaskEntity>()
+        val today = LocalDate.now()
+        val thisMonday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        val thisSunday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+        var currentDate = thisMonday
+
+        while (!currentDate.isAfter(thisSunday)) {
+            val task =
+                Fixture.createScheduledTask(
+                    id = null,
+                    dueDatetime = currentDate.atTime(22, 0),
+                    triggerActionAlarmTime = currentDate.atTime(10, 0),
+                ).toEntity()
+            allTasks.add(task)
+            currentDate = currentDate.plusDays(1)
+        }
+        taskRepository.saveAllAndFlush(allTasks)
+
+        // when
+        val tasksByDayOfWeek = taskService.getTasksForRestOfCurrentWeek(Fixture.createMember())
+
+        // then
+        when (today.dayOfWeek) {
+            DayOfWeek.MONDAY -> assertThat(tasksByDayOfWeek).hasSize(6)
+            DayOfWeek.TUESDAY -> assertThat(tasksByDayOfWeek).hasSize(5) // 수,목,금,토,일 (5개)
+            DayOfWeek.WEDNESDAY -> assertThat(tasksByDayOfWeek).hasSize(4) // 목,금,토,일 (4개)
+            DayOfWeek.THURSDAY -> assertThat(tasksByDayOfWeek).hasSize(3) // 금,토,일 (3개)
+            DayOfWeek.FRIDAY -> assertThat(tasksByDayOfWeek).hasSize(2) // 토,일 (2개)
+            DayOfWeek.SATURDAY -> assertThat(tasksByDayOfWeek).hasSize(1) // 일 (1개)
+            DayOfWeek.SUNDAY -> assertThat(tasksByDayOfWeek).isEmpty() // 빈 목록 (0개)
+        }
     }
 
     @TestConfiguration
