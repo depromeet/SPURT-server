@@ -11,6 +11,8 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
+import com.ssak3.timeattack.member.service.events.DeviceRegisterEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,6 +22,7 @@ class AuthService(
     private val memberRepository: MemberRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val refreshTokenService: RefreshTokenService,
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
     fun authenticateAndRegister(request: LoginRequest): JwtTokenDto {
         // id token 요청
@@ -44,6 +47,9 @@ class AuthService(
 
         // refresh token 저장
         refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
+
+        // 기기 정보 저장 이벤트 발행
+        eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
 
         return tokens
     }
