@@ -12,7 +12,8 @@ enum class TaskStatus {
     fun canTransitionTo(next: TaskStatus): Boolean {
         return when (this) {
             // 항상 다음 상태로만 전환 가능
-            BEFORE -> next == WARMING_UP || next == PROCRASTINATING || next == FOCUSED || next == COMPLETE || next == FAIL
+            BEFORE ->
+                next == WARMING_UP || next == PROCRASTINATING || next == FOCUSED || next == COMPLETE || next == FAIL
             WARMING_UP -> next == FOCUSED || next == COMPLETE || next == FAIL
             PROCRASTINATING -> next == FOCUSED || next == FAIL
             FOCUSED -> next == COMPLETE
