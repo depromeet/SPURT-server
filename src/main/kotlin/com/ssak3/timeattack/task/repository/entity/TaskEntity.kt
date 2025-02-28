@@ -36,6 +36,8 @@ class TaskEntity(
     val dueDatetime: LocalDateTime,
     @Column(name = "trigger_action", length = 100)
     val triggerAction: String? = null,
+    @Column(name = "trigger_action_alarm_time")
+    val triggerActionAlarmTime: LocalDateTime? = null,
     @Column(name = "estimated_time")
     val estimatedTime: Int? = null,
     @Enumerated(EnumType.STRING)

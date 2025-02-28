@@ -11,12 +11,15 @@ class TaskStatusTest {
     @CsvSource(
         value = [
             "BEFORE, WARMING_UP",
+            "BEFORE, PROCRASTINATING",
             "BEFORE, FOCUSED",
             "BEFORE, COMPLETE",
             "BEFORE, FAIL",
             "WARMING_UP, FOCUSED",
             "WARMING_UP, COMPLETE",
             "WARMING_UP, FAIL",
+            "PROCRASTINATING, FOCUSED",
+            "PROCRASTINATING, FAIL",
             "FOCUSED, COMPLETE",
         ],
     )
@@ -46,6 +49,8 @@ class TaskStatusTest {
             "FOCUSED, BEFORE",
             "FOCUSED, WARMING_UP",
             "FOCUSED, FAIL",
+            "PROCRASTINATING, BEFORE",
+            "PROCRASTINATING, WARMING_UP",
             "WARMING_UP, BEFORE",
         ],
     )
