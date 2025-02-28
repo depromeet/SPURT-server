@@ -17,6 +17,7 @@ import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -162,4 +163,9 @@ class TaskService(
         // 2. date가 null이 아니면 해당 날짜를 대상으로 조회
         return listOf()
     }
+
+    fun getTaskById(id: Long): Task =
+        taskRepository.findByIdOrNull(id)?.let {
+            Task.fromEntity(it)
+        } ?: throw IllegalArgumentException("Task not found")
 }

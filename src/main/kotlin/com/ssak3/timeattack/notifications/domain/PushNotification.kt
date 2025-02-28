@@ -1,21 +1,23 @@
 package com.ssak3.timeattack.notifications.domain
 
+import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.notifications.repository.entity.PushNotificationEntity
+import com.ssak3.timeattack.task.domain.Task
 import java.time.LocalDateTime
 
 data class PushNotification(
-    val id: Long = 0,
-    val memberId: Long,
-    val taskId: Long,
+    val member: Member,
+    val task: Task,
     val scheduledAt: LocalDateTime,
-    val status: Boolean = true,
+    var isDeleted: Boolean = false,
+    val order: Int,
 ) {
     fun toEntity() =
         PushNotificationEntity(
-            id = this.id,
-            memberId = this.memberId,
-            taskId = this.taskId,
-            scheduledAt = this.scheduledAt,
-            status = this.status,
+            member = member.toEntity(),
+            task = task.toEntity(),
+            scheduledAt = scheduledAt,
+            isDeleted = isDeleted,
+            order = order,
         )
 }
