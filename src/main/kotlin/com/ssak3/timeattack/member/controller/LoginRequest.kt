@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
-import com.ssak3.timeattack.common.domain.DeviceType
+import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
@@ -19,5 +19,5 @@ data class LoginRequest(
     val deviceId: String,
     @Schema(title = "기기 타입", example = "ANDROID or IOS", requiredMode = RequiredMode.REQUIRED)
     @field:NotBlank
-    val deviceType: DeviceType,
+    val deviceType: DevicePlatform,
 )
