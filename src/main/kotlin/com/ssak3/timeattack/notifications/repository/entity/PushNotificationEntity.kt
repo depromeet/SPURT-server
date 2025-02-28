@@ -31,6 +31,6 @@ class PushNotificationEntity(
     val scheduledAt: LocalDateTime,
     @Column(name = "is_deleted")
     val isDeleted: Boolean,
-    @Column(name = "order")
+    @Column(name = "`order`")
     val order: Int,
 ) : BaseEntity()
