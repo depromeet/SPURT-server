@@ -20,6 +20,9 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 @Service
 class TaskService(
@@ -161,4 +164,18 @@ class TaskService(
         taskRepository.findByIdOrNull(id)?.let {
             Task.fromEntity(it)
         } ?: throw IllegalArgumentException("Task not found")
+
+    @Transactional(readOnly = true)
+    fun getTasksForRestOfCurrentWeek(member: Member): List<Task> {
+        val today = LocalDate.now()
+        // 오늘이 일요일이면 이번 주 할 일은 없다고 판단(이번주의 끝이 일요일이기 때문)
+        if (today.dayOfWeek == DayOfWeek.SUNDAY) return emptyList()
+
+        // 이번 주 = 내일(00:00:00) ~ 일요일(23:59:59)
+        val tomorrow = today.plusDays(1).atStartOfDay()
+        val thisSunday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)).atTime(23, 59, 59)
+
+        checkNotNull(member.id) { "Member id must not be null" }
+        return taskRepository.getTasksBetweenDates(member.id, tomorrow, thisSunday).map { Task.fromEntity(it) }
+    }
 }
