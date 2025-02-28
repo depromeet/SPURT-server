@@ -70,6 +70,7 @@ class TaskService(
                 status = TaskStatus.BEFORE,
                 triggerAction = scheduledTaskRequest.triggerAction,
                 estimatedTime = scheduledTaskRequest.estimatedTime,
+                triggerActionAlarmTime = scheduledTaskRequest.triggerActionAlarmTime,
                 member = member,
                 persona = persona,
             )
