@@ -17,6 +17,7 @@ import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -70,6 +71,7 @@ class TaskService(
                 status = TaskStatus.BEFORE,
                 triggerAction = scheduledTaskRequest.triggerAction,
                 estimatedTime = scheduledTaskRequest.estimatedTime,
+                triggerActionAlarmTime = scheduledTaskRequest.triggerActionAlarmTime,
                 member = member,
                 persona = persona,
             )
@@ -154,4 +156,9 @@ class TaskService(
         logger.info("Task 상태 변경 반영: ${request.status} -> ${savedTaskEntity.status}")
         return Task.fromEntity(savedTaskEntity)
     }
+
+    fun getTaskById(id: Long): Task =
+        taskRepository.findByIdOrNull(id)?.let {
+            Task.fromEntity(it)
+        } ?: throw IllegalArgumentException("Task not found")
 }

@@ -10,12 +10,11 @@ class PushNotificationService(
     private val pushNotificationRepository: PushNotificationRepository,
 ) {
     @Transactional
-    fun upsert(pushNotification: PushNotification) = pushNotificationRepository.save(pushNotification.toEntity())
+    fun save(pushNotification: PushNotification) = pushNotificationRepository.save(pushNotification.toEntity())
 
     @Transactional
-    fun upsertAll(pushNotifications: List<PushNotification>): Boolean {
+    fun saveAll(pushNotifications: List<PushNotification>) {
         val entities = pushNotifications.map { it.toEntity() }
-        val result = pushNotificationRepository.saveAll(entities)
-        return result.size > 0
+        pushNotificationRepository.saveAll(entities)
     }
 }
