@@ -158,9 +158,8 @@ class TaskService(
         return Task.fromEntity(savedTaskEntity)
     }
 
-    fun findTodayTasks(member: Member, date: LocalDate?): List<Task> {
-        // 1. date가 null이면 모든 날짜를 대상으로 조회
-        // 2. date가 null이 아니면 해당 날짜를 대상으로 조회
+    fun findTodayTasks(member: Member): List<Task> {
+
         return listOf()
     }
 

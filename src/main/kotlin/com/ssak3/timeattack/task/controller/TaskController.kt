@@ -69,9 +69,8 @@ class TaskController(
     @GetMapping("/today")
     fun findTodayTasks(
         @AuthenticationPrincipal member: Member,
-        @RequestParam(required = false) date: LocalDate?,
     ): ResponseEntity<List<TaskResponse>> {
-        val todayTasks = taskService.findTodayTasks(member, date)
+        val todayTasks = taskService.findTodayTasks(member)
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
     }
 }
