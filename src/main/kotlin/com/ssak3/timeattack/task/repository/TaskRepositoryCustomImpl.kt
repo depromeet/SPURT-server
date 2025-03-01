@@ -47,18 +47,23 @@ class TaskRepositoryCustomImpl(
         return queryFactory
             .select(qTask)
             .from(qTask)
-            .where(qTask.member.id.eq(memberId)
-                .and(
-                    qTask.status.eq(FOCUSED)
-                        .or(qTask.status.eq(WARMING_UP))
-                        .or(qTask.status.eq(PROCRASTINATING))
-                        .or(qTask.status.eq(BEFORE)
-                            .and(qTask.triggerActionAlarmTime.between(
-                                today.atStartOfDay(),
-                                today.plusDays(1).atStartOfDay()
-                            )
-                        )
-                )))
+            .where(
+                qTask.member.id.eq(memberId)
+                    .and(
+                        qTask.status.eq(FOCUSED)
+                            .or(qTask.status.eq(WARMING_UP))
+                            .or(qTask.status.eq(PROCRASTINATING))
+                            .or(
+                                qTask.status.eq(BEFORE)
+                                    .and(
+                                        qTask.triggerActionAlarmTime.between(
+                                            today.atStartOfDay(),
+                                            today.plusDays(1).atStartOfDay(),
+                                        ),
+                                    ),
+                            ),
+                    ),
+            )
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
