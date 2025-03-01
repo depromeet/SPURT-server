@@ -85,4 +85,18 @@ class TaskController(
 
         return ResponseEntity.ok(taskResponseList)
     }
+
+    @Operation(
+        summary = "전체 할일 조회",
+        description = "조회 시점을 기준으로 마감시간이 지나지 않은 일들을 조회",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @GetMapping("/all-todos")
+    fun findAllTodos(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<List<TaskResponse>> {
+        val taskResponseList = taskService.findAllTodos(member).map { TaskResponse.fromTask(it) }
+
+        return ResponseEntity.ok(taskResponseList)
+    }
 }
