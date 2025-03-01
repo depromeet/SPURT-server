@@ -163,4 +163,34 @@ class TaskRepositoryCustomImplTest(
         val status: TaskStatus,
         val triggerActionAlarmTime: LocalDateTime? = null,
     )
+
+    @Test
+    @DisplayName("전체 할 일 조회")
+    fun test_findAllTodos() {
+        // given
+        // when
+        val tasks = taskRepository.findAllTodos(checkNotNull(member.id))
+
+        // then
+        assertEquals(11, tasks.size)
+
+        val taskNames = tasks.map { it.name }
+        assertTrue(
+            taskNames.containsAll(
+                listOf(
+                    "urgent task2",
+                    "scheduled task1",
+                    "scheduled task2",
+                    "scheduled task3",
+                    "scheduled task4",
+                    "scheduled task5",
+                    "scheduled task6",
+                    "scheduled task7",
+                    "scheduled task10",
+                    "scheduled task11",
+                    "scheduled task12",
+                ),
+            ),
+        )
+    }
 }
