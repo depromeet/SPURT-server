@@ -77,9 +77,10 @@ class TaskRepositoryCustomImpl(
         return queryFactory
             .select(qTask)
             .from(qTask)
-            .where(qTask.member.id.eq(id)
-                .and(qTask.dueDatetime.after(now))
-                .and(qTask.status.ne(TaskStatus.COMPLETE))
+            .where(
+                qTask.member.id.eq(id)
+                    .and(qTask.dueDatetime.after(now))
+                    .and(qTask.status.ne(TaskStatus.COMPLETE)),
             )
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()

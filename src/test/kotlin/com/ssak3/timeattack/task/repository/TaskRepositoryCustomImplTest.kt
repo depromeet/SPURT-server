@@ -103,7 +103,13 @@ class TaskRepositoryCustomImplTest(
                 // [Scheduled Task] 내일 마감시간 전, 내일 알림시간 전 등록만 한 상태 (오늘 할 일 X)
                 TaskCreateInfo("scheduled task11", SCHEDULED, tomorrowEndDateTime, BEFORE, tomorrowStartTime),
                 // [Scheduled Task] 모레 마감시간 전, 모레 알림시간 전 등록만 한 상태 (오늘 할 일 X)
-                TaskCreateInfo("scheduled task12", SCHEDULED, tomorrowEndDateTime.plusDays(1), BEFORE, tomorrow8Pm.plusDays(1)),
+                TaskCreateInfo(
+                    "scheduled task12",
+                    SCHEDULED,
+                    tomorrowEndDateTime.plusDays(1),
+                    BEFORE,
+                    tomorrow8Pm.plusDays(1),
+                ),
                 // [Scheduled Task] 오늘 마감시간 전, 완료한 상태 (오늘 할 일 X)
                 TaskCreateInfo("scheduled task13", SCHEDULED, todayEndDateTime, COMPLETE, today8Pm),
             )
