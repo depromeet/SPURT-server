@@ -20,7 +20,7 @@ class TaskTest {
 
     @BeforeEach
     fun setUp() {
-        urgentTask = Fixture.createUrgentTask()
+        urgentTask = Fixture.createTask()
         scheduledTask = Fixture.createScheduledTask()
     }
 
