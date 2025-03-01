@@ -161,7 +161,7 @@ class TaskService(
     }
 
     fun findTodayTasks(member: Member): List<Task> {
-        return taskRepository.findTodayTasks(checkNotNull(member.id), LocalDate.now()).map { Task.fromEntity(it) }
+        return taskRepository.findTodayTasks(checkNotNull(member.id)).map { Task.fromEntity(it) }
     }
 
     fun getTaskById(id: Long): Task =

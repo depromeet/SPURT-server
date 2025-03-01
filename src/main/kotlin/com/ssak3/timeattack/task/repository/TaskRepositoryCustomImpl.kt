@@ -40,15 +40,15 @@ class TaskRepositoryCustomImpl(
     /**
      * 오늘 해야 할 일 목록 조회
      */
-    override fun findTodayTasks(
-        memberId: Long,
-        today: LocalDate,
-    ): List<TaskEntity> {
+    override fun findTodayTasks(memberId: Long): List<TaskEntity> {
+        val todayDate = LocalDate.now()
+        val nowDateTime = LocalDateTime.now()
         return queryFactory
             .select(qTask)
             .from(qTask)
             .where(
                 qTask.member.id.eq(memberId)
+                    .and(qTask.dueDatetime.after(nowDateTime))
                     .and(
                         qTask.status.eq(FOCUSED)
                             .or(qTask.status.eq(WARMING_UP))
@@ -57,8 +57,8 @@ class TaskRepositoryCustomImpl(
                                 qTask.status.eq(BEFORE)
                                     .and(
                                         qTask.triggerActionAlarmTime.between(
-                                            today.atStartOfDay(),
-                                            today.plusDays(1).atStartOfDay().minusSeconds(1),
+                                            todayDate.atStartOfDay(),
+                                            todayDate.plusDays(1).atStartOfDay().minusSeconds(1),
                                         ),
                                     ),
                             ),
