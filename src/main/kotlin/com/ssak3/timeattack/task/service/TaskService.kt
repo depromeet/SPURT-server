@@ -167,7 +167,16 @@ class TaskService(
     fun getTaskById(id: Long): Task =
         taskRepository.findByIdOrNull(id)?.let {
             Task.fromEntity(it)
-        } ?: throw IllegalArgumentException("Task not found")
+        } ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, id)
+
+    fun findTaskById(taskId: Long): Task {
+        val task = taskRepository.findByIdAndIsDeletedIsFalse(taskId)
+            ?: throw ApplicationException(
+                ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
+                taskId,
+            )
+        return Task.fromEntity(task)
+    }
 
     @Transactional(readOnly = true)
     fun getTasksForRestOfCurrentWeek(member: Member): List<Task> {

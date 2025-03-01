@@ -13,8 +13,12 @@ import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.service.TaskService
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@Tag(name = "Task APIs")
 @RestController
 @RequestMapping("/v1/tasks")
 class TaskController(
@@ -84,5 +89,15 @@ class TaskController(
         val taskResponseList = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
 
         return ResponseEntity.ok(taskResponseList)
+    }
+
+    @Operation(summary = "작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @GetMapping("/{taskId}")
+    fun findTask(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true) @Positive taskId: Long,
+    ): ResponseEntity<TaskResponse> {
+        val task = taskService.findTaskById(taskId)
+        return ResponseEntity.ok(TaskResponse.fromTask(task))
     }
 }
