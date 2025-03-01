@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.domain.TaskStatus.PROCRASTINATING
+import com.ssak3.timeattack.task.domain.TaskStatus.WARMING_UP
 import com.ssak3.timeattack.task.repository.entity.QTaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import org.springframework.stereotype.Repository
@@ -49,6 +50,7 @@ class TaskRepositoryCustomImpl(
             .where(qTask.member.id.eq(memberId)
                 .and(
                     qTask.status.eq(FOCUSED)
+                        .or(qTask.status.eq(WARMING_UP))
                         .or(qTask.status.eq(PROCRASTINATING))
                         .or(qTask.status.eq(BEFORE)
                             .and(qTask.triggerActionAlarmTime.between(

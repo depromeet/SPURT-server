@@ -88,10 +88,10 @@ class TaskRepositoryCustomImplTest (
         val tasks = taskRepository.findTodayTasks(checkNotNull(member.id), LocalDate.parse("2025-03-01"))
 
         // then
-        assertEquals(7, tasks.size)
+        assertEquals(8, tasks.size)
 
         val taskNames = tasks.map { it.name }
-        assertTrue(taskNames.containsAll(listOf("urgent task2", "scheduled task1", "scheduled task2", "scheduled task3", "scheduled task4", "scheduled task5", "scheduled task7")))
+        assertTrue(taskNames.containsAll(listOf("urgent task2", "scheduled task1", "scheduled task2", "scheduled task3", "scheduled task4", "scheduled task5", "scheduled task7", "scheduled task10")))
 
     }
 
