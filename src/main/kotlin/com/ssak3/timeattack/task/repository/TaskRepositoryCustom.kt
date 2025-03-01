@@ -9,4 +9,6 @@ interface TaskRepositoryCustom {
         start: LocalDateTime,
         end: LocalDateTime,
     ): List<TaskEntity>
+
+    fun findTodayTasks(memberId: Long): List<TaskEntity>
 }

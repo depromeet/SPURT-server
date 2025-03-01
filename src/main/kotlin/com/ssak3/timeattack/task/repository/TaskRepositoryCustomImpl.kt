@@ -2,9 +2,13 @@ package com.ssak3.timeattack.task.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
+import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
+import com.ssak3.timeattack.task.domain.TaskStatus.PROCRASTINATING
+import com.ssak3.timeattack.task.domain.TaskStatus.WARMING_UP
 import com.ssak3.timeattack.task.repository.entity.QTaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Repository
@@ -30,6 +34,37 @@ class TaskRepositoryCustomImpl(
                 qTask.triggerActionAlarmTime.between(start, end),
             )
             .orderBy(qTask.dueDatetime.asc())
+            .fetch()
+    }
+
+    /**
+     * 오늘 해야 할 일 목록 조회
+     */
+    override fun findTodayTasks(memberId: Long): List<TaskEntity> {
+        val todayDate = LocalDate.now()
+        val nowDateTime = LocalDateTime.now()
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.member.id.eq(memberId)
+                    .and(qTask.dueDatetime.after(nowDateTime))
+                    .and(
+                        qTask.status.eq(FOCUSED)
+                            .or(qTask.status.eq(WARMING_UP))
+                            .or(qTask.status.eq(PROCRASTINATING))
+                            .or(
+                                qTask.status.eq(BEFORE)
+                                    .and(
+                                        qTask.triggerActionAlarmTime.between(
+                                            todayDate.atStartOfDay(),
+                                            todayDate.plusDays(1).atStartOfDay().minusSeconds(1),
+                                        ),
+                                    ),
+                            ),
+                    ),
+            )
+            .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
 }

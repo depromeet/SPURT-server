@@ -160,6 +160,10 @@ class TaskService(
         return Task.fromEntity(savedTaskEntity)
     }
 
+    fun findTodayTasks(member: Member): List<Task> {
+        return taskRepository.findTodayTasks(checkNotNull(member.id)).map { Task.fromEntity(it) }
+    }
+
     fun getTaskById(id: Long): Task =
         taskRepository.findByIdOrNull(id)?.let {
             Task.fromEntity(it)

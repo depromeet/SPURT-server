@@ -16,7 +16,7 @@ object Fixture {
     private val now = LocalDateTime.now()
 
     fun createMember(
-        id: Long = 1L,
+        id: Long? = 1L,
         email: String = "test@example.com",
         nickname: String = "testUser",
         profileImageUrl: String = "https://test.com",
@@ -74,12 +74,13 @@ object Fixture {
         personaImageUrl = personaImageUrl,
     )
 
-    fun createUrgentTask(
-        id: Long = 1L,
+    fun createTask(
+        id: Long? = 1L,
         name: String = "Test Task",
         category: TaskCategory = TaskCategory.URGENT,
         dueDatetime: LocalDateTime = now.plusDays(1),
         triggerAction: String? = null,
+        triggerActionAlarmTime: LocalDateTime? = null,
         estimatedTime: Int? = null,
         status: TaskStatus = TaskStatus.BEFORE,
         member: Member = createMember(),
@@ -93,6 +94,7 @@ object Fixture {
         category = category,
         dueDatetime = dueDatetime,
         triggerAction = triggerAction,
+        triggerActionAlarmTime = triggerActionAlarmTime,
         estimatedTime = estimatedTime,
         status = status,
         member = member,
