@@ -14,7 +14,6 @@ import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.service.TaskService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -95,7 +94,8 @@ class TaskController(
     @GetMapping("/{taskId}")
     fun findTask(
         @Parameter(description = "작업 ID")
-        @PathVariable(required = true) @Positive taskId: Long,
+        @PathVariable(required = true)
+        @Positive taskId: Long,
     ): ResponseEntity<TaskResponse> {
         val task = taskService.findTaskById(taskId)
         return ResponseEntity.ok(TaskResponse.fromTask(task))

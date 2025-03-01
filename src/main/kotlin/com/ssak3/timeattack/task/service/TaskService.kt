@@ -170,11 +170,12 @@ class TaskService(
         } ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, id)
 
     fun findTaskById(taskId: Long): Task {
-        val task = taskRepository.findByIdAndIsDeletedIsFalse(taskId)
-            ?: throw ApplicationException(
-                ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
-                taskId,
-            )
+        val task =
+            taskRepository.findByIdAndIsDeletedIsFalse(taskId)
+                ?: throw ApplicationException(
+                    ApplicationExceptionType.TASK_NOT_FOUND_BY_ID,
+                    taskId,
+                )
         return Task.fromEntity(task)
     }
 
