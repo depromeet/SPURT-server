@@ -58,7 +58,7 @@ class TaskRepositoryCustomImpl(
                                     .and(
                                         qTask.triggerActionAlarmTime.between(
                                             today.atStartOfDay(),
-                                            today.plusDays(1).atStartOfDay(),
+                                            today.plusDays(1).atStartOfDay().minusSeconds(1),
                                         ),
                                     ),
                             ),

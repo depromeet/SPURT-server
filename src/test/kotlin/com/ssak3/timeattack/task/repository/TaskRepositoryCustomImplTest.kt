@@ -87,6 +87,7 @@ class TaskRepositoryCustomImplTest(
                 TaskCreateInfo("scheduled task8", SCHEDULED, "2025-02-28 23:59:59", COMPLETE, "2025-02-28 20:00:00"),
                 TaskCreateInfo("scheduled task9", SCHEDULED, "2025-02-28 23:59:59", FAIL, "2025-03-01 20:00:00"),
                 TaskCreateInfo("scheduled task10", SCHEDULED, "2025-03-01 23:59:59", WARMING_UP, "2025-03-01 00:00:01"),
+                TaskCreateInfo("scheduled task11", SCHEDULED, "2025-03-02 23:59:59", BEFORE, "2025-03-02 00:00:00"),
             )
 
         // save task
