@@ -48,3 +48,6 @@ springdoc:
     path: ${DEV_SPRINGDOC_SWAGGER_UI_PATH}
   api-docs:
     path: ${DEV_SPRINGDOC_API_DOCS_PATH}
+
+server:
+  url: ${DEV_SERVER_URL}

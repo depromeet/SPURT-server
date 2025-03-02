@@ -30,4 +30,6 @@ interface TaskRepositoryCustom {
      * @return 조건에 맞는 작업 중 정렬 기준에 따라 첫 번째 작업, 없으면 null
      */
     fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity?
+
+    fun findAllTodos(id: Long): List<TaskEntity>
 }

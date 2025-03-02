@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.repository
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.domain.TaskStatus.PROCRASTINATING
@@ -61,7 +62,24 @@ class TaskRepositoryCustomImpl(
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
-
+   
+    /**
+     * 전체 할일 조회
+     */
+    override fun findAllTodos(id: Long): List<TaskEntity> {
+        val now = LocalDateTime.now()
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.member.id.eq(id)
+                    .and(qTask.dueDatetime.after(now))
+                    .and(qTask.status.ne(TaskStatus.COMPLETE)),
+            )
+            .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
+            .fetch()
+    }
+    
     override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
         val now = LocalDateTime.now()
         val threeMinutesAgo = now.minusMinutes(3)
@@ -75,8 +93,8 @@ class TaskRepositoryCustomImpl(
                 qTask.status.eq(WARMING_UP)
                     .or(
                         qTask.status.eq(BEFORE)
-                            .and(qTask.triggerActionAlarmTime.before(threeMinutesAgo))
-                            .and(qTask.triggerActionAlarmTime.isNotNull),
+                            .and(qTask.triggerActionAlarmTime.isNotNull)
+                            .and(qTask.triggerActionAlarmTime.before(threeMinutesAgo)),
                     ),
             )
             .orderBy(qTask.triggerActionAlarmTime.desc(), qTask.dueDatetime.asc())
