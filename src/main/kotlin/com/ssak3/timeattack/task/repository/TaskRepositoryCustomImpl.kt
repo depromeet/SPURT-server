@@ -18,9 +18,6 @@ class TaskRepositoryCustomImpl(
 ) : TaskRepositoryCustom {
     private val qTask: QTaskEntity = QTaskEntity.taskEntity
 
-    /**
-     * 두 날짜 사이에 해야 할 일 목록 조회
-     */
     override fun getTasksBetweenDates(
         memberId: Long,
         start: LocalDateTime,
@@ -38,9 +35,6 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    /**
-     * 오늘 해야 할 일 목록 조회
-     */
     override fun findTodayTasks(memberId: Long): List<TaskEntity> {
         val todayDate = LocalDate.now()
         val nowDateTime = LocalDateTime.now()
@@ -69,9 +63,6 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    /**
-     * 전체 할일 조회
-     */
     override fun findAllTodos(id: Long): List<TaskEntity> {
         val now = LocalDateTime.now()
         return queryFactory
@@ -84,5 +75,27 @@ class TaskRepositoryCustomImpl(
             )
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
+    }
+
+    override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
+        val now = LocalDateTime.now()
+        val threeMinutesAgo = now.minusMinutes(3)
+
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.member.id.eq(memberId),
+                qTask.dueDatetime.after(now),
+                qTask.status.eq(WARMING_UP)
+                    .or(
+                        qTask.status.eq(BEFORE)
+                            .and(qTask.triggerActionAlarmTime.isNotNull)
+                            .and(qTask.triggerActionAlarmTime.before(threeMinutesAgo)),
+                    ),
+                qTask.isDeleted.eq(false),
+            )
+            .orderBy(qTask.triggerActionAlarmTime.desc(), qTask.dueDatetime.asc())
+            .fetchFirst()
     }
 }

@@ -3,12 +3,12 @@ package com.ssak3.timeattack.task.service
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
-import com.ssak3.timeattack.member.repository.entity.QMemberEntity.memberEntity
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.TaskCategory
+import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
@@ -35,7 +35,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
@@ -182,6 +181,184 @@ class TaskServiceTest(
             DayOfWeek.SATURDAY -> assertThat(tasksByDayOfWeek).hasSize(1) // 일 (1개)
             DayOfWeek.SUNDAY -> assertThat(tasksByDayOfWeek).isEmpty() // 빈 목록 (0개)
         }
+    }
+
+    @Test
+    @DisplayName("여러 작업 중 알림 시간이 가장 최근인 작업을 반환한다")
+    fun findAbandonedOrIgnoredTasksTest() {
+        // given
+        val now = LocalDateTime.now()
+
+        // 1. WARMING_UP 상태인 작업 (이탈한 작업)
+        val warmingUpTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.WARMING_UP,
+                triggerActionAlarmTime = now.minusMinutes(4),
+                dueDatetime = now.plusDays(1),
+                member = member,
+            ).toEntity()
+
+        // 2. BEFORE 상태이고 알림이 3분 지난 작업 (무시된 작업 - 가장 최근)
+        val ignoredTask1 =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = now.minusMinutes(3),
+                dueDatetime = now.plusDays(2),
+                member = member,
+            ).toEntity()
+
+        // 3. BEFORE 상태이고 알림이 5분 지난 작업 (무시된 작업 - 더 이전)
+        val ignoredTask2 =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = now.minusMinutes(5),
+                dueDatetime = now.plusHours(5),
+                member = member,
+            ).toEntity()
+
+        // 4. BEFORE 상태이지만 알림이 아직 3분 지나지 않은 작업 (조회되면 안 됨)
+        val notIgnoredTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = now.minusMinutes(2),
+                dueDatetime = now.plusHours(3),
+                member = member,
+            ).toEntity()
+
+        taskRepository.saveAllAndFlush(
+            listOf(
+                warmingUpTask,
+                ignoredTask1,
+                ignoredTask2,
+                notIgnoredTask,
+            ),
+        )
+
+        // when
+        val foundTask = taskService.getAbandonedOrIgnoredTasks(member)
+        // then
+        assertThat(foundTask).isNotNull
+
+        // 가장 최근에 알림이 발생한 ignoredTask1이 조회되어야 함
+        assertThat(foundTask?.id).isEqualTo(ignoredTask1.id)
+    }
+
+    @Test
+    @DisplayName("WARMING_UP 상태의 최근 알림 작업이 다른 작업보다 우선 반환된다")
+    fun findMostRecentWarmingUpTask() {
+        // given
+        val now = LocalDateTime.now()
+
+        // WARMING_UP 상태이고 알림 시간이 매우 최근인 작업 (푸시 알림 받고 앱들어갔다가 바로 나갔다가, 다시 홈화면 들어온 경우)
+        val warmingUpTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.WARMING_UP,
+                triggerActionAlarmTime = now.minusMinutes(1),
+                dueDatetime = now.plusDays(1),
+                member = member,
+            ).toEntity()
+
+        // BEFORE 상태이고 알림 시간이 3분 전인 작업 (알람 무시한지 3분이 된 경우)
+        val beforeTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = now.minusMinutes(3),
+                dueDatetime = now.plusDays(2),
+                member = member,
+            ).toEntity()
+
+        taskRepository.saveAllAndFlush(listOf(warmingUpTask, beforeTask))
+
+        // when
+        val foundTask = taskService.getAbandonedOrIgnoredTasks(member)
+
+        // then
+        assertThat(foundTask).isNotNull
+        // 알림 시간이 더 최근인 WARMING_UP 작업이 조회되어야 함
+        assertThat(foundTask?.id).isEqualTo(warmingUpTask.id)
+    }
+
+    @Test
+    @DisplayName("알림 시간이 동일할 경우 마감일이 더 빠른 작업을 반환한다")
+    fun findTaskWithSameAlarmTimeTest() {
+        // given
+        val now = LocalDateTime.now()
+        val sameAlarmTime = now.minusMinutes(5)
+
+        // 알림 시간이 같은 두 작업 생성, 마감시간만 다름
+        val earlierDueTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = sameAlarmTime,
+                dueDatetime = now.plusDays(2),
+                member = member,
+            ).toEntity()
+
+        val laterDueTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = sameAlarmTime,
+                dueDatetime = now.plusDays(3),
+                member = member,
+            ).toEntity()
+
+        taskRepository.saveAllAndFlush(
+            listOf(
+                earlierDueTask,
+                laterDueTask,
+            ),
+        )
+
+        // when
+        val foundTask = taskService.getAbandonedOrIgnoredTasks(member)
+
+        // then
+        assertThat(foundTask).isNotNull
+        assertThat(foundTask?.id).isEqualTo(earlierDueTask.id)
+    }
+
+    @Test
+    @DisplayName("이탈한 작업이 없으면 null을 반환한다")
+    fun findNoAbandonedOrIgnoredTasksTest() {
+        // given
+        val now = LocalDateTime.now()
+
+        // 조건에 해당하지 않는 작업만 생성
+        // 1. BEFORE 상태이지만 알림이 아직 3분 지나지 않은 작업
+        val beforeTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.BEFORE,
+                triggerActionAlarmTime = now.minusMinutes(2),
+                dueDatetime = now.plusDays(1),
+                member = member,
+            ).toEntity()
+
+        // 2. FOCUSED 상태인 작업
+        val focusedTask =
+            Fixture.createScheduledTask(
+                id = null,
+                status = TaskStatus.FOCUSED,
+                triggerActionAlarmTime = now.minusMinutes(10),
+                dueDatetime = now.plusDays(1),
+                member = member,
+            ).toEntity()
+
+        taskRepository.saveAllAndFlush(listOf(beforeTask, focusedTask))
+
+        // when
+        val foundTask = taskService.getAbandonedOrIgnoredTasks(member)
+
+        // then
+        assertThat(foundTask).isNull()
     }
 
     @Test

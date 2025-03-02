@@ -47,7 +47,7 @@ class TaskService(
                 name = urgentTaskRequest.name,
                 category = TaskCategory.URGENT,
                 dueDatetime = urgentTaskRequest.dueDatetime,
-                status = TaskStatus.BEFORE,
+                status = TaskStatus.FOCUSED,
                 member = member,
                 persona = persona,
             )
@@ -192,6 +192,12 @@ class TaskService(
 
         checkNotNull(member.id) { "Member id must not be null" }
         return taskRepository.getTasksBetweenDates(member.id, tomorrow, thisSunday).map { Task.fromEntity(it) }
+    }
+
+    @Transactional(readOnly = true)
+    fun getAbandonedOrIgnoredTasks(member: Member): Task? {
+        checkNotNull(member.id) { "Member id must not be null" }
+        return taskRepository.findAbandonedOrIgnoredTasks(member.id)?.let { Task.fromEntity(it) }
     }
 
     fun findAllTodos(member: Member): List<Task> {
