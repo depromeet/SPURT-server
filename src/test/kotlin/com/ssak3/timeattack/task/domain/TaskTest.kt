@@ -6,6 +6,7 @@ import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.TASK_INVALID_STATE_TRANSITION
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
+import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -31,10 +32,10 @@ class TaskTest {
         urgentTask.status = BEFORE
 
         // when
-        urgentTask.changeStatus(COMPLETE)
+        urgentTask.changeStatus(FOCUSED)
 
         // then
-        assertThat(urgentTask.status).isEqualTo(COMPLETE)
+        assertThat(urgentTask.status).isEqualTo(FOCUSED)
     }
 
     @Test
