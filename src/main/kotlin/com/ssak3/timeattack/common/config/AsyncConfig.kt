@@ -10,14 +10,17 @@ import java.lang.reflect.Method
 @Configuration
 @EnableAsync
 class AsyncConfig : AsyncConfigurer {
-
     override fun getAsyncUncaughtExceptionHandler(): AsyncUncaughtExceptionHandler {
         return AsyncExceptionHandler()
     }
 }
 
 class AsyncExceptionHandler : AsyncUncaughtExceptionHandler, Logger {
-    override fun handleUncaughtException(exception: Throwable, method: Method, vararg params: Any) {
+    override fun handleUncaughtException(
+        exception: Throwable,
+        method: Method,
+        vararg params: Any,
+    ) {
         logger.error("비동기 이벤트 처리 중 예외 발생: ${exception.message}", exception)
     }
 }
