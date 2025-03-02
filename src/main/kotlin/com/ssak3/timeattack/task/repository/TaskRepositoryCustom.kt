@@ -11,4 +11,6 @@ interface TaskRepositoryCustom {
     ): List<TaskEntity>
 
     fun findTodayTasks(memberId: Long): List<TaskEntity>
+
+    fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity?
 }

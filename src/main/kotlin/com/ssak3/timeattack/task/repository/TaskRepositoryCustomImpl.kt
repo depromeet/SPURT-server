@@ -67,4 +67,31 @@ class TaskRepositoryCustomImpl(
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
+
+    /**
+     * 중간에 이탈한 작업 또는 작은행동 푸시 알림 무시한 작업들 중
+     * - 작업을 시작하고 중간에 이탈한 작업
+     * - 작은행동 푸시 알림 무시하고 3분 이상 지난 작업
+     */
+    override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
+        val now = LocalDateTime.now()
+        val threeMinutesAgo = now.minusMinutes(3)
+
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.member.id.eq(memberId),
+                qTask.dueDatetime.after(now),
+                qTask.status.eq(WARMING_UP)
+                    .or(
+                        qTask.status.eq(BEFORE)
+                            .and(qTask.triggerActionAlarmTime.before(threeMinutesAgo))
+                            .and(qTask.triggerActionAlarmTime.isNotNull),
+                    ),
+            )
+            // TODO: 정렬 조건 기획 정해지는대로 수정
+            .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
+            .fetchFirst()
+    }
 }
