@@ -93,6 +93,7 @@ class TaskRepositoryCustomImpl(
                             .and(qTask.triggerActionAlarmTime.isNotNull)
                             .and(qTask.triggerActionAlarmTime.before(threeMinutesAgo)),
                     ),
+                qTask.isDeleted.eq(false),
             )
             .orderBy(qTask.triggerActionAlarmTime.desc(), qTask.dueDatetime.asc())
             .fetchFirst()
