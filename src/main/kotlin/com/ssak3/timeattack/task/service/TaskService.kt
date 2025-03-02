@@ -19,7 +19,6 @@ import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
@@ -59,7 +58,6 @@ class TaskService(
         return Task.fromEntity(savedTaskEntity)
     }
 
-    @Async
     @Transactional
     fun createScheduledTask(
         member: Member,
@@ -200,9 +198,11 @@ class TaskService(
         return taskRepository.findAllTodos(checkNotNull(member.id)).map { Task.fromEntity(it) }
     }
 
-    @Async
     @Transactional
-    fun removeTask(member: Member, taskId: Long) {
+    fun removeTask(
+        member: Member,
+        taskId: Long,
+    ) {
         checkNotNull(member.id)
         val task = findTaskById(taskId)
         task.assertModifiableBy(member.id)

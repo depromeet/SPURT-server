@@ -118,11 +118,16 @@ class TaskController(
         return ResponseEntity.ok(TaskResponse.fromTask(task))
     }
 
-    @Operation(summary = "작업 삭제", description = "사용자의 작업 중 요청받은 작업을 삭제합니다.", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @Operation(
+        summary = "작업 삭제",
+        description = "사용자의 작업 중 요청받은 작업을 삭제합니다.",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
     @DeleteMapping("/{taskId}")
     fun removeTask(
         @Parameter(description = "작업 ID")
-        @PathVariable(required = true) @Positive taskId: Long,
+        @PathVariable(required = true)
+        @Positive taskId: Long,
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<MessageResponse> {
         taskService.removeTask(member, taskId)
