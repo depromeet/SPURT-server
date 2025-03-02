@@ -17,7 +17,7 @@ enum class TaskStatus {
                 next == WARMING_UP || next == PROCRASTINATING || next == HOLDING_OFF ||
                     next == FOCUSED || next == COMPLETE || next == FAIL
             WARMING_UP -> next == FOCUSED || next == COMPLETE || next == FAIL
-            HOLDING_OFF -> next == FOCUSED || next == FAIL
+            HOLDING_OFF -> next == FOCUSED || next == PROCRASTINATING || next == FAIL
             PROCRASTINATING -> next == FOCUSED || next == FAIL
             FOCUSED -> next == COMPLETE
             // 최종 상태에서는 더 이상 전환 불가
