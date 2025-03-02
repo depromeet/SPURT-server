@@ -2,10 +2,9 @@ package com.ssak3.timeattack.task.service
 
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
-import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
-import com.ssak3.timeattack.member.repository.entity.MemberEntity
-import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
+import com.ssak3.timeattack.member.repository.entity.QMemberEntity.memberEntity
+import com.ssak3.timeattack.notifications.service.PushNotificationListener
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
@@ -17,11 +16,15 @@ import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
+import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -33,6 +36,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
+import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
@@ -59,31 +63,36 @@ class TaskServiceTest(
     private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
 
+    @MockK
+    private lateinit var pushNotificationListener: PushNotificationListener
+
     @BeforeEach
     fun beforeEach() {
-        // given
-        val provider = OAuthProvider.KAKAO
-        val subject = "1234567890"
-        val nickname = "testUser"
         val memberEntity =
-            MemberEntity(
-                nickname = nickname,
-                email = "test@test.com",
-                profileImageUrl = "https://test.com",
-                oAuthProviderInfo = OAuthProviderInfo(oauthProvider = provider, subject = subject),
-            )
+            Fixture.createMember(
+                id = null,
+            ).toEntity()
 
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
         val taskType = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
         val taskMode = taskModeRepository.saveAndFlush(TaskModeEntity(name = "긴급한"))
         personaRepository.saveAndFlush(
             PersonaEntity(
-                name = "Happy Programmer",
+                name = "Urgent Programmer",
                 personaImageUrl = "https://testimage.com",
                 taskType = taskType,
                 taskMode = taskMode,
             ),
         )
+    }
+
+    @AfterEach
+    fun clear() {
+        taskRepository.deleteAll()
+        personaRepository.deleteAll()
+        taskModeRepository.deleteAll()
+        taskTypeRepository.deleteAll()
+        memberRepository.deleteAll()
     }
 
     @Test
@@ -124,6 +133,8 @@ class TaskServiceTest(
                 taskType = "프로그래밍",
                 taskMode = "긴급한",
             )
+
+        every { eventPublisher.publishEvent(any()) } returns Unit
 
         // when
         val task = taskService.createScheduledTask(member, taskRequest)
@@ -174,6 +185,30 @@ class TaskServiceTest(
             DayOfWeek.SATURDAY -> assertThat(tasksByDayOfWeek).hasSize(1) // 일 (1개)
             DayOfWeek.SUNDAY -> assertThat(tasksByDayOfWeek).isEmpty() // 빈 목록 (0개)
         }
+    }
+
+    @Test
+    @DisplayName("작업이 올바르게 삭제되고 작업 삭제 이벤트가 발행된다.")
+    fun removeTaskTest() {
+        // given
+        val taskEntity =
+            taskRepository.saveAndFlush(
+                Fixture.createTask(
+                    id = null,
+                    member = member,
+                ).toEntity(),
+            )
+        val taskId = checkNotNull(taskEntity.id)
+        every { eventPublisher.publishEvent(any()) } returns Unit
+
+        // when
+        taskService.removeTask(member, taskId)
+
+        // then
+        val deletedTask = taskRepository.findByIdAndIsDeletedIsFalse(taskId)
+        assertThat(deletedTask).isNull()
+
+        verify(exactly = 1) { eventPublisher.publishEvent(any<DeleteTaskEvent>()) }
     }
 
     @TestConfiguration
