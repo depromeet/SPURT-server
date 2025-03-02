@@ -31,5 +31,8 @@ interface TaskRepositoryCustom {
      */
     fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity?
 
+    /**
+     * 전체 할일 조회
+     */
     fun findAllTodos(id: Long): List<TaskEntity>
 }

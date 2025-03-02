@@ -198,7 +198,7 @@ class TaskService(
         checkNotNull(member.id) { "Member id must not be null" }
         return taskRepository.findAbandonedOrIgnoredTasks(member.id)?.let { Task.fromEntity(it) }
     }
-    
+
     fun findAllTodos(member: Member): List<Task> {
         return taskRepository.findAllTodos(checkNotNull(member.id)).map { Task.fromEntity(it) }
     }

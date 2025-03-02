@@ -62,10 +62,7 @@ class TaskRepositoryCustomImpl(
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
-   
-    /**
-     * 전체 할일 조회
-     */
+
     override fun findAllTodos(id: Long): List<TaskEntity> {
         val now = LocalDateTime.now()
         return queryFactory
@@ -79,7 +76,7 @@ class TaskRepositoryCustomImpl(
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
     }
-    
+
     override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
         val now = LocalDateTime.now()
         val threeMinutesAgo = now.minusMinutes(3)
