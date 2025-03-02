@@ -46,7 +46,7 @@ class TaskService(
                 name = urgentTaskRequest.name,
                 category = TaskCategory.URGENT,
                 dueDatetime = urgentTaskRequest.dueDatetime,
-                status = TaskStatus.BEFORE,
+                status = TaskStatus.FOCUSED,
                 member = member,
                 persona = persona,
             )
