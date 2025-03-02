@@ -4,7 +4,6 @@ import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.QMemberEntity.memberEntity
-import com.ssak3.timeattack.notifications.service.PushNotificationListener
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
@@ -18,8 +17,8 @@ import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
+import io.mockk.clearMocks
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
@@ -63,9 +62,6 @@ class TaskServiceTest(
     private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
 
-    @MockK
-    private lateinit var pushNotificationListener: PushNotificationListener
-
     @BeforeEach
     fun beforeEach() {
         val memberEntity =
@@ -93,6 +89,7 @@ class TaskServiceTest(
         taskModeRepository.deleteAll()
         taskTypeRepository.deleteAll()
         memberRepository.deleteAll()
+        clearMocks(eventPublisher)
     }
 
     @Test
@@ -147,7 +144,7 @@ class TaskServiceTest(
         assertEquals(savedTaskKeywordsCombination.taskType.name, "프로그래밍")
         assertEquals(savedTaskKeywordsCombination.taskMode.name, "긴급한")
 
-        verify { eventPublisher.publishEvent(any<ScheduledTaskSaveEvent>()) }
+        verify(exactly = 1) { eventPublisher.publishEvent(any<ScheduledTaskSaveEvent>()) }
     }
 
     @Test
