@@ -17,9 +17,6 @@ class TaskRepositoryCustomImpl(
 ) : TaskRepositoryCustom {
     private val qTask: QTaskEntity = QTaskEntity.taskEntity
 
-    /**
-     * 두 날짜 사이에 해야 할 일 목록 조회
-     */
     override fun getTasksBetweenDates(
         memberId: Long,
         start: LocalDateTime,
@@ -37,9 +34,6 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    /**
-     * 오늘 해야 할 일 목록 조회
-     */
     override fun findTodayTasks(memberId: Long): List<TaskEntity> {
         val todayDate = LocalDate.now()
         val nowDateTime = LocalDateTime.now()
@@ -68,11 +62,6 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    /**
-     * 중간에 이탈한 작업 또는 작은행동 푸시 알림 무시한 작업들 중
-     * - 작업을 시작하고 중간에 이탈한 작업
-     * - 작은행동 푸시 알림 무시하고 3분 이상 지난 작업
-     */
     override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
         val now = LocalDateTime.now()
         val threeMinutesAgo = now.minusMinutes(3)
@@ -90,8 +79,7 @@ class TaskRepositoryCustomImpl(
                             .and(qTask.triggerActionAlarmTime.isNotNull),
                     ),
             )
-            // TODO: 정렬 조건 기획 정해지는대로 수정
-            .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
+            .orderBy(qTask.triggerActionAlarmTime.desc(), qTask.dueDatetime.asc())
             .fetchFirst()
     }
 }
