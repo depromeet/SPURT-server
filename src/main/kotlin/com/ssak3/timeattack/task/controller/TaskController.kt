@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
+import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
@@ -20,6 +21,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -54,6 +56,7 @@ class TaskController(
         return ResponseEntity.ok(ScheduledTaskCreateResponse.fromTask(createdScheduledTask))
     }
 
+    // TODO: 작업 조회 또는 업데이트 시 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "작업 상태 변경", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PatchMapping("/{taskId}/status")
     fun changeStatus(
@@ -113,5 +116,16 @@ class TaskController(
     ): ResponseEntity<TaskResponse> {
         val task = taskService.findTaskById(taskId)
         return ResponseEntity.ok(TaskResponse.fromTask(task))
+    }
+
+    @Operation(summary = "작업 삭제", description = "사용자의 작업 중 요청받은 작업을 삭제합니다.", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @DeleteMapping("/{taskId}")
+    fun removeTask(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true) @Positive taskId: Long,
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<MessageResponse> {
+        taskService.removeTask(member, taskId)
+        return ResponseEntity.ok(MessageResponse("Task removed successfully"))
     }
 }
