@@ -48,29 +48,17 @@ class TaskRepositoryCustomImplTest(
     val todayH00M00S01: LocalDateTime = todayDate.atTime(0, 0, 1)
 
     @BeforeEach
-    fun beforeEach() {
+    fun setUp() {
         member =
             memberRepository.save(
                 Fixture.createMember(
                     id = null,
                 ).toEntity(),
             )
-    }
 
-    @AfterEach
-    fun afterEach() {
-        taskRepository.deleteAll()
-    }
-
-    @Test
-    @DisplayName("오늘 할 일 조회")
-    fun test_findTodayTasks() {
-        // given
         val taskCreateInfoList =
             listOf(
                 // urgent (name, category, dueDatetime, status)
-                // 마감시간전, 즉시 시작 등록 후 이탈 (오늘 할 일 O)
-                TaskCreateInfo("urgent task1", URGENT, todayEndDateTime, BEFORE),
                 // 마감시간전, 즉시 시작 등록 후 몰입 시작 (오늘 할 일 O)
                 TaskCreateInfo("urgent task2", URGENT, todayEndDateTime, FOCUSED),
                 // 마감시간전, 즉시 시작 등록 후 작업 완료 (오늘 할 일 X)
@@ -114,6 +102,16 @@ class TaskRepositoryCustomImplTest(
                 TaskCreateInfo("scheduled task10", SCHEDULED, todayEndDateTime, WARMING_UP, todayH00M00S01),
                 // [Scheduled Task] 내일 마감시간 전, 내일 알림시간 전 등록만 한 상태 (오늘 할 일 X)
                 TaskCreateInfo("scheduled task11", SCHEDULED, tomorrowEndDateTime, BEFORE, tomorrowStartTime),
+                // [Scheduled Task] 모레 마감시간 전, 모레 알림시간 전 등록만 한 상태 (오늘 할 일 X)
+                TaskCreateInfo(
+                    "scheduled task12",
+                    SCHEDULED,
+                    tomorrowEndDateTime.plusDays(1),
+                    BEFORE,
+                    tomorrow8Pm.plusDays(1),
+                ),
+                // [Scheduled Task] 오늘 마감시간 전, 완료한 상태 (오늘 할 일 X)
+                TaskCreateInfo("scheduled task13", SCHEDULED, todayEndDateTime, COMPLETE, today8Pm),
             )
 
         // save task
@@ -130,7 +128,17 @@ class TaskRepositoryCustomImplTest(
                 )
             taskRepository.save(task.toEntity())
         }
+    }
 
+    @AfterEach
+    fun afterEach() {
+        taskRepository.deleteAll()
+    }
+
+    @Test
+    @DisplayName("오늘 할 일 조회")
+    fun test_findTodayTasks() {
+        // given
         // when
         val tasks = taskRepository.findTodayTasks(checkNotNull(member.id))
 
@@ -161,4 +169,34 @@ class TaskRepositoryCustomImplTest(
         val status: TaskStatus,
         val triggerActionAlarmTime: LocalDateTime? = null,
     )
+
+    @Test
+    @DisplayName("전체 할 일 조회")
+    fun test_findAllTodos() {
+        // given
+        // when
+        val tasks = taskRepository.findAllTodos(checkNotNull(member.id))
+
+        // then
+        assertEquals(11, tasks.size)
+
+        val taskNames = tasks.map { it.name }
+        assertTrue(
+            taskNames.containsAll(
+                listOf(
+                    "urgent task2",
+                    "scheduled task1",
+                    "scheduled task2",
+                    "scheduled task3",
+                    "scheduled task4",
+                    "scheduled task5",
+                    "scheduled task6",
+                    "scheduled task7",
+                    "scheduled task10",
+                    "scheduled task11",
+                    "scheduled task12",
+                ),
+            ),
+        )
+    }
 }
