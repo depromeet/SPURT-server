@@ -14,8 +14,7 @@ enum class TaskStatus {
         return when (this) {
             // 항상 다음 상태로만 전환 가능
             BEFORE ->
-                next == WARMING_UP || next == PROCRASTINATING || next == HOLDING_OFF ||
-                    next == FOCUSED || next == COMPLETE || next == FAIL
+                next == WARMING_UP || next == HOLDING_OFF || next == FOCUSED || next == COMPLETE || next == FAIL
             WARMING_UP -> next == FOCUSED || next == COMPLETE || next == FAIL
             HOLDING_OFF -> next == FOCUSED || next == PROCRASTINATING || next == FAIL
             PROCRASTINATING -> next == FOCUSED || next == FAIL
