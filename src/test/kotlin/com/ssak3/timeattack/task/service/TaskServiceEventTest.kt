@@ -8,7 +8,6 @@ import com.ssak3.timeattack.notifications.service.PushNotificationListener
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
-import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
@@ -18,19 +17,15 @@ import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import jakarta.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.context.PayloadApplicationEvent
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.event.ApplicationEvents
 import org.springframework.test.context.event.RecordApplicationEvents
@@ -127,11 +122,12 @@ class TaskServiceEventTest(
             )
         val taskId = checkNotNull(taskEntity.id)
 
-        val taskHoldOffRequest = TaskHoldOffRequest(
-            remindTerm = 15,
-            remindCount = 3,
-            remindBaseTime = LocalDateTime.of(2025, 1, 1, 0, 0, 0),
-        )
+        val taskHoldOffRequest =
+            TaskHoldOffRequest(
+                remindTerm = 15,
+                remindCount = 3,
+                remindBaseTime = LocalDateTime.of(2025, 1, 1, 0, 0, 0),
+            )
 
         every { pushNotificationListener.saveNotifications(any()) } returns Unit
 
@@ -139,19 +135,21 @@ class TaskServiceEventTest(
         taskService.holdOffTask(taskId, member, taskHoldOffRequest)
 
         // then
-        val eventList = events.stream(ReminderSaveEvent::class.java)
-            .toList()
+        val eventList =
+            events.stream(ReminderSaveEvent::class.java)
+                .toList()
         assertThat(eventList).hasSize(1)
 
         val reminderSaveEvent = eventList[0]
         assertThat(reminderSaveEvent.memberId).isEqualTo(member.id)
         assertThat(reminderSaveEvent.taskId).isEqualTo(taskId)
 
-        val expectedReminderAlarms = listOf(
-            ReminderAlarm(1, LocalDateTime.of(2025, 1, 1, 0, 15, 0)),
-            ReminderAlarm(2, LocalDateTime.of(2025, 1, 1, 0, 30, 0)),
-            ReminderAlarm(3, LocalDateTime.of(2025, 1, 1, 0, 45, 0)),
-        )
+        val expectedReminderAlarms =
+            listOf(
+                ReminderAlarm(1, LocalDateTime.of(2025, 1, 1, 0, 15, 0)),
+                ReminderAlarm(2, LocalDateTime.of(2025, 1, 1, 0, 30, 0)),
+                ReminderAlarm(3, LocalDateTime.of(2025, 1, 1, 0, 45, 0)),
+            )
         assertThat(reminderSaveEvent.alarmTimes).containsExactlyElementsOf(expectedReminderAlarms)
     }
 }

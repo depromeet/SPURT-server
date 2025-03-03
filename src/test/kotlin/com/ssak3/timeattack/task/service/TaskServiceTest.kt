@@ -400,11 +400,12 @@ class TaskServiceTest(
             )
         val taskId = checkNotNull(taskEntity.id)
 
-        val taskHoldOffRequest = TaskHoldOffRequest(
-            remindTerm = 10,
-            remindCount = 3,
-            remindBaseTime = LocalDateTime.now(),
-        )
+        val taskHoldOffRequest =
+            TaskHoldOffRequest(
+                remindTerm = 10,
+                remindCount = 3,
+                remindBaseTime = LocalDateTime.now(),
+            )
         every { eventPublisher.publishEvent(any()) } returns Unit
 
         // when

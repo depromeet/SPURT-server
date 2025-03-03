@@ -10,7 +10,10 @@ class AllowedIntValuesValidator : ConstraintValidator<AllowedIntValues, Int> {
         allowedIntValues = constraintAnnotation.values.toSet()
     }
 
-    override fun isValid(value: Int?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(
+        value: Int?,
+        context: ConstraintValidatorContext,
+    ): Boolean {
         return value != null && value in allowedIntValues
     }
 }

@@ -12,5 +12,5 @@ annotation class AllowedIntValues(
     val values: IntArray,
     val message: String = "Invalid value. Allowed values are: {values}",
     val groups: Array<KClass<*>> = [],
-    val payload: Array<KClass<out Payload>> = []
+    val payload: Array<KClass<out Payload>> = [],
 )
