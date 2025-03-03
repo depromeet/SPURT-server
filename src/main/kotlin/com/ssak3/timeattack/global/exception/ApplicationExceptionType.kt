@@ -85,6 +85,16 @@ enum class ApplicationExceptionType(
         "잘못된 Task Category입니다. : {0}",
     ),
 
+    /**
+     * - {0} : Reminder Alarm Time
+     * - {1} : Task Due Datetime
+     */
+    INVALID_REMINDER_ALARM_TIME(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_009",
+        "리마인드 알림 시간({0})이 마감 시간({1}) 이후입니다.",
+    ),
+
     // ======================== [END] TASK ========================
 
     /**
