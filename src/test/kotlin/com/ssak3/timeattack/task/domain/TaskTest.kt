@@ -53,12 +53,12 @@ class TaskTest {
     }
 
     @Test
-    @DisplayName("assertModifiableBy 메서드는 Task의 멤버와 다른 사용자가 수정을 시도할 경우 예외를 발생시킨다")
+    @DisplayName("assertOwnedBy 메서드는 Task의 멤버와 다른 사용자가 수정을 시도할 경우 예외를 발생시킨다")
     fun throwExceptionForNonTaskOwner() {
         // given
         val otherMemberId = 999L
 
-        // when
+        // when & then
         assertThrows<ApplicationException> {
             urgentTask.assertOwnedBy(otherMemberId)
         }.apply {
