@@ -5,6 +5,7 @@ import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
 import com.ssak3.timeattack.task.controller.dto.TaskResponse
@@ -135,5 +136,21 @@ class TaskController(
     ): ResponseEntity<MessageResponse> {
         taskService.removeTask(member, taskId)
         return ResponseEntity.ok(MessageResponse("Task removed successfully"))
+    }
+
+    @Operation(
+        summary = "홈 화면 작업 조회",
+        description = "홈 화면에 표시할 수 있는 모든 작업 목록을 조회합니다.",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @GetMapping("/home")
+    fun findHomeTasks(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<HomeTasksResponse> {
+        val todayTasks = taskService.findTodayTasks(member)
+        val weeklyTasks = taskService.getTasksForRestOfCurrentWeek(member)
+        val allTasks = taskService.findAllTodos(member)
+        val missionEscapeTask = taskService.getAbandonedOrIgnoredTasks(member)
+        return ResponseEntity.ok(HomeTasksResponse.fromTasks(todayTasks, weeklyTasks, allTasks, missionEscapeTask))
     }
 }
