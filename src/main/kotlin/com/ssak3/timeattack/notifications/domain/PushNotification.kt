@@ -20,4 +20,14 @@ data class PushNotification(
             isDeleted = isDeleted,
             order = order,
         )
+
+    companion object {
+        fun fromEntity(entity: PushNotificationEntity) =
+            PushNotification(
+                member = Member.fromEntity(entity.member),
+                task = Task.fromEntity(entity.task),
+                scheduledAt = entity.scheduledAt,
+                order = entity.order,
+            )
+    }
 }
