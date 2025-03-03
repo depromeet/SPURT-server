@@ -170,11 +170,14 @@ class TaskService(
             Task.fromEntity(it)
         } ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, id)
 
-    fun findTaskByIdAndMember(member: Member, taskId: Long): Task {
+    fun findTaskByIdAndMember(
+        member: Member,
+        taskId: Long,
+    ): Task {
         checkNotNull(member.id)
         val task = findTaskById(taskId)
         task.assertOwnedBy(member.id)
-        return task;
+        return task
     }
 
     fun findTaskById(taskId: Long): Task {

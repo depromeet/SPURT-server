@@ -74,7 +74,7 @@ class TaskServiceTest(
         val memberEntity2 =
             Fixture.createMember(
                 id = null,
-                subject = "123123123123"
+                subject = "123123123123",
             ).toEntity()
 
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
