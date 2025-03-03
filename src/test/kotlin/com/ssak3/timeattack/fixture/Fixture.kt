@@ -3,6 +3,7 @@ package com.ssak3.timeattack.fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
+import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.domain.TaskKeywordsCombination
 import com.ssak3.timeattack.task.domain.Task
@@ -132,5 +133,20 @@ object Fixture {
         createdAt = createdAt,
         updatedAt = updatedAt,
         isDeleted = isDeleted,
+    )
+
+    fun createPushNotification(
+        member: Member = createMember(),
+        task: Task = createTask(),
+        scheduledAt: LocalDateTime = LocalDateTime.now(),
+        isDeleted: Boolean = false,
+        order: Int = 0,
+    ) = PushNotification(
+        member = member,
+        task = task,
+        scheduledAt = scheduledAt,
+        isDeleted = isDeleted,
+        order = order
+
     )
 }
