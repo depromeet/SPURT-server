@@ -30,6 +30,7 @@ class TaskRepositoryCustomImpl(
                 qTask.member.id.eq(memberId),
                 qTask.status.eq(BEFORE),
                 qTask.triggerActionAlarmTime.between(start, end),
+                qTask.isDeleted.eq(false),
             )
             .orderBy(qTask.dueDatetime.asc())
             .fetch()
@@ -44,6 +45,7 @@ class TaskRepositoryCustomImpl(
             .where(
                 qTask.member.id.eq(memberId)
                     .and(qTask.dueDatetime.after(nowDateTime))
+                    .and(qTask.isDeleted.eq(false))
                     .and(
                         qTask.status.eq(FOCUSED)
                             .or(qTask.status.eq(WARMING_UP))
@@ -71,7 +73,8 @@ class TaskRepositoryCustomImpl(
             .where(
                 qTask.member.id.eq(id)
                     .and(qTask.dueDatetime.after(now))
-                    .and(qTask.status.ne(TaskStatus.COMPLETE)),
+                    .and(qTask.status.ne(TaskStatus.COMPLETE))
+                    .and(qTask.isDeleted.eq(false)),
             )
             .orderBy(qTask.dueDatetime.asc(), qTask.name.asc())
             .fetch()
