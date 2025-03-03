@@ -56,7 +56,6 @@ class TaskController(
         return ResponseEntity.ok(ScheduledTaskCreateResponse.fromTask(createdScheduledTask))
     }
 
-    // TODO: 작업 조회 또는 업데이트 시 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "작업 상태 변경", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PatchMapping("/{taskId}/status")
     fun changeStatus(
@@ -70,6 +69,7 @@ class TaskController(
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "오늘 할 작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/today")
     fun findTodayTasks(
@@ -79,6 +79,7 @@ class TaskController(
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "이번 주 작업 목록 조회",
         description = "오늘 할 일 목록을 제외하고 내일부터 일요일까지 할 일 목록 조회",
@@ -93,6 +94,7 @@ class TaskController(
         return ResponseEntity.ok(taskResponseList)
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "전체 할일 조회",
         description = "조회 시점을 기준으로 마감시간이 지나지 않은 일들을 조회",
@@ -107,6 +109,7 @@ class TaskController(
         return ResponseEntity.ok(taskResponseList)
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/{taskId}")
     fun findTask(
