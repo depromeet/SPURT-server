@@ -13,7 +13,7 @@ object FcmNotificationConstants {
         return if (order == 0) {
             "/action/push"
         } else {
-            "/action/push?left=${REMINDER_LIMIT-order}"
+            "/action/push?left=${REMINDER_LIMIT - order}"
         }
     }
 

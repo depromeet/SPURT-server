@@ -146,7 +146,6 @@ object Fixture {
         task = task,
         scheduledAt = scheduledAt,
         isDeleted = isDeleted,
-        order = order
-
+        order = order,
     )
 }
