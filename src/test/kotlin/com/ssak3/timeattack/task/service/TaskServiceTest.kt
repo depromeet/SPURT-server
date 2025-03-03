@@ -3,6 +3,7 @@ package com.ssak3.timeattack.task.service
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
+import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
@@ -62,6 +63,7 @@ class TaskServiceTest(
     @Autowired
     private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
+    private lateinit var persona: Persona
 
     @BeforeEach
     fun beforeEach() {
@@ -73,14 +75,17 @@ class TaskServiceTest(
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
         val taskType = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
         val taskMode = taskModeRepository.saveAndFlush(TaskModeEntity(name = "긴급한"))
-        personaRepository.saveAndFlush(
-            PersonaEntity(
-                name = "Urgent Programmer",
-                personaImageUrl = "https://testimage.com",
-                taskType = taskType,
-                taskMode = taskMode,
-            ),
-        )
+        persona =
+            Persona.fromEntity(
+                personaRepository.saveAndFlush(
+                    PersonaEntity(
+                        name = "Urgent Programmer",
+                        personaImageUrl = "https://testimage.com",
+                        taskType = taskType,
+                        taskMode = taskMode,
+                    ),
+                ),
+            )
     }
 
     @AfterEach
@@ -396,6 +401,7 @@ class TaskServiceTest(
                 Fixture.createScheduledTask(
                     id = null,
                     member = member,
+                    persona = persona,
                 ).toEntity(),
             )
         val taskId = checkNotNull(taskEntity.id)

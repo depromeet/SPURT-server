@@ -5,6 +5,7 @@ import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.notifications.service.PushNotificationListener
+import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.event.ApplicationEvents
 import org.springframework.test.context.event.RecordApplicationEvents
@@ -48,11 +48,11 @@ class TaskServiceEventTest(
     @Autowired private val taskTypeRepository: TaskTypeRepository,
     @Autowired private val taskModeRepository: TaskModeRepository,
     @Autowired private val personaRepository: PersonaRepository,
-    @Autowired private val eventPublisher: ApplicationEventPublisher,
 ) {
     @Autowired
     private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
+    private lateinit var persona: Persona
 
     @MockkBean
     private lateinit var pushNotificationListener: PushNotificationListener
@@ -67,14 +67,17 @@ class TaskServiceEventTest(
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
         val taskType = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
         val taskMode = taskModeRepository.saveAndFlush(TaskModeEntity(name = "긴급한"))
-        personaRepository.saveAndFlush(
-            PersonaEntity(
-                name = "Urgent Programmer",
-                personaImageUrl = "https://testimage.com",
-                taskType = taskType,
-                taskMode = taskMode,
-            ),
-        )
+        persona =
+            Persona.fromEntity(
+                personaRepository.saveAndFlush(
+                    PersonaEntity(
+                        name = "Urgent Programmer",
+                        personaImageUrl = "https://testimage.com",
+                        taskType = taskType,
+                        taskMode = taskMode,
+                    ),
+                ),
+            )
     }
 
     @AfterEach
@@ -90,12 +93,12 @@ class TaskServiceEventTest(
     @DisplayName("작업 삭제시 이벤트 리스너에서 예외가 발생해도 정상적으로 작업이 삭제된다.")
     fun removeTaskWithEventListenerExceptionTest() {
         // given
-
         val taskEntity =
             taskRepository.saveAndFlush(
                 Fixture.createTask(
                     id = null,
                     member = member,
+                    persona = persona,
                 ).toEntity(),
             )
         val taskId = checkNotNull(taskEntity.id)
@@ -118,6 +121,7 @@ class TaskServiceEventTest(
                 Fixture.createScheduledTask(
                     id = null,
                     member = member,
+                    persona = persona,
                 ).toEntity(),
             )
         val taskId = checkNotNull(taskEntity.id)
