@@ -58,10 +58,10 @@ enum class ApplicationExceptionType(
      * - {0} : Task ID
      * - {1} : Member ID
      */
-    TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER(
+    TASK_OWNER_MISMATCH(
         HttpStatus.BAD_REQUEST,
         "ERR_TASK_006",
-        "해당 Task({0})는 회원({1})이 수정할 수 없습니다.",
+        "해당 Task({0})는 회원({1})이 소유하고 있지 않습니다.",
     ),
 
     /**

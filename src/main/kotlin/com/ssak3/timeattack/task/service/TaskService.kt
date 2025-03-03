@@ -149,7 +149,7 @@ class TaskService(
             )
 
         // Task 수정 가능 여부 확인
-        task.assertModifiableBy(memberId)
+        task.assertOwnedBy(memberId)
 
         // Task 상태 변경
         task.changeStatus(request.status)
@@ -169,6 +169,13 @@ class TaskService(
         taskRepository.findByIdOrNull(id)?.let {
             Task.fromEntity(it)
         } ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, id)
+
+    fun findTaskByIdAndMember(member: Member, taskId: Long): Task {
+        checkNotNull(member.id)
+        val task = findTaskById(taskId)
+        task.assertOwnedBy(member.id)
+        return task;
+    }
 
     fun findTaskById(taskId: Long): Task {
         val task =
@@ -211,7 +218,7 @@ class TaskService(
     ) {
         checkNotNull(member.id)
         val task = findTaskById(taskId)
-        task.assertModifiableBy(member.id)
+        task.assertOwnedBy(member.id)
         task.delete()
         taskRepository.save(task.toEntity())
 

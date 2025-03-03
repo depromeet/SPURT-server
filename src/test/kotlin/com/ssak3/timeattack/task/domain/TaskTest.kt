@@ -60,9 +60,9 @@ class TaskTest {
 
         // when
         assertThrows<ApplicationException> {
-            urgentTask.assertModifiableBy(otherMemberId)
+            urgentTask.assertOwnedBy(otherMemberId)
         }.apply {
-            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.TASK_MODIFICATION_NOT_ALLOWED_FOR_MEMBER)
+            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.TASK_OWNER_MISMATCH)
         }
     }
 
