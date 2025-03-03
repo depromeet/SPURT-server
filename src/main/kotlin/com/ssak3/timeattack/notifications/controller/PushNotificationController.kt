@@ -29,7 +29,6 @@ class PushNotificationController(
                 FcmMessage(
                     token = request.token,
                     platform = DevicePlatform.valueOf(request.platform),
-                    title = request.title,
                     body = request.body,
                     route = request.route,
                 ),
