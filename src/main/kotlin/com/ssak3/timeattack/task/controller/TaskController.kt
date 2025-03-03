@@ -143,7 +143,7 @@ class TaskController(
     fun holdOffTask(
         @AuthenticationPrincipal member: Member,
         @PathVariable(required = true) taskId: Long,
-        @RequestBody taskHoldOffRequest: TaskHoldOffRequest,
+        @RequestBody @Valid taskHoldOffRequest: TaskHoldOffRequest,
     ): ResponseEntity<MessageResponse> {
         taskService.holdOffTask(taskId, member, taskHoldOffRequest)
         return ResponseEntity.ok(MessageResponse("Task hold-off successfully"))
