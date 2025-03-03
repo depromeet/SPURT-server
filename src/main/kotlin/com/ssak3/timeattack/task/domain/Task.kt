@@ -20,7 +20,7 @@ class Task(
     val persona: Persona,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
-    val isDeleted: Boolean = false,
+    var isDeleted: Boolean = false,
 ) {
     fun toEntity() =
         TaskEntity(
@@ -34,6 +34,7 @@ class Task(
             estimatedTime = estimatedTime,
             member = member.toEntity(),
             persona = persona.toEntity(),
+            isDeleted = isDeleted,
         )
 
     fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
@@ -80,6 +81,10 @@ class Task(
                 memberId,
             )
         }
+    }
+
+    fun delete() {
+        this.isDeleted = true
     }
 
     companion object {

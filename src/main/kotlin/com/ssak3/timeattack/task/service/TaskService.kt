@@ -15,6 +15,7 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
+import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
@@ -201,5 +202,21 @@ class TaskService(
 
     fun findAllTodos(member: Member): List<Task> {
         return taskRepository.findAllTodos(checkNotNull(member.id)).map { Task.fromEntity(it) }
+    }
+
+    @Transactional
+    fun removeTask(
+        member: Member,
+        taskId: Long,
+    ) {
+        checkNotNull(member.id)
+        val task = findTaskById(taskId)
+        task.assertModifiableBy(member.id)
+        task.delete()
+        taskRepository.save(task.toEntity())
+
+        // Task 삭제 이벤트 발행
+        eventPublisher.publishEvent(DeleteTaskEvent(member.id, checkNotNull(task.id)))
+        // TODO: 이벤트 처리 실패시 어떻게 처리할지 고민
     }
 }

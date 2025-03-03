@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
+import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
@@ -20,6 +21,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -67,6 +69,7 @@ class TaskController(
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "오늘 할 작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/today")
     fun findTodayTasks(
@@ -76,6 +79,7 @@ class TaskController(
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "이번 주 작업 목록 조회",
         description = "오늘 할 일 목록을 제외하고 내일부터 일요일까지 할 일 목록 조회",
@@ -90,6 +94,7 @@ class TaskController(
         return ResponseEntity.ok(taskResponseList)
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "전체 할일 조회",
         description = "조회 시점을 기준으로 마감시간이 지나지 않은 일들을 조회",
@@ -104,6 +109,7 @@ class TaskController(
         return ResponseEntity.ok(taskResponseList)
     }
 
+    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/{taskId}")
     fun findTask(
@@ -113,5 +119,21 @@ class TaskController(
     ): ResponseEntity<TaskResponse> {
         val task = taskService.findTaskById(taskId)
         return ResponseEntity.ok(TaskResponse.fromTask(task))
+    }
+
+    @Operation(
+        summary = "작업 삭제",
+        description = "사용자의 작업 중 요청받은 작업을 삭제합니다.",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @DeleteMapping("/{taskId}")
+    fun removeTask(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true)
+        @Positive taskId: Long,
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<MessageResponse> {
+        taskService.removeTask(member, taskId)
+        return ResponseEntity.ok(MessageResponse("Task removed successfully"))
     }
 }

@@ -48,7 +48,7 @@ object Fixture {
 
     fun createTaskMode(
         id: Int = 1,
-        name: String = "즐거운",
+        name: String = "긴급한",
     ) = TaskMode(
         id = id,
         name = name,
@@ -64,7 +64,7 @@ object Fixture {
 
     fun createPersona(
         id: Long = 1L,
-        name: String = "Work Persona",
+        name: String = "Urgent Programmer",
         taskKeywordsCombination: TaskKeywordsCombination = createTaskKeywordsCombination(),
         personaImageUrl: String = "https://testimage.com",
     ) = Persona(
