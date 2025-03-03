@@ -6,6 +6,7 @@ import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
+import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
@@ -16,6 +17,7 @@ import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
+import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
 import io.mockk.clearMocks
 import io.mockk.every
@@ -383,6 +385,37 @@ class TaskServiceTest(
         assertThat(deletedTask).isNull()
 
         verify(exactly = 1) { eventPublisher.publishEvent(any<DeleteTaskEvent>()) }
+    }
+
+    @Test
+    @DisplayName("리마인더 설정시 작업은 HOLDING_OFF 상태로 변경되고 리마인더 저장 이벤트가 발행된다.")
+    fun setReminderTest() {
+        // given
+        val taskEntity =
+            taskRepository.saveAndFlush(
+                Fixture.createScheduledTask(
+                    id = null,
+                    member = member,
+                ).toEntity(),
+            )
+        val taskId = checkNotNull(taskEntity.id)
+
+        val taskHoldOffRequest = TaskHoldOffRequest(
+            remindTerm = 10,
+            remindCount = 3,
+            remindBaseTime = LocalDateTime.now(),
+        )
+        every { eventPublisher.publishEvent(any()) } returns Unit
+
+        // when
+        taskService.holdOffTask(taskId, member, taskHoldOffRequest)
+
+        // then
+        val updatedTask = taskRepository.findByIdAndIsDeletedIsFalse(taskId)
+        checkNotNull(updatedTask)
+        assertThat(updatedTask.status).isEqualTo(TaskStatus.HOLDING_OFF)
+
+        verify(exactly = 1) { eventPublisher.publishEvent(any<ReminderSaveEvent>()) }
     }
 
     @TestConfiguration
