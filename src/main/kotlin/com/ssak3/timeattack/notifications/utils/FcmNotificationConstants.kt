@@ -2,11 +2,19 @@ package com.ssak3.timeattack.notifications.utils
 
 import kotlin.random.Random
 
-object PushNotificationMessages {
+object FcmNotificationConstants {
     fun getMessage(order: Int): String {
         val messages = messageTemplate[order] ?: throw IllegalStateException("message not exist for this number")
         val index = Random.nextInt(messages.size)
         return messages[index]
+    }
+
+    fun getRoute(order: Int): String {
+        return if (order == 0) {
+            "/action/push"
+        } else {
+            "/action/push?left=${REMINDER_LIMIT-order}"
+        }
     }
 
     private val messageTemplate =
@@ -40,4 +48,6 @@ object PushNotificationMessages {
                     """.trimIndent(),
                 ),
         )
+
+    private const val REMINDER_LIMIT = 3
 }
