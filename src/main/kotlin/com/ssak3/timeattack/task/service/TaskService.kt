@@ -149,7 +149,7 @@ class TaskService(
             )
 
         // Task 수정 가능 여부 확인
-        task.assertModifiableBy(memberId)
+        task.assertOwnedBy(memberId)
 
         // Task 상태 변경
         task.changeStatus(request.status)
@@ -161,7 +161,7 @@ class TaskService(
         return Task.fromEntity(savedTaskEntity)
     }
 
-    fun findTodayTasks(member: Member): List<Task> {
+    fun findTodayTodoTasks(member: Member): List<Task> {
         return taskRepository.findTodayTasks(checkNotNull(member.id)).map { Task.fromEntity(it) }
     }
 
@@ -169,6 +169,16 @@ class TaskService(
         taskRepository.findByIdOrNull(id)?.let {
             Task.fromEntity(it)
         } ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, id)
+
+    fun findTaskByIdAndMember(
+        member: Member,
+        taskId: Long,
+    ): Task {
+        checkNotNull(member.id)
+        val task = findTaskById(taskId)
+        task.assertOwnedBy(member.id)
+        return task
+    }
 
     fun findTaskById(taskId: Long): Task {
         val task =
@@ -181,7 +191,7 @@ class TaskService(
     }
 
     @Transactional(readOnly = true)
-    fun getTasksForRestOfCurrentWeek(member: Member): List<Task> {
+    fun getTodoTasksForRestOfCurrentWeek(member: Member): List<Task> {
         val today = LocalDate.now()
         // 오늘이 일요일이면 이번 주 할 일은 없다고 판단(이번주의 끝이 일요일이기 때문)
         if (today.dayOfWeek == DayOfWeek.SUNDAY) return emptyList()
@@ -200,7 +210,7 @@ class TaskService(
         return taskRepository.findAbandonedOrIgnoredTasks(member.id)?.let { Task.fromEntity(it) }
     }
 
-    fun findAllTodos(member: Member): List<Task> {
+    fun findAllTodoTasks(member: Member): List<Task> {
         return taskRepository.findAllTodos(checkNotNull(member.id)).map { Task.fromEntity(it) }
     }
 
@@ -211,7 +221,7 @@ class TaskService(
     ) {
         checkNotNull(member.id)
         val task = findTaskById(taskId)
-        task.assertModifiableBy(member.id)
+        task.assertOwnedBy(member.id)
         task.delete()
         taskRepository.save(task.toEntity())
 

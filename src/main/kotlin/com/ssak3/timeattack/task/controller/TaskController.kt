@@ -5,6 +5,7 @@ import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
 import com.ssak3.timeattack.task.controller.dto.TaskResponse
@@ -69,17 +70,15 @@ class TaskController(
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
 
-    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "오늘 할 작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/today")
     fun findTodayTasks(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val todayTasks = taskService.findTodayTasks(member)
+        val todayTasks = taskService.findTodayTodoTasks(member)
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
     }
 
-    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "이번 주 작업 목록 조회",
         description = "오늘 할 일 목록을 제외하고 내일부터 일요일까지 할 일 목록 조회",
@@ -89,12 +88,11 @@ class TaskController(
     fun getCurrentWeekTasks(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val taskResponseList = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
+        val taskResponseList = taskService.getTodoTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
 
         return ResponseEntity.ok(taskResponseList)
     }
 
-    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(
         summary = "전체 할일 조회",
         description = "조회 시점을 기준으로 마감시간이 지나지 않은 일들을 조회",
@@ -104,20 +102,20 @@ class TaskController(
     fun findAllTodos(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val taskResponseList = taskService.findAllTodos(member).map { TaskResponse.fromTask(it) }
+        val taskResponseList = taskService.findAllTodoTasks(member).map { TaskResponse.fromTask(it) }
 
         return ResponseEntity.ok(taskResponseList)
     }
 
-    // TODO: 작업 조회 해당 사용자의 작업인지 검증하는 로직 필요
     @Operation(summary = "작업 조회", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/{taskId}")
     fun findTask(
         @Parameter(description = "작업 ID")
         @PathVariable(required = true)
         @Positive taskId: Long,
+        @AuthenticationPrincipal member: Member,
     ): ResponseEntity<TaskResponse> {
-        val task = taskService.findTaskById(taskId)
+        val task = taskService.findTaskByIdAndMember(member, taskId)
         return ResponseEntity.ok(TaskResponse.fromTask(task))
     }
 
@@ -135,5 +133,23 @@ class TaskController(
     ): ResponseEntity<MessageResponse> {
         taskService.removeTask(member, taskId)
         return ResponseEntity.ok(MessageResponse("Task removed successfully"))
+    }
+
+    @Operation(
+        summary = "홈 화면 작업 조회",
+        description = "홈 화면에 표시할 수 있는 모든 작업 목록을 조회합니다.",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @GetMapping("/home")
+    fun findHomeTasks(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<HomeTasksResponse> {
+        val todayTodoTasks = taskService.findTodayTodoTasks(member)
+        val weeklyTodoTasks = taskService.getTodoTasksForRestOfCurrentWeek(member)
+        val allTodoTasks = taskService.findAllTodoTasks(member)
+        val missionEscapeTask = taskService.getAbandonedOrIgnoredTasks(member)
+        return ResponseEntity.ok(
+            HomeTasksResponse.fromTasks(todayTodoTasks, weeklyTodoTasks, allTodoTasks, missionEscapeTask),
+        )
     }
 }

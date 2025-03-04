@@ -1,6 +1,8 @@
 package com.ssak3.timeattack.task.service
 
 import com.ssak3.timeattack.fixture.Fixture
+import com.ssak3.timeattack.global.exception.ApplicationException
+import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.persona.repository.PersonaRepository
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -60,6 +63,7 @@ class TaskServiceTest(
     @Autowired
     private lateinit var taskRepository: TaskRepository
     private lateinit var member: Member
+    private lateinit var member2: Member
 
     @BeforeEach
     fun beforeEach() {
@@ -67,8 +71,14 @@ class TaskServiceTest(
             Fixture.createMember(
                 id = null,
             ).toEntity()
+        val memberEntity2 =
+            Fixture.createMember(
+                id = null,
+                subject = "123123123123",
+            ).toEntity()
 
         member = Member.fromEntity(memberRepository.saveAndFlush(memberEntity))
+        member2 = Member.fromEntity(memberRepository.saveAndFlush(memberEntity2))
         val taskType = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
         val taskMode = taskModeRepository.saveAndFlush(TaskModeEntity(name = "긴급한"))
         personaRepository.saveAndFlush(
@@ -169,7 +179,7 @@ class TaskServiceTest(
         taskRepository.saveAllAndFlush(allTasks)
 
         // when
-        val tasksByDayOfWeek = taskService.getTasksForRestOfCurrentWeek(Fixture.createMember())
+        val tasksByDayOfWeek = taskService.getTodoTasksForRestOfCurrentWeek(Fixture.createMember())
 
         // then
         when (today.dayOfWeek) {
@@ -383,6 +393,26 @@ class TaskServiceTest(
         assertThat(deletedTask).isNull()
 
         verify(exactly = 1) { eventPublisher.publishEvent(any<DeleteTaskEvent>()) }
+    }
+
+    @Test
+    @DisplayName("소유하지 않은 사용자에 의해 작업 조회 시 예외가 발생한다.")
+    fun assertOwnedByTest() {
+        // given
+        val taskEntity =
+            taskRepository.saveAndFlush(
+                Fixture.createTask(
+                    id = null,
+                    member = member,
+                ).toEntity(),
+            )
+        val taskId = checkNotNull(taskEntity.id)
+
+        // when & then
+        assertThrows<ApplicationException> { taskService.findTaskByIdAndMember(member2, taskId) }
+            .apply {
+                assertThat(exceptionType).isEqualTo(ApplicationExceptionType.TASK_OWNER_MISMATCH)
+            }
     }
 
     @TestConfiguration
