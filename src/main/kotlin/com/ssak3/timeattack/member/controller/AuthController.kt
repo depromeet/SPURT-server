@@ -26,11 +26,11 @@ class AuthController(
     fun socialLogin(
         @RequestBody loginRequest: LoginRequest,
         response: HttpServletResponse,
-    ): ResponseEntity<JwtTokenDto> {
+    ): ResponseEntity<LoginResponse> {
         // 소셜 로그인 후, JWT 토큰 반환
-        val tokens = authService.authenticateAndRegister(loginRequest)
+        val (tokens, isNewUser) = authService.authenticateAndRegister(loginRequest)
 
-        return ResponseEntity.ok(tokens)
+        return ResponseEntity.ok(LoginResponse(tokens, isNewUser))
     }
 
     @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = "BearerAuth")])
