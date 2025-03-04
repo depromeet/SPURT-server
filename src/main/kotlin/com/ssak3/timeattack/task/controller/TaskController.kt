@@ -75,7 +75,7 @@ class TaskController(
     fun findTodayTasks(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val todayTasks = taskService.findTodayTasks(member)
+        val todayTasks = taskService.findTodayTodoTasks(member)
         return ResponseEntity.ok(todayTasks.map { TaskResponse.fromTask(it) })
     }
 
@@ -88,7 +88,7 @@ class TaskController(
     fun getCurrentWeekTasks(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val taskResponseList = taskService.getTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
+        val taskResponseList = taskService.getTodoTasksForRestOfCurrentWeek(member).map { TaskResponse.fromTask(it) }
 
         return ResponseEntity.ok(taskResponseList)
     }
@@ -102,7 +102,7 @@ class TaskController(
     fun findAllTodos(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<List<TaskResponse>> {
-        val taskResponseList = taskService.findAllTodos(member).map { TaskResponse.fromTask(it) }
+        val taskResponseList = taskService.findAllTodoTasks(member).map { TaskResponse.fromTask(it) }
 
         return ResponseEntity.ok(taskResponseList)
     }
@@ -144,10 +144,12 @@ class TaskController(
     fun findHomeTasks(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<HomeTasksResponse> {
-        val todayTasks = taskService.findTodayTasks(member)
-        val weeklyTasks = taskService.getTasksForRestOfCurrentWeek(member)
-        val allTasks = taskService.findAllTodos(member)
+        val todayTodoTasks = taskService.findTodayTodoTasks(member)
+        val weeklyTodoTasks = taskService.getTodoTasksForRestOfCurrentWeek(member)
+        val allTodoTasks = taskService.findAllTodoTasks(member)
         val missionEscapeTask = taskService.getAbandonedOrIgnoredTasks(member)
-        return ResponseEntity.ok(HomeTasksResponse.fromTasks(todayTasks, weeklyTasks, allTasks, missionEscapeTask))
+        return ResponseEntity.ok(
+            HomeTasksResponse.fromTasks(todayTodoTasks, weeklyTodoTasks, allTodoTasks, missionEscapeTask),
+        )
     }
 }

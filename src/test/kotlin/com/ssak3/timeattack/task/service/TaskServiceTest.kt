@@ -179,7 +179,7 @@ class TaskServiceTest(
         taskRepository.saveAllAndFlush(allTasks)
 
         // when
-        val tasksByDayOfWeek = taskService.getTasksForRestOfCurrentWeek(Fixture.createMember())
+        val tasksByDayOfWeek = taskService.getTodoTasksForRestOfCurrentWeek(Fixture.createMember())
 
         // then
         when (today.dayOfWeek) {
