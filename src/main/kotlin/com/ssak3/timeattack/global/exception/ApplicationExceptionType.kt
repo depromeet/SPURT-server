@@ -85,6 +85,26 @@ enum class ApplicationExceptionType(
         "잘못된 Task Category입니다. : {0}",
     ),
 
+    /**
+     * - {0} : Task attribute
+     * - {1} : Task Status
+     */
+    INVALID_TASK_STATUS_FOR_UPDATE(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_009",
+        "Task의 {0} 속성은 {1} 상태에서 수정할 수 없습니다.",
+    ),
+
+    /**
+     * - {0} : Due Datetime
+     * - {1} : Trigger Action Alarm Time
+     */
+    INVALID_DUE_DATETIME(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_010",
+        "마감시간({0})이 작은 행동 알림 시간({1})보다 이전일 수 없습니다.",
+    ),
+
     // ======================== [END] TASK ========================
 
     /**
@@ -153,6 +173,16 @@ enum class ApplicationExceptionType(
      * - {0} : Exception Message
      */
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "ERR_GLOBAL_001", "잘못된 요청 값입니다. : {0}"),
+
+    /**
+     * - {0} : Exception Message
+     */
+    INVALID_UPDATE_VALUE(
+        HttpStatus.BAD_REQUEST,
+        "ERR_GLOBAL_002",
+        "수정할 값이 유효하지 않습니다. : {0}",
+    ),
+
     /**
      * - {0} : Custom Exception Message
      */

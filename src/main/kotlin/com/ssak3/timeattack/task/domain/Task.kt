@@ -9,12 +9,12 @@ import java.time.LocalDateTime
 
 class Task(
     val id: Long? = null,
-    val name: String,
+    var name: String,
     val category: TaskCategory,
-    val dueDatetime: LocalDateTime,
-    val triggerAction: String? = null,
-    val estimatedTime: Int? = null,
-    val triggerActionAlarmTime: LocalDateTime? = null,
+    var dueDatetime: LocalDateTime,
+    var triggerAction: String? = null,
+    var estimatedTime: Int? = null,
+    var triggerActionAlarmTime: LocalDateTime? = null,
     var status: TaskStatus,
     val member: Member,
     val persona: Persona,
@@ -37,7 +37,7 @@ class Task(
             isDeleted = isDeleted,
         )
 
-    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, estimatedTime: Int, dueDatetime: LocalDateTime) {
         // 현재 버퍼타임에 대한 계산을 프론트에서 해서 보여주기 때문에 서버에서는 정확한 버퍼타임에 대한 배수는 검증하지 않음
         // triggerActionAlarmTime은 마감 이전이어야 한다.
         // triggerActionAlarmTime부터 dueDatetime까지의 시간이 estimatedTime보다 커야 한다.
@@ -56,6 +56,17 @@ class Task(
         }
     }
 
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, checkNotNull(this.estimatedTime), this.dueDatetime)
+    }
+
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, dueDatetime: LocalDateTime) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, checkNotNull(this.estimatedTime), dueDatetime)
+    }
+
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, estimatedTime: Int) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, estimatedTime, this.dueDatetime)
+    }
     /**
      * Task의 상태를 변경한다.
      */
@@ -85,6 +96,42 @@ class Task(
 
     fun delete() {
         this.isDeleted = true
+    }
+
+    fun modifyName(name: String) {
+        this.name = name
+    }
+
+    fun modifyTriggerAction(triggerAction: String) {
+        validateTaskStatusForUpdate(TaskStatus.BEFORE, "triggerAction")
+        this.triggerAction = triggerAction
+    }
+
+    fun modifyEstimatedTime(estimatedTime: Int, triggerActionAlarmTime: LocalDateTime) {
+        validateTaskStatusForUpdate(TaskStatus.BEFORE, "estimatedTime")
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, estimatedTime, this.dueDatetime)
+        this.estimatedTime = estimatedTime
+        this.triggerActionAlarmTime = triggerActionAlarmTime
+    }
+
+    fun modifyToUrgentDueDatetime(dueDatetime: LocalDateTime, triggerActionAlarmTime: LocalDateTime) {
+        // BEFORE 상태에서만 수정 가능
+        validateTaskStatusForUpdate(TaskStatus.BEFORE, "dueDatetime")
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, checkNotNull(this.estimatedTime), dueDatetime)
+        this.dueDatetime = dueDatetime
+        this.triggerActionAlarmTime = triggerActionAlarmTime
+    }
+
+    fun modifyToUrgentDueDatetime(dueDatetime: LocalDateTime) {
+        validateTaskStatusForUpdate(TaskStatus.BEFORE, "dueDatetime")
+        changeStatus(TaskStatus.FOCUSED)
+        this.dueDatetime = dueDatetime
+    }
+
+    fun validateTaskStatusForUpdate(status: TaskStatus, attribute: String) {
+        if (this.status != TaskStatus.BEFORE) {
+            throw ApplicationException(ApplicationExceptionType.INVALID_TASK_STATUS_FOR_UPDATE, attribute, this.status)
+        }
     }
 
     companion object {
