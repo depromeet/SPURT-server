@@ -147,6 +147,12 @@ enum class ApplicationExceptionType(
 
     // ======================== [END] OIDC ========================
 
+
+    // ======================== [START] GLOBAL ========================
+    /**
+     * - {0} : Exception Message
+     */
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "ERR_GLOBAL_001", "잘못된 요청 값입니다. : {0}"),
     /**
      * - {0} : Custom Exception Message
      */
