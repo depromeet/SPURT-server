@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.domain
 
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
@@ -37,7 +38,7 @@ class Task(
             isDeleted = isDeleted,
         )
 
-    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, estimatedTime: Int, dueDatetime: LocalDateTime) {
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, estimatedTime: Int?, dueDatetime: LocalDateTime) {
         // 현재 버퍼타임에 대한 계산을 프론트에서 해서 보여주기 때문에 서버에서는 정확한 버퍼타임에 대한 배수는 검증하지 않음
         // triggerActionAlarmTime은 마감 이전이어야 한다.
         // triggerActionAlarmTime부터 dueDatetime까지의 시간이 estimatedTime보다 커야 한다.
@@ -45,6 +46,7 @@ class Task(
         if (category == TaskCategory.URGENT) {
             throw ApplicationException(ApplicationExceptionType.TASK_CATEGORY_MISMATCH, category)
         }
+        checkNotNull(estimatedTime, "estimatedTime")
         val checkedEstimatedTime = (checkNotNull(estimatedTime) { "estimatedTime must not be null" }).toLong()
         if (triggerActionAlarmTime.plusMinutes(checkedEstimatedTime).isAfter(dueDatetime)) {
             throw ApplicationException(
@@ -57,11 +59,11 @@ class Task(
     }
 
     fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, checkNotNull(this.estimatedTime), this.dueDatetime)
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, this.dueDatetime)
     }
 
     fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, dueDatetime: LocalDateTime) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, checkNotNull(this.estimatedTime), dueDatetime)
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, dueDatetime)
     }
 
     fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime, estimatedTime: Int) {
