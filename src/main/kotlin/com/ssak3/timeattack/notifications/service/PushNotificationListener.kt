@@ -4,9 +4,9 @@ import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.service.MemberService
 import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.task.service.TaskService
-import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
+import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
-import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionAlarmSaveEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -24,7 +24,8 @@ class PushNotificationListener(
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    fun saveNotification(event: ScheduledTaskSaveEvent) {
+    fun saveNotification(event: TriggerActionAlarmSaveEvent) {
+        logger.info("TriggerActionAlarmSaveEvent: $event")
         val member = memberService.getMemberById(event.memberId)
         val task = taskService.getTaskById(event.taskId)
 
@@ -41,6 +42,7 @@ class PushNotificationListener(
 
     @EventListener
     fun saveNotifications(event: ReminderSaveEvent) {
+        logger.info("ReminderSaveEvent: $event")
         val member = memberService.getMemberById(event.memberId)
         val task = taskService.getTaskById(event.taskId)
 
@@ -60,7 +62,8 @@ class PushNotificationListener(
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    fun deleteNotifications(event: DeleteTaskEvent) {
+    fun deleteNotifications(event: DeleteTaskAlarmEvent) {
+        logger.info("DeleteTaskAlarmEvent: $event")
         TODO("알림 삭제 이벤트를 받아 db에서 비활성화 처리")
     }
 }
