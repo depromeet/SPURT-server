@@ -10,5 +10,5 @@ import kotlin.reflect.KClass
 annotation class NotAllFieldNull(
     val message: String = "모든 필드를 null로 설정할 수 없습니다.",
     val groups: Array<KClass<out Any>> = [],
-    val payload: Array<KClass<out Payload>> = []
+    val payload: Array<KClass<out Payload>> = [],
 )

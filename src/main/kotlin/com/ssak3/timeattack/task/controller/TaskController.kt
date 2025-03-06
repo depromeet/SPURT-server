@@ -3,7 +3,6 @@ package com.ssak3.timeattack.task.controller
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
@@ -136,6 +135,7 @@ class TaskController(
         taskService.removeTask(member, taskId)
         return ResponseEntity.ok(MessageResponse("Task removed successfully"))
     }
+
     // TODO: find -> get
     @Operation(
         summary = "홈 화면 작업 조회",

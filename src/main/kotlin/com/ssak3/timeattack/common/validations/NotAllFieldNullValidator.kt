@@ -5,8 +5,10 @@ import jakarta.validation.ConstraintValidatorContext
 import kotlin.reflect.full.memberProperties
 
 class NotAllFieldNullValidator : ConstraintValidator<NotAllFieldNull, Any> {
-
-    override fun isValid(value: Any?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(
+        value: Any?,
+        context: ConstraintValidatorContext,
+    ): Boolean {
         // 객체 자체가 null이면 검증 실패
         if (value == null) return false
 

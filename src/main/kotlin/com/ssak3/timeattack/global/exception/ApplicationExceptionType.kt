@@ -167,7 +167,6 @@ enum class ApplicationExceptionType(
 
     // ======================== [END] OIDC ========================
 
-
     // ======================== [START] GLOBAL ========================
     /**
      * - {0} : Exception Message

@@ -21,7 +21,7 @@ class GlobalControllerAdvice : Logger {
     fun handleValidationException(exception: HandlerMethodValidationException): ResponseEntity<ExceptionResponse> {
         val sb = StringBuilder()
         exception.parameterValidationResults.forEachIndexed { index, it ->
-            sb.append("Validation Error${index+1}) ")
+            sb.append("Validation Error${index + 1}) ")
             it.resolvableErrors.forEach { error ->
                 sb.append(error.defaultMessage).append(", ")
             }

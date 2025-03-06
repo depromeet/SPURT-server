@@ -10,7 +10,10 @@ import kotlin.contracts.contract
  * @param attributeName 예외 메시지에 사용할 속성 이름
  */
 @OptIn(ExperimentalContracts::class)
-fun <T : Any> checkNotNull(value: T?, attributeName: String?): T {
+fun <T : Any> checkNotNull(
+    value: T?,
+    attributeName: String?,
+): T {
     contract {
         returns() implies (value != null)
     }

@@ -233,7 +233,11 @@ class TaskService(
     }
 
     @Transactional
-    fun updateTask(member: Member, taskId: Long, request: TaskUpdateRequest): Task {
+    fun updateTask(
+        member: Member,
+        taskId: Long,
+        request: TaskUpdateRequest,
+    ): Task {
         val task = findTaskByIdAndMember(member, taskId)
         request.name?.let { task.modifyName(it) }
         request.triggerAction?.let { task.modifyTriggerAction(it) }
@@ -260,7 +264,6 @@ class TaskService(
         // 작업 수정 및 저장
         val updatedTaskEntity = taskRepository.save(task.toEntity())
 
-
         // 작은 행동 알림이 업데이트 되거나 즉시 시작하게 되면 기존 알림을 삭제
         if (request.isTriggerActionAlarmTimeUpdateRequest() || request.isUrgent) {
             eventPublisher.publishEvent(DeleteTaskAlarmEvent(checkNotNull(member.id), taskId))
@@ -268,11 +271,12 @@ class TaskService(
 
         // 작은 행동 알림이 업데이트 되면 새로운 알림 저장 이벤트 발행
         if (request.isTriggerActionAlarmTimeUpdateRequest()) {
-            val triggerActionAlarmSaveEvent = TriggerActionAlarmSaveEvent(
-                checkNotNull(member.id, "memberId"),
-                taskId,
-                checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
-            )
+            val triggerActionAlarmSaveEvent =
+                TriggerActionAlarmSaveEvent(
+                    checkNotNull(member.id, "memberId"),
+                    taskId,
+                    checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
+                )
             eventPublisher.publishEvent(triggerActionAlarmSaveEvent)
         }
 
