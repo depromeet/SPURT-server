@@ -5,7 +5,7 @@ import com.ssak3.timeattack.notifications.repository.entity.PushNotificationEnti
 import com.ssak3.timeattack.task.domain.Task
 import java.time.LocalDateTime
 
-data class PushNotification(
+class PushNotification(
     val member: Member,
     val task: Task,
     val scheduledAt: LocalDateTime,
@@ -20,4 +20,14 @@ data class PushNotification(
             isDeleted = isDeleted,
             order = order,
         )
+
+    companion object {
+        fun fromEntity(entity: PushNotificationEntity) =
+            PushNotification(
+                member = Member.fromEntity(entity.member),
+                task = Task.fromEntity(entity.task),
+                scheduledAt = entity.scheduledAt,
+                order = entity.order,
+            )
+    }
 }

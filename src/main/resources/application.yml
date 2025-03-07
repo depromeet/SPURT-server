@@ -29,6 +29,8 @@ jwt:
   refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY}
 fcm:
   secret-key: ${FIREBASE_SECRET_KEY}
+  scheduler:
+    status: false
 cors:
   allowed-origins:
     - ${CORS_ALLOWED_ORIGINS_01}
@@ -44,7 +46,6 @@ security:
     - ${SECURITY_PERMIT_URLS_02}
     - ${SECURITY_PERMIT_URLS_03}
     - ${SECURITY_PERMIT_URLS_04}
-
 springdoc:
   swagger-ui:
     path: ${SPRINGDOC_SWAGGER_UI_PATH}

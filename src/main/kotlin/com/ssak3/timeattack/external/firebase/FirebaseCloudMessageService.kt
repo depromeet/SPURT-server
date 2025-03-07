@@ -16,9 +16,14 @@ class FirebaseCloudMessageService : Logger {
             Message.builder()
                 .setToken(message.token)
                 .setNotification(
-                    Notification.builder().setTitle(message.title).setBody(message.body).build(),
+                    Notification.builder().setTitle(TITLE).setBody(message.body).build(),
                 )
-                .putData("route", message.route)
+                .putAllData(
+                    mapOf(
+                        "route" to message.route,
+                        "taskId" to message.taskId.toString(),
+                    ),
+                )
                 .build()
 
         val response = firebaseMessaging.send(fcmMessage)
@@ -26,5 +31,9 @@ class FirebaseCloudMessageService : Logger {
         logger.info("[Firebase Messaging] send successfully: $response")
 
         return response
+    }
+
+    companion object {
+        const val TITLE = "SPURT"
     }
 }
