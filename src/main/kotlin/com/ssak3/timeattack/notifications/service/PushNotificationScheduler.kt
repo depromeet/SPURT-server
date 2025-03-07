@@ -24,11 +24,13 @@ class PushNotificationScheduler(
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
         currentScheduledNotifications.forEach {
             checkNotNull(it.member.id)
+            checkNotNull(it.task.id)
             fcmDeviceService.getDevicesByMember(it.member.id).forEach { device ->
                 val message =
                     FcmMessage(
                         token = device.fcmRegistrationToken,
                         platform = DevicePlatform.valueOf(device.devicePlatform.toString()),
+                        taskId = it.task.id,
                         body = getMessage(it.order),
                         route = getRoute(it.order),
                     )

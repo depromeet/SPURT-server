@@ -18,7 +18,12 @@ class FirebaseCloudMessageService : Logger {
                 .setNotification(
                     Notification.builder().setTitle(TITLE).setBody(message.body).build(),
                 )
-                .putData("route", message.route)
+                .putAllData(
+                    mapOf(
+                        "route" to message.route,
+                        "taskId" to message.taskId.toString(),
+                    ),
+                )
                 .build()
 
         val response = firebaseMessaging.send(fcmMessage)
