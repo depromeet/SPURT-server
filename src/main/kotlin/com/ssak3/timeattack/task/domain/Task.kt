@@ -38,15 +38,44 @@ class Task(
             isDeleted = isDeleted,
         )
 
+    /**
+     * 입력된 triggerActionAlarmTime 이 기존 task 의 estimatedTime 과 dueDatetime 에 대해 유효한지 검증
+     */
+    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, this.dueDatetime)
+    }
+
+    /**
+     * 입력된 마감시간과 작은 행동 알림 시간이 이 기존 task 의 예상 소요 시간에 대해 유효한지 검증
+     */
+    fun validateTriggerActionAlarmTime(
+        triggerActionAlarmTime: LocalDateTime,
+        dueDatetime: LocalDateTime,
+    ) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, dueDatetime)
+    }
+
+    /**
+     * 입력된 예상 소요 시간과 작은 행동 알림 시간이 이 기존 task 의 마감시간에 대해 유효한지 검증
+     */
+    fun validateTriggerActionAlarmTime(
+        triggerActionAlarmTime: LocalDateTime,
+        estimatedTime: Int,
+    ) {
+        validateTriggerActionAlarmTime(triggerActionAlarmTime, estimatedTime, this.dueDatetime)
+    }
+
+    /**
+     * 작은 행동 알림 시간을 검증합니다.
+     * 작은 행동 알림시간에 예상 소요 시간(estimatedTime)을 더한 시간이 마감 시간(dueDatetime)보다 뒤에 있으면 예외를 발생시킵니다.
+     */
     fun validateTriggerActionAlarmTime(
         triggerActionAlarmTime: LocalDateTime,
         estimatedTime: Int?,
         dueDatetime: LocalDateTime,
     ) {
         // 현재 버퍼타임에 대한 계산을 프론트에서 해서 보여주기 때문에 서버에서는 정확한 버퍼타임에 대한 배수는 검증하지 않음
-        // triggerActionAlarmTime은 마감 이전이어야 한다.
         // triggerActionAlarmTime부터 dueDatetime까지의 시간이 estimatedTime보다 커야 한다.
-
         if (category == TaskCategory.URGENT) {
             throw ApplicationException(ApplicationExceptionType.TASK_CATEGORY_MISMATCH, category)
         }
@@ -60,24 +89,6 @@ class Task(
                 estimatedTime,
             )
         }
-    }
-
-    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, this.dueDatetime)
-    }
-
-    fun validateTriggerActionAlarmTime(
-        triggerActionAlarmTime: LocalDateTime,
-        dueDatetime: LocalDateTime,
-    ) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, dueDatetime)
-    }
-
-    fun validateTriggerActionAlarmTime(
-        triggerActionAlarmTime: LocalDateTime,
-        estimatedTime: Int,
-    ) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, estimatedTime, this.dueDatetime)
     }
 
     /**
