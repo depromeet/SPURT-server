@@ -24,7 +24,7 @@ class AuthService(
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
 ) {
-    fun authenticateAndRegister(request: LoginRequest): JwtTokenDto {
+    fun authenticateAndRegister(request: LoginRequest): Pair<JwtTokenDto, Boolean> {
         // id token 요청
         val oAuthClient = oAuthClientFactory.getClient(request.provider)
         val idToken = oAuthClient.getToken(request.authCode).idToken
@@ -36,10 +36,14 @@ class AuthService(
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
 
         // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
+        var isNewUser = false
         val member =
             memberRepository.findByProviderAndSubject(request.provider, oidcPayload.subject)
                 ?.let { Member.fromEntity(it) }
-                ?: createMember(oidcPayload, request.provider)
+                ?: run {
+                    isNewUser = true
+                    createMember(oidcPayload, request.provider)
+                }
 
         // JWT 토큰 생성 & 반환
         checkNotNull(member.id) { "Member ID must not be null" }
@@ -51,7 +55,7 @@ class AuthService(
         // 기기 정보 저장 이벤트 발행
         eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
 
-        return tokens
+        return Pair(tokens, isNewUser)
     }
 
     private fun createMember(
