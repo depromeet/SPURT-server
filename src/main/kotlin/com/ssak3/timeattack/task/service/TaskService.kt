@@ -236,13 +236,15 @@ class TaskService(
         // 2. 리마인더 알림 시간 계산
         // 횟수만큼 반복하면서 작은행동알림시간에서 remindTerm을 더한 시간을 계산
         checkNotNull(task.triggerActionAlarmTime)
-        val reminderAlarms = (1..taskHoldOffRequest.remindCount).map { order ->
-            val nextReminderAlarmTime = taskHoldOffRequest.remindBaseTime.plusMinutes(
-                taskHoldOffRequest.remindInterval * order.toLong()
-            )
-            task.validateReminderAlarmTime(nextReminderAlarmTime)
-            ReminderAlarm(order, nextReminderAlarmTime)
-        }
+        val reminderAlarms =
+            (1..taskHoldOffRequest.remindCount).map { order ->
+                val nextReminderAlarmTime =
+                    taskHoldOffRequest.remindBaseTime.plusMinutes(
+                        taskHoldOffRequest.remindInterval * order.toLong(),
+                    )
+                task.validateReminderAlarmTime(nextReminderAlarmTime)
+                ReminderAlarm(order, nextReminderAlarmTime)
+            }
 
         // 3. 리마인더 알림 저장 이벤트 발행
         eventPublisher.publishEvent(ReminderSaveEvent(member.id, taskId, reminderAlarms))
