@@ -8,6 +8,7 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateResponse
+import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.TaskResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
@@ -151,5 +152,16 @@ class TaskController(
         return ResponseEntity.ok(
             HomeTasksResponse.fromTasks(todayTodoTasks, weeklyTodoTasks, allTodoTasks, missionEscapeTask),
         )
+    }
+
+    @Operation(summary = "작업 리마인더 설정", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @PatchMapping("/{taskId}/hold-off")
+    fun holdOffTask(
+        @AuthenticationPrincipal member: Member,
+        @PathVariable(required = true) taskId: Long,
+        @RequestBody @Valid taskHoldOffRequest: TaskHoldOffRequest,
+    ): ResponseEntity<MessageResponse> {
+        taskService.holdOffTask(taskId, member, taskHoldOffRequest)
+        return ResponseEntity.noContent().build()
     }
 }
