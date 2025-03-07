@@ -19,7 +19,7 @@ class PushNotificationScheduler(
     private val fcmPushNotificationService: FcmPushNotificationService,
 ) {
     @Async
-    @Scheduled(cron = "0 * * * * *") // 1분 단위
+    @Scheduled(cron = "0 0/5 * * * ?") //5분 단위
     fun sendNotifications() {
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
         currentScheduledNotifications.forEach {
