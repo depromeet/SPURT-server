@@ -13,4 +13,7 @@ class FcmDeviceService(
     fun save(fcmDevice: FcmDevice) {
         fcmDeviceRepository.save(fcmDevice.toEntity())
     }
+
+    fun getDevicesByMember(memberId: Long): List<FcmDevice> =
+        fcmDeviceRepository.findActiveByMember(memberId).map(FcmDevice::fromEntity)
 }

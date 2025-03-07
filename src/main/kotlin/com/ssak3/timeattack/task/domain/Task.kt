@@ -167,6 +167,16 @@ class Task(
         }
     }
 
+    fun validateReminderAlarmTime(reminderAlarmTime: LocalDateTime) {
+        if (reminderAlarmTime.isAfter(dueDatetime)) {
+            throw ApplicationException(
+                ApplicationExceptionType.INVALID_REMINDER_ALARM_TIME,
+                reminderAlarmTime,
+                dueDatetime,
+            )
+        }
+    }
+
     companion object {
         fun fromEntity(entity: TaskEntity) =
             Task(

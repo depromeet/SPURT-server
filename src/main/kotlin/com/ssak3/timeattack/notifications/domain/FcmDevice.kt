@@ -17,4 +17,14 @@ class FcmDevice(
             devicePlatform = devicePlatform,
             status = status,
         )
+
+    companion object {
+        fun fromEntity(entity: FcmDeviceEntity) =
+            FcmDevice(
+                member = Member.fromEntity(entity.member),
+                fcmRegistrationToken = entity.fcmRegistrationToken,
+                devicePlatform = entity.devicePlatform,
+                status = entity.status,
+            )
+    }
 }

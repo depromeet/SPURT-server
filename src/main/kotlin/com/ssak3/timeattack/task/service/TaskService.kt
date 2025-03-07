@@ -8,6 +8,7 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
+import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
@@ -19,6 +20,8 @@ import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
+import com.ssak3.timeattack.task.service.events.ReminderAlarm
+import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -230,6 +233,33 @@ class TaskService(
         // Task 삭제 이벤트 발행
         eventPublisher.publishEvent(DeleteTaskAlarmEvent(member.id, checkNotNull(task.id)))
         // TODO: 이벤트 처리 실패시 어떻게 처리할지 고민
+    }
+
+    @Transactional
+    fun holdOffTask(
+        taskId: Long,
+        member: Member,
+        taskHoldOffRequest: TaskHoldOffRequest,
+    ) {
+        checkNotNull(member.id)
+        // 1. Task 상태 변경
+        val task = changeTaskStatus(taskId, member.id, TaskStatusRequest(TaskStatus.HOLDING_OFF))
+
+        // 2. 리마인더 알림 시간 계산
+        // 횟수만큼 반복하면서 작은행동알림시간에서 remindInterval을 더한 시간을 계산
+        checkNotNull(task.triggerActionAlarmTime)
+        val reminderAlarms =
+            (1..taskHoldOffRequest.remindCount).map { order ->
+                val nextReminderAlarmTime =
+                    taskHoldOffRequest.remindBaseTime.plusMinutes(
+                        taskHoldOffRequest.remindInterval * order.toLong(),
+                    )
+                task.validateReminderAlarmTime(nextReminderAlarmTime)
+                ReminderAlarm(order, nextReminderAlarmTime)
+            }
+
+        // 3. 리마인더 알림 저장 이벤트 발행
+        eventPublisher.publishEvent(ReminderSaveEvent(member.id, taskId, reminderAlarms))
     }
 
     @Transactional

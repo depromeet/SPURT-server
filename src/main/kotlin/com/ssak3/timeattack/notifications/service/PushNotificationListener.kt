@@ -33,7 +33,7 @@ class PushNotificationListener(
             PushNotification(
                 member = member,
                 task = task,
-                scheduledAt = event.alarmTime,
+                scheduledAt = event.alarmTime.withSecond(0),
                 order = 0,
             )
 
@@ -51,7 +51,7 @@ class PushNotificationListener(
                 PushNotification(
                     member = member,
                     task = task,
-                    scheduledAt = it.alarmTime,
+                    scheduledAt = it.alarmTime.withSecond(0),
                     order = it.order,
                 )
             }

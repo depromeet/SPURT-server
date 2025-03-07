@@ -86,12 +86,22 @@ enum class ApplicationExceptionType(
     ),
 
     /**
+     * - {0} : Reminder Alarm Time
+     * - {1} : Task Due Datetime
+     */
+    INVALID_REMINDER_ALARM_TIME(
+        HttpStatus.BAD_REQUEST,
+        "ERR_TASK_009",
+        "리마인드 알림 시간({0})이 마감 시간({1}) 이후입니다.",
+    ),
+
+    /**
      * - {0} : Task attribute
      * - {1} : Task Status
      */
     INVALID_TASK_STATUS_FOR_UPDATE(
         HttpStatus.BAD_REQUEST,
-        "ERR_TASK_009",
+        "ERR_TASK_010",
         "Task의 {0} 속성은 {1} 상태에서 수정할 수 없습니다.",
     ),
 
@@ -101,7 +111,7 @@ enum class ApplicationExceptionType(
      */
     INVALID_DUE_DATETIME(
         HttpStatus.BAD_REQUEST,
-        "ERR_TASK_010",
+        "ERR_TASK_011",
         "마감시간({0})이 작은 행동 알림 시간({1})보다 이전일 수 없습니다.",
     ),
 
