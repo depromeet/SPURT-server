@@ -19,7 +19,7 @@ class PushNotificationService(
         pushNotificationRepository.saveAll(entities)
     }
 
-    fun getCurrentList(): List<PushNotification> {
+    fun getNotificationsByCurrentTime(): List<PushNotification> {
         return pushNotificationRepository.findActiveAndScheduledAt(
             datetime = LocalDateTime.now().withSecond(0).withNano(0),
         ).map(PushNotification::fromEntity)
