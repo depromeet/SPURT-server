@@ -9,19 +9,9 @@ import kotlin.contracts.contract
  * @param value 체크할 값
  * @param valueName 예외 메시지에 사용할 속성 이름
  */
-@OptIn(ExperimentalContracts::class)
 fun <T : Any> checkNotNull(
     value: T?,
     valueName: String?,
 ): T {
-    contract {
-        returns() implies (value != null)
-    }
-
-    if (value == null) {
-        // valueName이 없다면(null) default 메시지로 예외를 발생시킵니다.
-        val message = valueName?.let { "$valueName must not be null" } ?: "Required value must not be null"
-        throw IllegalArgumentException(message)
-    }
-    return value
+    return checkNotNull(value) { "$valueName must not be null" }
 }
