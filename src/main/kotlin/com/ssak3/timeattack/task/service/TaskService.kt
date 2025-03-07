@@ -271,7 +271,11 @@ class TaskService(
         return Task.fromEntity(updatedTaskEntity)
     }
 
-    private fun publishEventForUpdateTask(memberId: Long,  taskId: Long, request: TaskUpdateRequest) {
+    private fun publishEventForUpdateTask(
+        memberId: Long,
+        taskId: Long,
+        request: TaskUpdateRequest,
+    ) {
         // 작은 행동 알림이 업데이트 되거나 즉시 시작하게 되면 기존 알림을 삭제
         if (request.isTriggerActionAlarmTimeUpdateRequest() || request.isUrgent) {
             eventPublisher.publishEvent(DeleteTaskAlarmEvent(memberId, taskId))
