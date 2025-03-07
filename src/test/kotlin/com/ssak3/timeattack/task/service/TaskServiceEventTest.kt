@@ -128,7 +128,7 @@ class TaskServiceEventTest(
 
         val taskHoldOffRequest =
             TaskHoldOffRequest(
-                remindTerm = 15,
+                remindInterval = 15,
                 remindCount = 3,
                 remindBaseTime = LocalDateTime.of(2025, 1, 1, 0, 0, 0),
             )

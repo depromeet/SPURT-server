@@ -14,7 +14,7 @@ data class TaskHoldOffRequest(
         requiredMode = Schema.RequiredMode.REQUIRED,
     )
     @field:AllowedIntValues(values = [15, 30, 60])
-    val remindTerm: Int,
+    val remindInterval: Int,
     @Schema(
         title = "리마인드 횟수",
         description = "리마인드 횟수",
