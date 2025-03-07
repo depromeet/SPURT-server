@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.service
 
 import com.ssak3.timeattack.common.utils.Logger
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
@@ -9,6 +10,7 @@ import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
+import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
@@ -16,10 +18,10 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
-import com.ssak3.timeattack.task.service.events.DeleteTaskEvent
+import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
-import com.ssak3.timeattack.task.service.events.ScheduledTaskSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -89,13 +91,13 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         // 4. Task 이벤트 발행
-        val scheduledTaskSaveEvent =
-            ScheduledTaskSaveEvent(
+        val triggerActionNotificationSaveEvent =
+            TriggerActionNotificationSaveEvent(
                 checkNotNull(member.id),
                 checkNotNull(savedTaskEntity.id),
                 scheduledTaskRequest.triggerActionAlarmTime,
             )
-        eventPublisher.publishEvent(scheduledTaskSaveEvent)
+        eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
 
         // 5. Task 반환
         return Task.fromEntity(savedTaskEntity)
@@ -229,7 +231,7 @@ class TaskService(
         taskRepository.save(task.toEntity())
 
         // Task 삭제 이벤트 발행
-        eventPublisher.publishEvent(DeleteTaskEvent(member.id, checkNotNull(task.id)))
+        eventPublisher.publishEvent(DeleteTaskAlarmEvent(member.id, checkNotNull(task.id)))
         // TODO: 이벤트 처리 실패시 어떻게 처리할지 고민
     }
 
@@ -258,5 +260,66 @@ class TaskService(
 
         // 3. 리마인더 알림 저장 이벤트 발행
         eventPublisher.publishEvent(ReminderSaveEvent(member.id, taskId, reminderAlarms))
+    }
+
+    @Transactional
+    fun updateTask(
+        member: Member,
+        taskId: Long,
+        request: TaskUpdateRequest,
+    ): Task {
+        val task = findTaskByIdAndMember(member, taskId)
+        request.name?.let { task.modifyName(it) }
+        request.triggerAction?.let { task.modifyTriggerAction(it) }
+
+        if (request.isEstimatedTimeUpdateRequest()) {
+            checkNotNull(request.estimatedTime, "estimatedTime")
+            checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime")
+
+            task.modifyEstimatedTime(request.estimatedTime, request.triggerActionAlarmTime)
+        } else if (request.isDueDatetimeUpdateRequest()) {
+            val updatedDueDatetime = checkNotNull(request.dueDatetime, "dueDatetime")
+
+            // 마감시간을 줄였는데 남은 시간이 예상 소요 시간보다 짧은 경우 즉시 몰입 시작으로 처리
+            if (request.isUrgent) {
+                // 즉시 몰입 시작으로 처리하기 위해 마감시간을 변경하고 status를 FOCUSED로 변경
+                task.modifyToUrgentDueDatetime(updatedDueDatetime)
+            } else {
+                // 즉시 몰입 시작이 아닌 경우 작은행동 알림 검증을 통해 마감시간 업데이트
+                checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime")
+                task.modifyToUrgentDueDatetime(updatedDueDatetime, request.triggerActionAlarmTime)
+            }
+        }
+
+        // 작업 수정 및 저장
+        val updatedTaskEntity = taskRepository.save(task.toEntity())
+
+        // 작업 수정 관련 이벤트 발행
+        checkNotNull(member.id, "member.id")
+        publishEventForUpdateTask(member.id, taskId, request)
+
+        return Task.fromEntity(updatedTaskEntity)
+    }
+
+    private fun publishEventForUpdateTask(
+        memberId: Long,
+        taskId: Long,
+        request: TaskUpdateRequest,
+    ) {
+        // 작은 행동 알림이 업데이트 되거나 즉시 시작하게 되면 기존 알림을 삭제
+        if (request.isTriggerActionAlarmTimeUpdateRequest() || request.isUrgent) {
+            eventPublisher.publishEvent(DeleteTaskAlarmEvent(memberId, taskId))
+        }
+
+        // 작은 행동 알림이 업데이트 되면 새로운 알림 저장 이벤트 발행
+        if (request.isTriggerActionAlarmTimeUpdateRequest()) {
+            val triggerActionNotificationSaveEvent =
+                TriggerActionNotificationSaveEvent(
+                    memberId,
+                    taskId,
+                    checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
+                )
+            eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
+        }
     }
 }
