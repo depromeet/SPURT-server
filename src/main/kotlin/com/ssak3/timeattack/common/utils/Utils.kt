@@ -18,9 +18,12 @@ fun <T : Any> checkNotNull(
         returns() implies (value != null)
     }
     if (value == null) {
+        // valueName이 없다면(null) default 메시지로 예외를 발생시킵니다.
         if (valueName == null) {
             throw IllegalArgumentException("Required value must not be null")
         }
+
+        // valueName이 있다면 valueName을 사용한 메시지로 예외를 발생시킵니다.
         throw IllegalArgumentException("$valueName must not be null")
     }
     return value
