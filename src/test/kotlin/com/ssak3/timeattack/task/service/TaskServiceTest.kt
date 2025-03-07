@@ -20,8 +20,8 @@ import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
-import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
