@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.controller
+package com.ssak3.timeattack.member.controller.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
