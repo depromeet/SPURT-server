@@ -10,6 +10,6 @@ fun <T : Any> checkNotNull(
     value: T?,
     valueName: String?,
 ): T {
-    val message = valueName?.let { "$it must not be null" } ?: "Value must not be null"
+    val message = valueName?.let { "$it must not be null" } ?: "Required value was null."
     return checkNotNull(value) { message }
 }
