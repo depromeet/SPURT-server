@@ -2,8 +2,8 @@ package com.ssak3.timeattack.notifications.service
 
 import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
 import com.ssak3.timeattack.notifications.domain.FcmMessage
-import com.ssak3.timeattack.notifications.utils.FcmNotificationConstants.getMessage
-import com.ssak3.timeattack.notifications.utils.FcmNotificationConstants.getRoute
+import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
+import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getRoute
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -21,9 +21,10 @@ class PushNotificationScheduler(
     @Async
     @Scheduled(cron = "0 * * * * *") // 1분 단위
     fun sendNotifications() {
-        val currentScheduledNotifications = pushNotificationService.getCurrentList()
-        currentScheduledNotifications.map {
-            fcmDeviceService.getDevicesByMember(it.member).forEach { device ->
+        val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
+        currentScheduledNotifications.forEach {
+            checkNotNull(it.member.id)
+            fcmDeviceService.getDevicesByMember(it.member.id).forEach { device ->
                 val message =
                     FcmMessage(
                         token = device.fcmRegistrationToken,
