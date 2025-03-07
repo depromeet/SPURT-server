@@ -1,6 +1,5 @@
 package com.ssak3.timeattack.notifications.service
 
-import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.notifications.domain.FcmDevice
 import com.ssak3.timeattack.notifications.repository.FcmDeviceRepository
 import org.springframework.stereotype.Service
@@ -15,6 +14,6 @@ class FcmDeviceService(
         fcmDeviceRepository.save(fcmDevice.toEntity())
     }
 
-    fun getDevicesByMember(member: Member): List<FcmDevice> =
-        fcmDeviceRepository.findActiveByMember(member.toEntity()).map(FcmDevice::fromEntity)
+    fun getDevicesByMember(memberId: Long): List<FcmDevice> =
+        fcmDeviceRepository.findActiveByMember(memberId).map(FcmDevice::fromEntity)
 }
