@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.notifications.utils
+package com.ssak3.timeattack.notifications.domain
 
 import kotlin.random.Random
 
