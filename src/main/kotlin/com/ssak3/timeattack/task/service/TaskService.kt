@@ -18,7 +18,7 @@ import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
-import com.ssak3.timeattack.task.service.events.TriggerActionAlarmSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -88,13 +88,13 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         // 4. Task 이벤트 발행
-        val triggerActionAlarmSaveEvent =
-            TriggerActionAlarmSaveEvent(
+        val triggerActionNotificationSaveEvent =
+            TriggerActionNotificationSaveEvent(
                 checkNotNull(member.id),
                 checkNotNull(savedTaskEntity.id),
                 scheduledTaskRequest.triggerActionAlarmTime,
             )
-        eventPublisher.publishEvent(triggerActionAlarmSaveEvent)
+        eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
 
         // 5. Task 반환
         return Task.fromEntity(savedTaskEntity)
@@ -271,13 +271,13 @@ class TaskService(
 
         // 작은 행동 알림이 업데이트 되면 새로운 알림 저장 이벤트 발행
         if (request.isTriggerActionAlarmTimeUpdateRequest()) {
-            val triggerActionAlarmSaveEvent =
-                TriggerActionAlarmSaveEvent(
+            val triggerActionNotificationSaveEvent =
+                TriggerActionNotificationSaveEvent(
                     checkNotNull(member.id, "memberId"),
                     taskId,
                     checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
                 )
-            eventPublisher.publishEvent(triggerActionAlarmSaveEvent)
+            eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
         }
 
         return Task.fromEntity(updatedTaskEntity)
