@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.member.controller
+package com.ssak3.timeattack.member.controller.dto
 
 import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.member.domain.OAuthProvider

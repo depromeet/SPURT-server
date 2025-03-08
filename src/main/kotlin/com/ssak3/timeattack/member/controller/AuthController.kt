@@ -2,6 +2,9 @@ package com.ssak3.timeattack.member.controller
 
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
+import com.ssak3.timeattack.member.controller.dto.LoginRequest
+import com.ssak3.timeattack.member.controller.dto.LoginResponse
+import com.ssak3.timeattack.member.controller.dto.RefreshRequest
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.service.AuthService
 import io.swagger.v3.oas.annotations.Operation
@@ -28,9 +31,9 @@ class AuthController(
         response: HttpServletResponse,
     ): ResponseEntity<LoginResponse> {
         // 소셜 로그인 후, JWT 토큰 반환
-        val (tokens, isNewUser) = authService.authenticateAndRegister(loginRequest)
+        val loginResult = authService.authenticateAndRegister(loginRequest)
 
-        return ResponseEntity.ok(LoginResponse(tokens, isNewUser))
+        return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 
     @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = "BearerAuth")])

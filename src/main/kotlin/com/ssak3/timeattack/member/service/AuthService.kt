@@ -1,16 +1,18 @@
 package com.ssak3.timeattack.member.service
 
-import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
-import com.ssak3.timeattack.member.controller.LoginRequest
+import com.ssak3.timeattack.member.controller.dto.LoginRequest
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
+import com.ssak3.timeattack.member.service.dto.LoginResult
+import com.ssak3.timeattack.member.service.dto.MemberInfo
 import com.ssak3.timeattack.member.service.events.DeviceRegisterEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -23,8 +25,8 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
-) {
-    fun authenticateAndRegister(request: LoginRequest): Pair<JwtTokenDto, Boolean> {
+) : Logger {
+    fun authenticateAndRegister(request: LoginRequest): LoginResult {
         // id token 요청
         val oAuthClient = oAuthClientFactory.getClient(request.provider)
         val idToken = oAuthClient.getToken(request.authCode).idToken
@@ -55,7 +57,14 @@ class AuthService(
         // 기기 정보 저장 이벤트 발행
         eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
 
-        return Pair(tokens, isNewUser)
+        val loginResult =
+            LoginResult(
+                tokens,
+                isNewUser,
+                MemberInfo(member.id, member.nickname, member.email, member.profileImageUrl),
+            )
+        logger.info("loginResult = $loginResult")
+        return loginResult
     }
 
     private fun createMember(
