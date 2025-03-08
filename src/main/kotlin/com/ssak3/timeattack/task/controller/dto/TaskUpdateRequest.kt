@@ -71,7 +71,7 @@ data class TaskUpdateRequest(
     @JsonIgnore
     fun validateRequest() {
         validateUpdateValueNotExists()
-        validateDueDatetimeWhenUrgent()
+        validateUrgentRequest()
     }
 
     @JsonIgnore
@@ -87,7 +87,14 @@ data class TaskUpdateRequest(
     }
 
     @JsonIgnore
-    fun validateDueDatetimeWhenUrgent() {
+    fun validateUrgentRequest() {
+        if (!isUrgent && triggerActionAlarmTime != null) {
+            throw ApplicationException(
+                ApplicationExceptionType.INVALID_UPDATE_VALUE,
+                "isUrgent가 false일 때 triggerActionAlarmTime을 업데이트 할 수 없습니다.",
+            )
+        }
+
         if (isUrgent && dueDatetime == null) {
             throw ApplicationException(
                 ApplicationExceptionType.INVALID_UPDATE_VALUE,

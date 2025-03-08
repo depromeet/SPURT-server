@@ -22,6 +22,7 @@ import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -306,20 +307,20 @@ class TaskService(
         taskId: Long,
         request: TaskUpdateRequest,
     ) {
-        // 작은 행동 알림이 업데이트 되거나 즉시 시작하게 되면 기존 알림을 삭제
-        if (request.isTriggerActionAlarmTimeUpdateRequest() || request.isUrgent) {
+        // 즉시 시작하게 되면 기존 알림을 삭제
+        if (request.isUrgent) {
             eventPublisher.publishEvent(DeleteTaskAlarmEvent(memberId, taskId))
         }
 
-        // 작은 행동 알림이 업데이트 되면 새로운 알림 저장 이벤트 발행
+        // 작은 행동 알림이 업데이트 되면 새로운 작은 행동 알림 업데이트 이벤트 발행
         if (request.isTriggerActionAlarmTimeUpdateRequest()) {
-            val triggerActionNotificationSaveEvent =
-                TriggerActionNotificationSaveEvent(
+            val triggerActionNotificationUpdateEvent =
+                TriggerActionNotificationUpdateEvent(
                     memberId,
                     taskId,
                     checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
                 )
-            eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
+            eventPublisher.publishEvent(triggerActionNotificationUpdateEvent)
         }
     }
 }
