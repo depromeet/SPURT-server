@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.notifications
 
-import com.ssak3.timeattack.IntegrationTest
+import com.ssak3.timeattack.RepositoryTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.notifications.repository.PushNotificationRepository
 import org.junit.jupiter.api.BeforeEach
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
-@IntegrationTest
+@RepositoryTest
 class PushNotificationRepositoryTest(
     @Autowired private val pushNotificationRepository: PushNotificationRepository,
 ) {
