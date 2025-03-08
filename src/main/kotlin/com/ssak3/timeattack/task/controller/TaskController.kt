@@ -12,6 +12,7 @@ import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.TaskResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
+import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.service.TaskService
@@ -136,6 +137,7 @@ class TaskController(
         return ResponseEntity.ok(MessageResponse("Task removed successfully"))
     }
 
+    // TODO: find -> get
     @Operation(
         summary = "홈 화면 작업 조회",
         description = "홈 화면에 표시할 수 있는 모든 작업 목록을 조회합니다.",
@@ -163,5 +165,23 @@ class TaskController(
     ): ResponseEntity<MessageResponse> {
         taskService.holdOffTask(taskId, member, taskHoldOffRequest)
         return ResponseEntity.noContent().build()
+    }
+
+    @Operation(
+        summary = "작업 수정",
+        description = "사용자의 작업 중 요청받은 작업을 수정합니다.",
+        security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)],
+    )
+    @PatchMapping("/{taskId}")
+    fun updateTask(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true)
+        @Positive taskId: Long,
+        @RequestBody @Valid taskUpdateRequest: TaskUpdateRequest,
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<TaskResponse> {
+        taskUpdateRequest.validateRequest()
+        val updatedTask = taskService.updateTask(member, taskId, taskUpdateRequest)
+        return ResponseEntity.ok(TaskResponse.fromTask(updatedTask))
     }
 }
