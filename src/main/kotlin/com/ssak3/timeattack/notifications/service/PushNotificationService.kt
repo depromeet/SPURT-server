@@ -2,6 +2,7 @@ package com.ssak3.timeattack.notifications.service
 
 import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.notifications.repository.PushNotificationRepository
+import com.ssak3.timeattack.task.domain.Task
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -23,5 +24,14 @@ class PushNotificationService(
         return pushNotificationRepository.findActiveAndScheduledAt(
             datetime = LocalDateTime.now().withSecond(0).withNano(0),
         ).map(PushNotification::fromEntity)
+    }
+
+    fun delete(task: Task) {
+        val entities = pushNotificationRepository.findAllByTaskIs(task.toEntity())
+        entities.forEach { e ->
+            val notification = PushNotification.fromEntity(e)
+            notification.delete()
+            pushNotificationRepository.save(notification.toEntity())
+        }
     }
 }

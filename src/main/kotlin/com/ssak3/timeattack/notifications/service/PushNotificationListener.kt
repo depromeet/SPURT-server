@@ -64,6 +64,7 @@ class PushNotificationListener(
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun deleteNotifications(event: DeleteTaskAlarmEvent) {
         logger.info("DeleteTaskAlarmEvent: $event")
-        TODO("알림 삭제 이벤트를 받아 db에서 비활성화 처리")
+        val task = taskService.getTaskById(event.taskId)
+        pushNotificationService.delete(task)
     }
 }
