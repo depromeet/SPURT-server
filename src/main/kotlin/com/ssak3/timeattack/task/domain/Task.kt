@@ -162,7 +162,7 @@ class Task(
         status: TaskStatus,
         attribute: String,
     ) {
-        if (this.status != TaskStatus.BEFORE) {
+        if (this.status != status) {
             throw ApplicationException(ApplicationExceptionType.INVALID_TASK_STATUS_FOR_UPDATE, attribute, this.status)
         }
     }
