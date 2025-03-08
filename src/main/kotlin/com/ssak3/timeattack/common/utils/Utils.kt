@@ -13,11 +13,11 @@ import kotlin.contracts.contract
 @OptIn(ExperimentalContracts::class)
 fun <T : Any> checkNotNull(
     value: T?,
-    valueName: String?,
+    valueName: String = "Required value",
 ): T {
     contract {
         returns() implies (value != null)
     }
-    val message = valueName?.let { "$it must not be null" } ?: "Required value was null."
-    return checkNotNull(value) { message }
+
+    return checkNotNull(value) { "$valueName must not be null" }
 }
