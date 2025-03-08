@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.repository
 
-import com.ssak3.timeattack.TimeApplicationTest
+import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-@TimeApplicationTest
+@IntegrationTest
 class MemberRepositoryTest
     @Autowired
     constructor(

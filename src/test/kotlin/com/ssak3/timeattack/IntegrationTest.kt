@@ -19,4 +19,4 @@ import org.springframework.transaction.annotation.Transactional
 @ExtendWith(MockKExtension::class)
 @ExtendWith(SpringExtension::class)
 @Import(QueryDslConfig::class)
-annotation class TimeApplicationTest
+annotation class IntegrationTest

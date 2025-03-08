@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.task.repository
 
-import com.ssak3.timeattack.TimeApplicationTest
+import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@TimeApplicationTest
+@IntegrationTest
 class TaskRepositoryCustomImplTest(
     @Autowired private val taskRepository: TaskRepository,
     @Autowired private val memberRepository: MemberRepository,

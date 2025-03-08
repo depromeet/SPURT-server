@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.task.service
 
 import com.ninjasquad.springmockk.MockkBean
-import com.ssak3.timeattack.TimeApplicationTest
+import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -30,7 +30,7 @@ import java.time.LocalDateTime
 /**
  * ApplicationEventPublisher의 실제 동작과 함께 TaskService 테스트
  */
-@TimeApplicationTest
+@IntegrationTest
 class TaskServiceEventTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,

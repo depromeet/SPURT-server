@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.task.service
 
-import com.ssak3.timeattack.TimeApplicationTest
+import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
@@ -44,7 +44,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
-@TimeApplicationTest
+@IntegrationTest
 class TaskServiceTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,
