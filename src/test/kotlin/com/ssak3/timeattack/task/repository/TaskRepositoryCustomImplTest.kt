@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.task.repository
 
-import com.ssak3.timeattack.common.config.QueryDslConfig
+import com.ssak3.timeattack.TimeApplicationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -22,15 +22,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@DataJpaTest
-@Import(QueryDslConfig::class)
-@ActiveProfiles("test")
+@TimeApplicationTest
 class TaskRepositoryCustomImplTest(
     @Autowired private val taskRepository: TaskRepository,
     @Autowired private val memberRepository: MemberRepository,

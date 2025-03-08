@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.service
 
+import com.ssak3.timeattack.TimeApplicationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.global.exception.ApplicationException
 import com.ssak3.timeattack.global.exception.ApplicationExceptionType
@@ -24,7 +25,6 @@ import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import io.mockk.clearMocks
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
@@ -34,27 +34,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Primary
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
-@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-@ExtendWith(MockKExtension::class)
-@ExtendWith(SpringExtension::class)
+@TimeApplicationTest
 class TaskServiceTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,

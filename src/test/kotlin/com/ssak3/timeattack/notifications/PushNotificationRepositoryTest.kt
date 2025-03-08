@@ -1,21 +1,16 @@
 package com.ssak3.timeattack.notifications
 
-import com.ssak3.timeattack.common.config.QueryDslConfig
+import com.ssak3.timeattack.TimeApplicationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.notifications.repository.PushNotificationRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
-@DataJpaTest
-@Import(QueryDslConfig::class)
-@ActiveProfiles("test")
+@TimeApplicationTest
 class PushNotificationRepositoryTest(
     @Autowired private val pushNotificationRepository: PushNotificationRepository,
 ) {
