@@ -1,8 +1,8 @@
 package com.ssak3.timeattack.task.service
 
-import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType
+import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.persona.domain.Persona
