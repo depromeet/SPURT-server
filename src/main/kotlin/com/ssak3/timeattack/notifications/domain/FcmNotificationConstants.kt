@@ -11,7 +11,7 @@ object FcmNotificationConstants {
 
     fun getRoute(order: Int): String {
         return if (order == 0) {
-            "/action/push"
+            "/action/start"
         } else {
             "/action/push?left=${REMINDER_LIMIT - order}"
         }

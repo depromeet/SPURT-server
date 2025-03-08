@@ -1,12 +1,12 @@
 package com.ssak3.timeattack.common.security
 
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_EXPIRED
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_GENERAL_ERR
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_INVALID_SIGNATURE
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_MALFORMED
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_UNSUPPORTED
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_EXPIRED
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_GENERAL_ERR
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_INVALID_SIGNATURE
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_MALFORMED
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_UNSUPPORTED
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws

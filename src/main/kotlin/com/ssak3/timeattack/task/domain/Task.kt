@@ -1,8 +1,8 @@
 package com.ssak3.timeattack.task.domain
 
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.utils.checkNotNull
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
@@ -162,7 +162,7 @@ class Task(
         status: TaskStatus,
         attribute: String,
     ) {
-        if (this.status != TaskStatus.BEFORE) {
+        if (this.status != status) {
             throw ApplicationException(ApplicationExceptionType.INVALID_TASK_STATUS_FOR_UPDATE, attribute, this.status)
         }
     }

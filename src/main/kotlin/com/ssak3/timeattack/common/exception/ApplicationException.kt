@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.global.exception
+package com.ssak3.timeattack.common.exception
 
 class ApplicationException(
     val exceptionType: ApplicationExceptionType,
