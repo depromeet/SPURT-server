@@ -72,7 +72,6 @@ class TaskServiceEventTest(
                 personaRepository.saveAndFlush(
                     PersonaEntity(
                         name = "Urgent Programmer",
-                        personaImageUrl = "https://testimage.com",
                         taskType = taskType,
                         taskMode = taskMode,
                     ),
