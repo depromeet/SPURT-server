@@ -21,6 +21,10 @@ class PushNotification(
             order = order,
         )
 
+    fun delete() {
+        isDeleted = true
+    }
+
     companion object {
         fun fromEntity(entity: PushNotificationEntity) =
             PushNotification(
