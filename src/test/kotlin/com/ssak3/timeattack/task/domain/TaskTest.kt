@@ -115,4 +115,42 @@ class TaskTest {
             assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.TASK_CATEGORY_MISMATCH)
         }
     }
+
+    @Test
+    @DisplayName("마감시간 이후의 리마인더 알림을 검증할 경우 예외가 발생한다.")
+    fun throwExceptionForValidateTriggerActionAlarmTimeAfterDueDatetime() {
+        // given
+        val now = LocalDateTime.now()
+        val scheduledTask =
+            Fixture.createScheduledTask(
+                dueDatetime = now.plusMinutes(40),
+                estimatedTime = 20,
+            )
+        val reminderNotificationTime = now.plusMinutes(50)
+
+        // when & then
+        assertThrows<ApplicationException> {
+            scheduledTask.validateReminderAlarmTime(reminderNotificationTime)
+        }.apply {
+            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.INVALID_REMINDER_ALARM_TIME)
+        }
+    }
+
+    @Test
+    @DisplayName("마감시간 이전의 리마인더 알림을 검증할 경우 예외가 발생하지 않는다.")
+    fun allowValidReminderAlarmTimeBeforeDueDatetime() {
+        // given
+        val now = LocalDateTime.now()
+        val scheduledTask =
+            Fixture.createScheduledTask(
+                dueDatetime = now.plusMinutes(40),
+                estimatedTime = 20,
+            )
+        val reminderAlarmTime = now.plusMinutes(30)
+
+        // when & then
+        assertDoesNotThrow {
+            scheduledTask.validateReminderAlarmTime(reminderAlarmTime)
+        }
+    }
 }
