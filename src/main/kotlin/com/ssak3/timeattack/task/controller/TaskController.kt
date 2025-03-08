@@ -2,8 +2,8 @@ package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.common.dto.MessageResponse
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
