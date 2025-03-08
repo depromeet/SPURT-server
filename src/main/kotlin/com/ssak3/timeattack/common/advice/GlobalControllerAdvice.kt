@@ -1,10 +1,13 @@
-package com.ssak3.timeattack.global.advice
+package com.ssak3.timeattack.common.advice
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
+import com.ssak3.timeattack.common.response.ExceptionResponse
 import com.ssak3.timeattack.common.utils.Logger
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
-import com.ssak3.timeattack.global.response.ExceptionResponse
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.HandlerMethodValidationException
@@ -33,6 +36,26 @@ class GlobalControllerAdvice : Logger {
         return ResponseEntity.status(
             exceptionType.httpStatus,
         ).body(ExceptionResponse.from(exceptionType, errorMessage))
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleMismatchedInputException(exception: MismatchedInputException): ResponseEntity<ExceptionResponse> {
+        logger.error("HttpMessageNotReadableException occurred", exception)
+        val exceptionType = ApplicationExceptionType.INVALID_REQUEST
+        return ResponseEntity.status(
+            exceptionType.httpStatus,
+        ).body(ExceptionResponse.from(exceptionType, exception.message ?: "json format error"))
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(
+        exception: MethodArgumentNotValidException,
+    ): ResponseEntity<ExceptionResponse> {
+        logger.error("MethodArgumentNotValidException occurred", exception)
+        val exceptionType = ApplicationExceptionType.INVALID_REQUEST
+        return ResponseEntity.status(
+            exceptionType.httpStatus,
+        ).body(ExceptionResponse.from(exceptionType, exception.message))
     }
 
     @ExceptionHandler(Exception::class)

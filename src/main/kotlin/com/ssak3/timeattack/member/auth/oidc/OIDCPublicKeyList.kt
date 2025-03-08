@@ -2,8 +2,8 @@ package com.ssak3.timeattack.member.auth.oidc
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.OIDC_PUBLIC_KEY_NOT_FOUND
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.OIDC_PUBLIC_KEY_NOT_FOUND
 import java.io.Serializable
 
 /**
