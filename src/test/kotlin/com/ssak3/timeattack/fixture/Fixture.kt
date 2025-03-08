@@ -67,12 +67,10 @@ object Fixture {
         id: Long = 1L,
         name: String = "Urgent Programmer",
         taskKeywordsCombination: TaskKeywordsCombination = createTaskKeywordsCombination(),
-        personaImageUrl: String = "https://testimage.com",
     ) = Persona(
         id = id,
         name = name,
         taskKeywordsCombination = taskKeywordsCombination,
-        personaImageUrl = personaImageUrl,
     )
 
     fun createTask(

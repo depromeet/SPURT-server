@@ -28,8 +28,6 @@ class PersonaEntity(
     val id: Long? = null,
     @Column(name = "name", unique = true, length = 100)
     val name: String,
-    @Column(name = "persona_image_url", length = 255)
-    val personaImageUrl: String,
     @ManyToOne
     @JoinColumn(name = "task_type_id", foreignKey = ForeignKey(ConstraintMode.NO_CONSTRAINT))
     val taskType: TaskTypeEntity,
