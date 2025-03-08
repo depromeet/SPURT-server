@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.service
 
 import com.ninjasquad.springmockk.MockkBean
+import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -17,31 +18,19 @@ import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import io.mockk.every
-import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.event.ApplicationEvents
-import org.springframework.test.context.event.RecordApplicationEvents
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 /**
  * ApplicationEventPublisher의 실제 동작과 함께 TaskService 테스트
  */
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-@RecordApplicationEvents
-@ExtendWith(MockKExtension::class)
-@ExtendWith(SpringExtension::class)
+@IntegrationTest
 class TaskServiceEventTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,

@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.member.repository
 
-import com.ssak3.timeattack.common.config.QueryDslConfig
+import com.ssak3.timeattack.RepositoryTest
 import com.ssak3.timeattack.member.domain.OAuthProvider
 import com.ssak3.timeattack.member.repository.entity.MemberEntity
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
@@ -9,13 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
 
-@DataJpaTest
-@Import(QueryDslConfig::class)
-@ActiveProfiles("test")
+@RepositoryTest
 class MemberRepositoryTest
     @Autowired
     constructor(
