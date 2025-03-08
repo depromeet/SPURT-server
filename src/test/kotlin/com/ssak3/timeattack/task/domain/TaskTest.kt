@@ -118,7 +118,7 @@ class TaskTest {
 
     @Test
     @DisplayName("마감시간 이후의 리마인더 알림을 검증할 경우 예외가 발생한다.")
-    fun throwExceptionForValidateTriggerActionNotificationTimeAfterDueDatetime() {
+    fun throwExceptionForValidateTriggerActionAlarmTimeAfterDueDatetime() {
         // given
         val now = LocalDateTime.now()
         val scheduledTask =
@@ -138,7 +138,7 @@ class TaskTest {
 
     @Test
     @DisplayName("마감시간 이전의 리마인더 알림을 검증할 경우 예외가 발생하지 않는다.")
-    fun allowValidReminderNotificationTimeBeforeDueDatetime() {
+    fun allowValidReminderAlarmTimeBeforeDueDatetime() {
         // given
         val now = LocalDateTime.now()
         val scheduledTask =
@@ -146,11 +146,11 @@ class TaskTest {
                 dueDatetime = now.plusMinutes(40),
                 estimatedTime = 20,
             )
-        val reminderNotificationTime = now.plusMinutes(30)
+        val reminderAlarmTime = now.plusMinutes(30)
 
         // when & then
         assertDoesNotThrow {
-            scheduledTask.validateReminderAlarmTime(reminderNotificationTime)
+            scheduledTask.validateReminderAlarmTime(reminderAlarmTime)
         }
     }
 }
