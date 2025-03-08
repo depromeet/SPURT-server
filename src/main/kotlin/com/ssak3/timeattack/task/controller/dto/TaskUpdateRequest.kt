@@ -88,10 +88,10 @@ data class TaskUpdateRequest(
 
     @JsonIgnore
     fun validateUrgentRequest() {
-        if (!isUrgent && triggerActionAlarmTime != null) {
+        if (isUrgent && triggerActionAlarmTime != null) {
             throw ApplicationException(
                 ApplicationExceptionType.INVALID_UPDATE_VALUE,
-                "isUrgent가 false일 때 triggerActionAlarmTime을 업데이트 할 수 없습니다.",
+                "isUrgent가 true 때 triggerActionAlarmTime을 업데이트 할 수 없습니다.",
             )
         }
 
