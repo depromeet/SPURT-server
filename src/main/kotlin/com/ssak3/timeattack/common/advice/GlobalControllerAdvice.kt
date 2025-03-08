@@ -1,10 +1,10 @@
-package com.ssak3.timeattack.global.advice
+package com.ssak3.timeattack.common.advice
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.ssak3.timeattack.common.utils.Logger
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
-import com.ssak3.timeattack.global.response.ExceptionResponse
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
+import com.ssak3.timeattack.common.response.ExceptionResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException

@@ -1,7 +1,7 @@
-package com.ssak3.timeattack.global.response
+package com.ssak3.timeattack.common.response
 
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 
 data class ExceptionResponse(
     val httpStatus: String,

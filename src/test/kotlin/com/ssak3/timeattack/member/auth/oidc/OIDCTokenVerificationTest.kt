@@ -1,7 +1,7 @@
 package com.ssak3.timeattack.member.auth.oidc
 
-import com.ssak3.timeattack.global.exception.ApplicationException
-import com.ssak3.timeattack.global.exception.ApplicationExceptionType.JWT_EXPIRED
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_EXPIRED
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
