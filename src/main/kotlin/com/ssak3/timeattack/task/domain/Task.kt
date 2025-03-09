@@ -158,7 +158,7 @@ class Task(
         this.dueDatetime = dueDatetime
     }
 
-    fun validateTaskStatusForUpdate(
+    private fun validateTaskStatusForUpdate(
         status: TaskStatus,
         attribute: String,
     ) {
