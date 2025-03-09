@@ -20,6 +20,11 @@ import java.time.LocalDateTime
 
 class TaskTest : DescribeSpec({
     describe("Task 클래스 수정 시") {
+        lateinit var now: LocalDateTime
+
+        beforeEach {
+            now = LocalDateTime.now()
+        }
         context("Urgent Task의 모든 가능한 Status에서") {
             val statusList = listOf(
                 FOCUSED,
@@ -67,10 +72,8 @@ class TaskTest : DescribeSpec({
 
         context("BEFORE 상태에서") {
             lateinit var task: Task
-            lateinit var now: LocalDateTime
 
             beforeEach {
-                now = LocalDateTime.now()
                 task = Fixture.createScheduledTask(
                     status = BEFORE,
                     dueDatetime = now.plusHours(2),
@@ -88,6 +91,12 @@ class TaskTest : DescribeSpec({
             it ("유효한 예상 소요 시간 수정이 가능하다.") {
                 shouldNotThrowAny {
                     task.modifyEstimatedTime(10, now.plusMinutes(20))
+                }
+            }
+
+            it ("유효한 마감 시간 수정이 가능하다.") {
+                shouldNotThrowAny {
+                    task.modifyDueDatetime(now.plusMinutes(90), now.plusMinutes(20))
                 }
             }
         }
@@ -117,7 +126,18 @@ class TaskTest : DescribeSpec({
                 forAll(*listToRowArray(statusExceptBefore)) { status ->
                     val task = Fixture.createScheduledTask(status = status)
                     shouldThrow<ApplicationException> {
-                        task.modifyEstimatedTime(10, LocalDateTime.now().plusMinutes(20))
+                        task.modifyEstimatedTime(10, now.plusMinutes(20))
+                    }.apply {
+                        this.exceptionType shouldBe ApplicationExceptionType.INVALID_TASK_STATUS_FOR_UPDATE
+                    }
+                }
+            }
+
+            it("유효한 마감 시간이어도 수정이 불가능하다.") {
+                forAll(*listToRowArray(statusExceptBefore)) { status ->
+                    val task = Fixture.createScheduledTask(status = status)
+                    shouldThrow<ApplicationException> {
+                        task.modifyDueDatetime(now.plusMinutes(90), now.plusMinutes(20))
                     }.apply {
                         this.exceptionType shouldBe ApplicationExceptionType.INVALID_TASK_STATUS_FOR_UPDATE
                     }

@@ -129,6 +129,13 @@ object Fixture {
         isDeleted = isDeleted,
     )
 
+    /**
+     * 다음 조건의 Scheduled Task 생성
+     * <br>
+     * - 마감시간은 현재시간보다 1일 뒤
+     * - 예상 소요 시간은 1시간
+     * - 작은 행동 알림 시간은 현재시간보다 10시간 뒤
+     */
     fun createScheduledTask(
         id: Long? = 1L,
         name: String = "Test Task",
