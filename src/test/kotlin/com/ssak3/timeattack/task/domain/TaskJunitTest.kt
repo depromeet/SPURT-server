@@ -15,7 +15,12 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 
-class TaskTest {
+/**
+ * Task 도메인의 Junit 테스트
+ * Kotest로 전환 예정
+ * 해당 테스트 클래스는 더 이상 확장되지 않습니다.
+ */
+class TaskJunitTest {
     private lateinit var urgentTask: Task
     private lateinit var scheduledTask: Task
 
