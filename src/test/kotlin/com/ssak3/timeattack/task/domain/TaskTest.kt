@@ -19,6 +19,63 @@ import io.kotest.matchers.shouldBe
 import java.time.LocalDateTime
 
 class TaskTest : DescribeSpec({
+    describe("Scheduled Task 생성 시") {
+        context("BEFORE 상태로 생성될 때") {
+            it("작은 행동 알림으로부터 마감시간까지 남은 시간이 예상 소요시간 보다 적게 생성 될 수 없다.") {
+                val now = LocalDateTime.now()
+                shouldThrow<ApplicationException> {
+                    Task(
+                        name = "test task",
+                        category = TaskCategory.SCHEDULED,
+                        status = BEFORE,
+                        triggerActionAlarmTime = now.plusMinutes(20),
+                        dueDatetime = now.plusMinutes(30),
+                        estimatedTime = 60,
+                        triggerAction = "test trigger action",
+                        member = Fixture.createMember(),
+                        persona = Fixture.createPersona(),
+                    )
+                }.apply {
+                    this.exceptionType shouldBe ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME
+                }
+            }
+
+            it("작은 행동 알림으로부터 마감시간까지 남은 시간이 예상 소요시간과 같다면 생성될 수 있다.") {
+                val now = LocalDateTime.now()
+                shouldNotThrowAny {
+                    Task(
+                        name = "test task",
+                        category = TaskCategory.SCHEDULED,
+                        status = BEFORE,
+                        triggerActionAlarmTime = now.plusMinutes(20),
+                        dueDatetime = now.plusMinutes(80),
+                        estimatedTime = 60,
+                        triggerAction = "test trigger action",
+                        member = Fixture.createMember(),
+                        persona = Fixture.createPersona(),
+                    )
+                }
+            }
+
+            it("작은 행동 알림으로부터 마감시간까지 남은 시간이 예상 소요시간보다 많다면 생성 될 수 있다.") {
+                val now = LocalDateTime.now()
+                shouldNotThrowAny {
+                    Task(
+                        name = "test task",
+                        category = TaskCategory.SCHEDULED,
+                        status = BEFORE,
+                        triggerActionAlarmTime = now.plusMinutes(20),
+                        dueDatetime = now.plusMinutes(90),
+                        estimatedTime = 60,
+                        triggerAction = "test trigger action",
+                        member = Fixture.createMember(),
+                        persona = Fixture.createPersona(),
+                    )
+                }
+            }
+        }
+    }
+
     describe("Task 클래스 수정 시") {
         lateinit var now: LocalDateTime
 
