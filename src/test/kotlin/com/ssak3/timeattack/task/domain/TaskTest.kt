@@ -202,6 +202,37 @@ class TaskTest : DescribeSpec({
             }
         }
 
+        context("예상 소요 시간이 늘어나는 경우") {
+            val task = Fixture.createScheduledTaskWithNow(now)
 
+            it("작은 행동 알림 시간부터 기존 마감 시간까지의 시간보다 커지면 예외가 발생한다.") {
+                shouldThrow<ApplicationException> {
+                    task.modifyEstimatedTime(180, now.plusMinutes(60))
+                }.apply {
+                    this.exceptionType shouldBe ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME
+                }
+            }
+        }
+
+        context("마감 시간이 줄고, 즉시 몰입 중으로 바뀌지 않는다면") {
+            val task = Fixture.createScheduledTaskWithNow(now)
+
+            it("작은 행동 알림 시간에서 기존 예상 소요시간을 더했을 때 마감 시간보다 크다면 예외가 발생한다.") {
+                shouldThrow<ApplicationException> {
+                    task.modifyDueDatetime(now.plusMinutes(90), now.plusMinutes(70))
+                }.apply {
+                    this.exceptionType shouldBe ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME
+                }
+            }
+        }
+
+        context("마감 시간이 줄고, 즉시 몰입 중으로 바뀐다면") {
+            val task = Fixture.createScheduledTaskWithNow(baseTime = now)
+
+            it("상태가 FOCUSED로 바뀐다.") {
+                task.modifyToUrgentDueDatetime(now.plusMinutes(30))
+                task.status shouldBe FOCUSED
+            }
+        }
     }
 })

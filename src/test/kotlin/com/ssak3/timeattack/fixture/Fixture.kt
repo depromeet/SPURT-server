@@ -169,9 +169,9 @@ object Fixture {
     /**
      * 기준 시간를 주입 받아 다음 조건의 Scheduled Task 생성
      * <br>
-     * - 마감시간은 현재시간보다 1일 뒤
+     * - 마감시간은 현재시간보다 3시간 뒤
+     * - 작은 행동 알림 시간은 현재시간보다 1시간 뒤
      * - 예상 소요 시간은 1시간
-     * - 작은 행동 알림 시간은 현재시간보다 10시간 뒤
      */
     fun createScheduledTaskWithNow(
         baseTime: LocalDateTime,
@@ -189,10 +189,10 @@ object Fixture {
         id = id,
         name = name,
         category = category,
-        dueDatetime = baseTime.plusDays(1),
-        triggerAction = triggerAction,
-        triggerActionAlarmTime = baseTime.plusHours(10),
+        triggerActionAlarmTime = baseTime.plusHours(1),
+        dueDatetime = baseTime.plusHours(3),
         estimatedTime = 60,
+        triggerAction = triggerAction,
         status = status,
         member = member,
         persona = persona,

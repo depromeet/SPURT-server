@@ -96,7 +96,7 @@ class TaskJunitTest {
         val now = LocalDateTime.now()
         val scheduledTask =
             Fixture.createScheduledTaskWithNow(now)
-        val reminderAlarmTime = now.plusHours(9)
+        val reminderAlarmTime = now.plusHours(2)
 
         // when & then
         assertDoesNotThrow {
