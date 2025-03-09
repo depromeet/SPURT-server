@@ -44,8 +44,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
+/**
+ * - TaskService Junit 테스트
+ * - Kotest로 전환 예정
+ * - 해당 테스트 클래스는 더 이상 확장되지 않습니다.
+ */
 @IntegrationTest
-class TaskServiceTest(
+class TaskServiceJUnitTest(
     @Autowired private val taskService: TaskService,
     @Autowired private val memberRepository: MemberRepository,
     @Autowired private val taskTypeRepository: TaskTypeRepository,
