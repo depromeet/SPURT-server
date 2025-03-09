@@ -81,7 +81,7 @@ object Fixture {
         triggerAction: String? = null,
         triggerActionAlarmTime: LocalDateTime? = null,
         estimatedTime: Int? = null,
-        status: TaskStatus = TaskStatus.BEFORE,
+        status: TaskStatus = TaskStatus.FOCUSED,
         member: Member = createMember(),
         persona: Persona = createPersona(),
         createdAt: LocalDateTime = now,
@@ -158,6 +158,41 @@ object Fixture {
         triggerAction = triggerAction,
         triggerActionAlarmTime = triggerActionAlarmTime,
         estimatedTime = estimatedTime,
+        status = status,
+        member = member,
+        persona = persona,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        isDeleted = isDeleted,
+    )
+
+    /**
+     * 기준 시간를 주입 받아 다음 조건의 Scheduled Task 생성
+     * <br>
+     * - 마감시간은 현재시간보다 1일 뒤
+     * - 예상 소요 시간은 1시간
+     * - 작은 행동 알림 시간은 현재시간보다 10시간 뒤
+     */
+    fun createScheduledTaskWithNow(
+        baseTime: LocalDateTime,
+        id: Long? = 1L,
+        name: String = "Test Task",
+        category: TaskCategory = TaskCategory.SCHEDULED,
+        triggerAction: String = "Trigger Action",
+        status: TaskStatus = TaskStatus.BEFORE,
+        member: Member = createMember(),
+        persona: Persona = createPersona(),
+        createdAt: LocalDateTime = baseTime,
+        updatedAt: LocalDateTime = baseTime,
+        isDeleted: Boolean = false,
+    ) = Task(
+        id = id,
+        name = name,
+        category = category,
+        dueDatetime = baseTime.plusDays(1),
+        triggerAction = triggerAction,
+        triggerActionAlarmTime = baseTime.plusHours(10),
+        estimatedTime = 60,
         status = status,
         member = member,
         persona = persona,

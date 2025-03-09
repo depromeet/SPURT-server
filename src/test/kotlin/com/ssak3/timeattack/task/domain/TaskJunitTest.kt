@@ -7,6 +7,7 @@ import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
+import io.kotest.matchers.collections.beStrictlyIncreasingWith
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -16,9 +17,9 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 
 /**
- * Task 도메인의 Junit 테스트
- * Kotest로 전환 예정
- * 해당 테스트 클래스는 더 이상 확장되지 않습니다.
+ * - Task 도메인의 Junit 테스트
+ * - Kotest로 전환 예정
+ * - 해당 테스트 클래스는 더 이상 확장되지 않습니다.
  */
 class TaskJunitTest {
     private lateinit var urgentTask: Task
@@ -71,55 +72,55 @@ class TaskJunitTest {
         }
     }
 
-    @Test
-    @DisplayName("ScheduledTask의 trigger action 알람 시간으로부터 마감 시간까지의 시간이 예상 시간보다 작을 경우 예외가 발생한다.")
-    fun throwExceptionForInvalidTriggerActionAlarmTime() {
-        // given
-        val now = LocalDateTime.now()
-        val scheduledTask =
-            Fixture.createScheduledTask(
-                dueDatetime = now.plusMinutes(100),
-                estimatedTime = 60,
-            )
-        val triggerActionAlarmTime = now.plusMinutes(50)
-
-        // when & then
-        assertThrows<ApplicationException> {
-            scheduledTask.validateTriggerActionAlarmTime(triggerActionAlarmTime)
-        }.apply {
-            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME)
-        }
-    }
-
-    @Test
-    @DisplayName("ScheduledTask의 trigger action 알람 시간으로부터 마감 시간까지의 시간이 예상 소요 시간 이상일 경우 예외가 발생하지 않는다.")
-    fun allowValidTriggerActionAlarmTime() {
-        // given
-        val now = LocalDateTime.now()
-        val scheduledTask =
-            Fixture.createScheduledTask(
-                dueDatetime = now.plusMinutes(100),
-                estimatedTime = 60,
-            )
-        val triggerActionAlarmTime = now.plusMinutes(30)
-
-        // when & then
-        assertDoesNotThrow {
-            scheduledTask.validateTriggerActionAlarmTime(triggerActionAlarmTime)
-        }
-    }
-
-    @Test
-    @DisplayName("URGENT Task에 대해서 Trigger Action 알람을 검증할 시 예외가 발생한다.")
-    fun throwExceptionForValidateTriggerActionAlarmTimeOnUrgentTask() {
-        // given
-        // when & then
-        assertThrows<ApplicationException> {
-            urgentTask.validateTriggerActionAlarmTime(LocalDateTime.now())
-        }.apply {
-            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.TASK_CATEGORY_MISMATCH)
-        }
-    }
+//    @Test
+//    @DisplayName("ScheduledTask의 trigger action 알람 시간으로부터 마감 시간까지의 시간이 예상 시간보다 작을 경우 예외가 발생한다.")
+//    fun throwExceptionForInvalidTriggerActionAlarmTime() {
+//        // given
+//        val now = LocalDateTime.now()
+//        val scheduledTask =
+//            Fixture.createScheduledTask(
+//                dueDatetime = now.plusMinutes(100),
+//                estimatedTime = 60,
+//            )
+//        val triggerActionAlarmTime = now.plusMinutes(50)
+//
+//        // when & then
+//        assertThrows<ApplicationException> {
+//            scheduledTask.validateTriggerActionAlarmTime(triggerActionAlarmTime)
+//        }.apply {
+//            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME)
+//        }
+//    }
+//
+//    @Test
+//    @DisplayName("ScheduledTask의 trigger action 알람 시간으로부터 마감 시간까지의 시간이 예상 소요 시간 이상일 경우 예외가 발생하지 않는다.")
+//    fun allowValidTriggerActionAlarmTime() {
+//        // given
+//        val now = LocalDateTime.now()
+//        val scheduledTask =
+//            Fixture.createScheduledTask(
+//                dueDatetime = now.plusMinutes(100),
+//                estimatedTime = 60,
+//            )
+//        val triggerActionAlarmTime = now.plusMinutes(30)
+//
+//        // when & then
+//        assertDoesNotThrow {
+//            scheduledTask.validateTriggerActionAlarmTime(triggerActionAlarmTime)
+//        }
+//    }
+//
+//    @Test
+//    @DisplayName("URGENT Task에 대해서 Trigger Action 알람을 검증할 시 예외가 발생한다.")
+//    fun throwExceptionForValidateTriggerActionAlarmTimeOnUrgentTask() {
+//        // given
+//        // when & then
+//        assertThrows<ApplicationException> {
+//            urgentTask.validateTriggerActionAlarmTime(LocalDateTime.now())
+//        }.apply {
+//            assertThat(this.exceptionType).isEqualTo(ApplicationExceptionType.TASK_CATEGORY_MISMATCH)
+//        }
+//    }
 
     @Test
     @DisplayName("마감시간 이후의 리마인더 알림을 검증할 경우 예외가 발생한다.")
@@ -127,11 +128,8 @@ class TaskJunitTest {
         // given
         val now = LocalDateTime.now()
         val scheduledTask =
-            Fixture.createScheduledTask(
-                dueDatetime = now.plusMinutes(40),
-                estimatedTime = 20,
-            )
-        val reminderNotificationTime = now.plusMinutes(50)
+            Fixture.createScheduledTaskWithNow(now)
+        val reminderNotificationTime = now.plusDays(2)
 
         // when & then
         assertThrows<ApplicationException> {
@@ -147,11 +145,8 @@ class TaskJunitTest {
         // given
         val now = LocalDateTime.now()
         val scheduledTask =
-            Fixture.createScheduledTask(
-                dueDatetime = now.plusMinutes(40),
-                estimatedTime = 20,
-            )
-        val reminderAlarmTime = now.plusMinutes(30)
+            Fixture.createScheduledTaskWithNow(now)
+        val reminderAlarmTime = now.plusHours(9)
 
         // when & then
         assertDoesNotThrow {

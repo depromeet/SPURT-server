@@ -23,6 +23,14 @@ class Task(
     val updatedAt: LocalDateTime? = null,
     var isDeleted: Boolean = false,
 ) {
+
+    init {
+        // scheduled 작업에서 FOCUSED 일 경우는 아래의 검증 로직에서 벗어나는 케이스 존재
+        if (category == TaskCategory.SCHEDULED && status == TaskStatus.BEFORE) {
+            validateTriggerActionAlarmTime()
+        }
+    }
+
     fun toEntity() =
         TaskEntity(
             id = id,
@@ -41,8 +49,12 @@ class Task(
     /**
      * 입력된 triggerActionAlarmTime 이 기존 task 의 estimatedTime 과 dueDatetime 에 대해 유효한지 검증
      */
-    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, this.dueDatetime)
+    private fun validateTriggerActionAlarmTime() {
+        validateTriggerActionAlarmTime(
+            checkNotNull(this.triggerActionAlarmTime, "triggerActionAlarmTime"),
+            this.estimatedTime,
+            this.dueDatetime
+        )
     }
 
     /**
@@ -80,8 +92,7 @@ class Task(
             throw ApplicationException(ApplicationExceptionType.TASK_CATEGORY_MISMATCH, category)
         }
         checkNotNull(estimatedTime, "estimatedTime")
-        val checkedEstimatedTime = (checkNotNull(estimatedTime) { "estimatedTime must not be null" }).toLong()
-        if (triggerActionAlarmTime.plusMinutes(checkedEstimatedTime).isAfter(dueDatetime)) {
+        if (triggerActionAlarmTime.plusMinutes(estimatedTime.toLong()).isAfter(dueDatetime)) {
             throw ApplicationException(
                 ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME,
                 triggerActionAlarmTime,

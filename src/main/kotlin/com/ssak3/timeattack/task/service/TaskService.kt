@@ -86,8 +86,6 @@ class TaskService(
                 persona = persona,
             )
 
-        task.validateTriggerActionAlarmTime(scheduledTaskRequest.triggerActionAlarmTime)
-
         // 3. Task 저장
         val savedTaskEntity = taskRepository.save(task.toEntity())
 

@@ -118,6 +118,7 @@ class TaskRepositoryCustomImplTest(
                     category = taskCreateInfo.category,
                     member = Member.fromEntity(member),
                     dueDatetime = taskCreateInfo.dueDatetime,
+                    estimatedTime = 60,
                     status = taskCreateInfo.status,
                     triggerActionAlarmTime = taskCreateInfo.triggerActionAlarmTime,
                 )
