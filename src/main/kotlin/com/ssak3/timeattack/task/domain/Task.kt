@@ -69,7 +69,7 @@ class Task(
      * 작은 행동 알림 시간을 검증합니다.
      * 작은 행동 알림시간에 예상 소요 시간(estimatedTime)을 더한 시간이 마감 시간(dueDatetime)보다 뒤에 있으면 예외를 발생시킵니다.
      */
-    fun validateTriggerActionAlarmTime(
+    private fun validateTriggerActionAlarmTime(
         triggerActionAlarmTime: LocalDateTime,
         estimatedTime: Int?,
         dueDatetime: LocalDateTime,
@@ -141,7 +141,7 @@ class Task(
         this.triggerActionAlarmTime = triggerActionAlarmTime
     }
 
-    fun modifyToUrgentDueDatetime(
+    fun modifyDueDatetime(
         dueDatetime: LocalDateTime,
         triggerActionAlarmTime: LocalDateTime,
     ) {

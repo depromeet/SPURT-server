@@ -288,7 +288,7 @@ class TaskService(
             } else {
                 // 즉시 몰입 시작이 아닌 경우 작은행동 알림 검증을 통해 마감시간 업데이트
                 checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime")
-                task.modifyToUrgentDueDatetime(updatedDueDatetime, request.triggerActionAlarmTime)
+                task.modifyDueDatetime(updatedDueDatetime, request.triggerActionAlarmTime)
             }
         }
 
