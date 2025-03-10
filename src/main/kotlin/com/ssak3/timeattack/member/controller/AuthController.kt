@@ -52,6 +52,7 @@ class AuthController(
         return refreshTokenService.reissueTokens(refreshRequest.refreshToken)
     }
 
+    @Operation(summary = "애플 로그인", description = "애플 로그인 후 JWT access, refresh 토큰 반환")
     @PostMapping("/login/apple")
     fun appleLogin(
         @RequestBody appleLoginRequest: AppleLoginRequest,
