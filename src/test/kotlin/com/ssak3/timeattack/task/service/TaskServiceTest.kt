@@ -174,7 +174,7 @@ class TaskServiceTest(
                     deleteTaskNotificationEvent.taskId shouldBe taskId
                 }
 
-                it("기존 알림 삭제 요청 Listener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
+                it("기존 알림 삭제 요청 EventListener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
                     // given
                     val taskId = checkNotNull(task.id, "task.id")
                     every { pushNotificationListener.deleteNotifications(any()) } throws RuntimeException()
@@ -223,7 +223,7 @@ class TaskServiceTest(
                     updateEvent.alarmTime shouldBe now.plusMinutes(120)
                 }
 
-                it("작은 행동 알림 업데이트 Listener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
+                it("작은 행동 알림 업데이트 EventListener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
                     // given
                     val taskId = checkNotNull(task.id, "task.id")
                     every { pushNotificationListener.updateNotification(any()) } throws RuntimeException()
