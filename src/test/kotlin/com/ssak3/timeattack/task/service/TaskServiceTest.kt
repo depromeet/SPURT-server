@@ -16,6 +16,7 @@ import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
+import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
@@ -155,7 +156,19 @@ class TaskServiceTest(
                     updatedTask.status shouldBe TaskStatus.FOCUSED
                 }
 
-                it("기존 알림 삭제 요청을 한다.")
+                it("기존 알림 삭제 요청을 한다.") {
+                    // when
+                    val taskId = checkNotNull(task.id, "task.id")
+                    taskService.updateTask(member, taskId, taskUpdateRequest)
+
+                    // then
+                    val deleteTaskNotificationEvents = events.stream(DeleteTaskNotificationEvent::class.java).toList()
+                    deleteTaskNotificationEvents.size shouldBe 1
+
+                    val deleteTaskNotificationEvent = deleteTaskNotificationEvents[0]
+                    deleteTaskNotificationEvent.memberId shouldBe member.id
+                    deleteTaskNotificationEvent.taskId shouldBe taskId
+                }
             }
 
             context("작은 행동 알림 업데이트가 있을 경우") {
@@ -186,7 +199,22 @@ class TaskServiceTest(
             }
 
             context("작은 행동 알림 업데이트가 있지 않을 경우") {
-                it("작은 행동 알림 업데이트를 요청하지 않는다.")
+                it("작은 행동 알림 업데이트를 요청하지 않는다.") {
+                    // given
+                    val taskUpdateRequest = TaskUpdateRequest(
+                        name = "modified task",
+                        triggerAction = "modified trigger action",
+                        isUrgent = false,
+                    )
+
+                    // when
+                    val taskId = checkNotNull(task.id, "task.id")
+                    taskService.updateTask(member, taskId, taskUpdateRequest)
+
+                    // then
+                    val updateEvents = events.stream(TriggerActionNotificationUpdateEvent::class.java).toList()
+                    updateEvents.size shouldBe 0
+                }
             }
         }
     }
