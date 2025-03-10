@@ -38,7 +38,6 @@ class AppleOAuthClient(
 
     // client-secret 생성
     private fun createClientSecret(): String {
-
         // JWT 만료 시간 설정 (1시간)
         val expirationDate =
             Date.from(
@@ -49,16 +48,17 @@ class AppleOAuthClient(
             )
 
         // JWT 생성
-        val clientSecret = Jwts.builder()
-            .setHeaderParam("kid", appleProperties.keyId)
-            .setHeaderParam("alg", "ES256")
-            .setIssuer(appleProperties.teamId)
-            .setIssuedAt(Date())
-            .setExpiration(expirationDate)
-            .setAudience(appleProperties.aud)
-            .setSubject(appleProperties.clientId)
-            .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
-            .compact()
+        val clientSecret =
+            Jwts.builder()
+                .setHeaderParam("kid", appleProperties.keyId)
+                .setHeaderParam("alg", "ES256")
+                .setIssuer(appleProperties.teamId)
+                .setIssuedAt(Date())
+                .setExpiration(expirationDate)
+                .setAudience(appleProperties.aud)
+                .setSubject(appleProperties.clientId)
+                .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
+                .compact()
 
         logger.info("Client Secret: $clientSecret")
         return clientSecret
