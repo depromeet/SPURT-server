@@ -6,6 +6,7 @@ import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
+import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
@@ -26,6 +27,7 @@ class AuthService(
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
 ) : Logger {
+    // 카카오 & 구글 소셜 로그인
     fun authenticateAndRegister(request: LoginRequest): LoginResult {
         // id token 요청
         val oAuthClient = oAuthClientFactory.getClient(request.provider)
@@ -36,6 +38,7 @@ class AuthService(
 
         // id token 파싱
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
+        logger.info("OIDC Payload: $oidcPayload")
 
         // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
         var isNewUser = false
@@ -54,6 +57,60 @@ class AuthService(
         // refresh token 저장
         refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
 
+        // 기기 정보 저장 이벤트 발행
+        eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
+
+        val loginResult =
+            LoginResult(
+                tokens,
+                isNewUser,
+                MemberInfo(member.id, member.nickname, member.email, member.profileImageUrl),
+            )
+        logger.info("loginResult = $loginResult")
+        return loginResult
+    }
+
+    // 애플 소셜 로그인
+    fun authenticateAndRegister(request: AppleLoginRequest): LoginResult {
+        val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.APPLE)
+
+        val publicKeys = oAuthClient.getPublicKeys()
+        logger.info("Public Keys: $publicKeys")
+
+        val oidcPayload = oidcTokenVerification.verifyIdToken(request.idToken, publicKeys)
+        logger.info("OIDC Payload: $oidcPayload")
+
+        var isNewUser = false
+        val member =
+            memberRepository.findByProviderAndSubject(OAuthProvider.APPLE, oidcPayload.subject)
+                ?.let {
+                    Member.fromEntity(it)
+                }
+                ?: run {
+                    isNewUser = true
+                    checkNotNull(request.nickname) { "Nickname must not be null" }
+                    checkNotNull(request.email) { "Email must not be null" }
+
+                    val updatedPayload =
+                        OIDCPayload(
+                            subject = oidcPayload.subject,
+                            email = request.email,
+                            picture = oidcPayload.picture,
+                            name = request.nickname,
+                        )
+
+                    createMember(updatedPayload, OAuthProvider.APPLE)
+                }
+
+        when (isNewUser) {
+            true -> logger.info("신규 회원 생성 완료 : ${member.id}, ${member.nickname}, ${member.email}")
+            false -> logger.info("기존 회원 로그인 완료 : ${member.id}, ${member.nickname}, ${member.email}")
+        }
+
+        checkNotNull(member.id) { "Member ID must not be null" }
+        val tokens = jwtTokenProvider.generateTokens(member.id)
+
+        refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
         // 기기 정보 저장 이벤트 발행
         eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
 

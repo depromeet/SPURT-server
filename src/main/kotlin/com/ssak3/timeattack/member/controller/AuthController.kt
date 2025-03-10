@@ -2,6 +2,8 @@ package com.ssak3.timeattack.member.controller
 
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
+import com.ssak3.timeattack.common.utils.Logger
+import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginResponse
 import com.ssak3.timeattack.member.controller.dto.RefreshRequest
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     private val authService: AuthService,
     private val refreshTokenService: RefreshTokenService,
-) {
+) : Logger {
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 후 JWT access, refresh 토큰 반환")
     @PostMapping("/login")
     fun socialLogin(
@@ -48,5 +50,15 @@ class AuthController(
         @RequestBody refreshRequest: RefreshRequest,
     ): JwtTokenDto {
         return refreshTokenService.reissueTokens(refreshRequest.refreshToken)
+    }
+
+    @PostMapping("/login/apple")
+    fun appleLogin(
+        @RequestBody appleLoginRequest: AppleLoginRequest,
+    ): ResponseEntity<LoginResponse> {
+        logger.info("Apple Login Request: $appleLoginRequest")
+        val loginResult = authService.authenticateAndRegister(appleLoginRequest)
+
+        return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 }
