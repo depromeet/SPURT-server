@@ -20,7 +20,7 @@ import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
-import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
+import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import io.mockk.clearMocks
@@ -393,7 +393,7 @@ class TaskServiceJUnitTest(
         val deletedTask = taskRepository.findByIdAndIsDeletedIsFalse(taskId)
         assertThat(deletedTask).isNull()
 
-        verify(exactly = 1) { eventPublisher.publishEvent(any<DeleteTaskAlarmEvent>()) }
+        verify(exactly = 1) { eventPublisher.publishEvent(any<DeleteTaskNotificationEvent>()) }
     }
 
     @Test

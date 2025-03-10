@@ -1,6 +1,6 @@
 package com.ssak3.timeattack.task.service.events
 
-data class DeleteTaskAlarmEvent(
+data class DeleteTaskNotificationEvent(
     val memberId: Long,
     val taskId: Long,
 )

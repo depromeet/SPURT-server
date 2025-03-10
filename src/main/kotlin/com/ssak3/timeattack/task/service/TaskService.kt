@@ -18,7 +18,7 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
-import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
+import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
@@ -230,7 +230,7 @@ class TaskService(
         taskRepository.save(task.toEntity())
 
         // Task 삭제 이벤트 발행
-        eventPublisher.publishEvent(DeleteTaskAlarmEvent(member.id, checkNotNull(task.id)))
+        eventPublisher.publishEvent(DeleteTaskNotificationEvent(member.id, checkNotNull(task.id)))
         // TODO: 이벤트 처리 실패시 어떻게 처리할지 고민
     }
 
@@ -307,7 +307,7 @@ class TaskService(
     ) {
         // 즉시 시작하게 되면 기존 알림을 삭제
         if (request.isUrgent) {
-            eventPublisher.publishEvent(DeleteTaskAlarmEvent(memberId, taskId))
+            eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId, taskId))
         }
 
         // 작은 행동 알림이 업데이트 되면 새로운 작은 행동 알림 업데이트 이벤트 발행
