@@ -83,11 +83,12 @@ class TaskTest : DescribeSpec({
             now = LocalDateTime.now()
         }
         context("Urgent Task의 모든 가능한 Status에서") {
-            val statusList = listOf(
-                FOCUSED,
-                FAIL,
-                COMPLETE,
-            )
+            val statusList =
+                listOf(
+                    FOCUSED,
+                    FAIL,
+                    COMPLETE,
+                )
             it("이름 수정이 가능하다.") {
                 forAll(*listToRowArray(statusList)) { status ->
                     val task =
@@ -103,15 +104,16 @@ class TaskTest : DescribeSpec({
         }
 
         context("Scheduled Task의 모든 가능한 Status에서") {
-            val statusList = listOf(
-                BEFORE,
-                WARMING_UP,
-                HOLDING_OFF,
-                FOCUSED,
-                FAIL,
-                PROCRASTINATING,
-                COMPLETE,
-            )
+            val statusList =
+                listOf(
+                    BEFORE,
+                    WARMING_UP,
+                    HOLDING_OFF,
+                    FOCUSED,
+                    FAIL,
+                    PROCRASTINATING,
+                    COMPLETE,
+                )
             it("이름 수정이 가능하다.") {
                 forAll(*listToRowArray(statusList)) { status ->
                     val task =
@@ -126,17 +128,17 @@ class TaskTest : DescribeSpec({
             }
         }
 
-
         context("BEFORE 상태에서") {
             lateinit var task: Task
 
             beforeEach {
-                task = Fixture.createScheduledTask(
-                    status = BEFORE,
-                    dueDatetime = now.plusHours(2),
-                    estimatedTime = 60,
-                    triggerActionAlarmTime = now.plusMinutes(30)
-                )
+                task =
+                    Fixture.createScheduledTask(
+                        status = BEFORE,
+                        dueDatetime = now.plusHours(2),
+                        estimatedTime = 60,
+                        triggerActionAlarmTime = now.plusMinutes(30),
+                    )
             }
 
             it("작은 행동 수정이 가능하다.") {
@@ -145,13 +147,13 @@ class TaskTest : DescribeSpec({
                 }
             }
 
-            it ("유효한 예상 소요 시간 수정이 가능하다.") {
+            it("유효한 예상 소요 시간 수정이 가능하다.") {
                 shouldNotThrowAny {
                     task.modifyEstimatedTime(10, now.plusMinutes(20))
                 }
             }
 
-            it ("유효한 마감 시간 수정이 가능하다.") {
+            it("유효한 마감 시간 수정이 가능하다.") {
                 shouldNotThrowAny {
                     task.modifyDueDatetime(now.plusMinutes(90), now.plusMinutes(20))
                 }
@@ -159,14 +161,15 @@ class TaskTest : DescribeSpec({
         }
 
         context("BEFORE가 아닌 상태에서") {
-            val statusExceptBefore = listOf(
-                WARMING_UP,
-                HOLDING_OFF,
-                FOCUSED,
-                FAIL,
-                PROCRASTINATING,
-                COMPLETE
-            )
+            val statusExceptBefore =
+                listOf(
+                    WARMING_UP,
+                    HOLDING_OFF,
+                    FOCUSED,
+                    FAIL,
+                    PROCRASTINATING,
+                    COMPLETE,
+                )
 
             it("작은 행동 수정이 불가능하다.") {
                 forAll(*listToRowArray(statusExceptBefore)) { status ->

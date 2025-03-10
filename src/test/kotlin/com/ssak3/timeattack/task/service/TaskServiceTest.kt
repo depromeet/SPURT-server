@@ -37,8 +37,8 @@ class TaskServiceTest(
     @Autowired private val taskModeRepository: TaskModeRepository,
     @Autowired private val personaRepository: PersonaRepository,
 ) : DescribeSpec() {
-
     @Autowired lateinit var events: ApplicationEvents
+
     @MockkBean lateinit var pushNotificationListener: PushNotificationListener
 
     init {
@@ -50,14 +50,16 @@ class TaskServiceTest(
             member = Member.fromEntity(memberRepository.save(Fixture.createMember(id = null).toEntity()))
             val taskTypeEntity = taskTypeRepository.saveAndFlush(TaskTypeEntity(name = "프로그래밍"))
             val taskModeEntity = taskModeRepository.saveAndFlush(TaskModeEntity(name = "긴급한"))
-            persona = Persona.fromEntity(
-                personaRepository.save(
-                    PersonaEntity(
-                        name = "Urgent Programmer",
-                        taskType = taskTypeEntity,
-                        taskMode = taskModeEntity,
-                    ))
-            )
+            persona =
+                Persona.fromEntity(
+                    personaRepository.save(
+                        PersonaEntity(
+                            name = "Urgent Programmer",
+                            taskType = taskTypeEntity,
+                            taskMode = taskModeEntity,
+                        ),
+                    ),
+                )
             now = LocalDateTime.now()
         }
 
@@ -80,13 +82,14 @@ class TaskServiceTest(
             context("소요시간 수정에 대해") {
                 it("유효한 값일 경우 정상적으로 수정된다.") {
                     // given
-                    val taskUpdateRequest = TaskUpdateRequest(
-                        name = "modified task",
-                        estimatedTime = 70,
-                        triggerActionAlarmTime = now.plusMinutes(70),
-                        triggerAction = "modified trigger action",
-                        isUrgent = false,
-                    )
+                    val taskUpdateRequest =
+                        TaskUpdateRequest(
+                            name = "modified task",
+                            estimatedTime = 70,
+                            triggerActionAlarmTime = now.plusMinutes(70),
+                            triggerAction = "modified trigger action",
+                            isUrgent = false,
+                        )
 
                     // when
                     val taskId = checkNotNull(task.id, "task.id")
@@ -107,13 +110,14 @@ class TaskServiceTest(
             context("즉시 몰입 중으로 바뀌지 않는 마감시간 수정에 대해") {
                 it("유효한 값일 경우 정상적으로 수정된다.") {
                     // given
-                    val taskUpdateRequest = TaskUpdateRequest(
-                        name = "modified task",
-                        dueDatetime = now.plusMinutes(150),
-                        triggerActionAlarmTime = now.plusMinutes(70),
-                        triggerAction = "modified trigger action",
-                        isUrgent = false,
-                    )
+                    val taskUpdateRequest =
+                        TaskUpdateRequest(
+                            name = "modified task",
+                            dueDatetime = now.plusMinutes(150),
+                            triggerActionAlarmTime = now.plusMinutes(70),
+                            triggerAction = "modified trigger action",
+                            isUrgent = false,
+                        )
 
                     // when
                     val taskId = checkNotNull(task.id, "task.id")
@@ -136,12 +140,13 @@ class TaskServiceTest(
                 lateinit var taskUpdateRequest: TaskUpdateRequest
 
                 beforeEach {
-                    taskUpdateRequest = TaskUpdateRequest(
-                        name = "modified task",
-                        dueDatetime = now.plusMinutes(50),
-                        triggerAction = "modified trigger action",
-                        isUrgent = true,
-                    )
+                    taskUpdateRequest =
+                        TaskUpdateRequest(
+                            name = "modified task",
+                            dueDatetime = now.plusMinutes(50),
+                            triggerAction = "modified trigger action",
+                            isUrgent = true,
+                        )
                 }
 
                 it("유효한 값일 경우 정상적으로 수정된다.") {
@@ -199,13 +204,14 @@ class TaskServiceTest(
 
                 beforeEach {
                     // given
-                    taskUpdateRequest = TaskUpdateRequest(
-                        name = "modified task",
-                        dueDatetime = now.plusMinutes(240),
-                        triggerActionAlarmTime = now.plusMinutes(120),
-                        triggerAction = "modified trigger action",
-                        isUrgent = false,
-                    )
+                    taskUpdateRequest =
+                        TaskUpdateRequest(
+                            name = "modified task",
+                            dueDatetime = now.plusMinutes(240),
+                            triggerActionAlarmTime = now.plusMinutes(120),
+                            triggerAction = "modified trigger action",
+                            isUrgent = false,
+                        )
                 }
 
                 it("작은 행동 알림 업데이트를 요청한다.") {
@@ -246,11 +252,12 @@ class TaskServiceTest(
             context("작은 행동 알림 업데이트가 있지 않을 경우") {
                 it("작은 행동 알림 업데이트를 요청하지 않는다.") {
                     // given
-                    val taskUpdateRequest = TaskUpdateRequest(
-                        name = "modified task",
-                        triggerAction = "modified trigger action",
-                        isUrgent = false,
-                    )
+                    val taskUpdateRequest =
+                        TaskUpdateRequest(
+                            name = "modified task",
+                            triggerAction = "modified trigger action",
+                            isUrgent = false,
+                        )
 
                     // when
                     val taskId = checkNotNull(task.id, "task.id")

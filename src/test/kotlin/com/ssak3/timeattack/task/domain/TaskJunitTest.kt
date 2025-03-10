@@ -7,7 +7,6 @@ import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
 import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
-import io.kotest.matchers.collections.beStrictlyIncreasingWith
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

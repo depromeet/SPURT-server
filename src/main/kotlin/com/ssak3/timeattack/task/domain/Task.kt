@@ -23,7 +23,6 @@ class Task(
     val updatedAt: LocalDateTime? = null,
     var isDeleted: Boolean = false,
 ) {
-
     init {
         // scheduled 작업에서 FOCUSED 일 경우는 아래의 검증 로직에서 벗어나는 케이스 존재
         if (category == TaskCategory.SCHEDULED && status == TaskStatus.BEFORE) {
@@ -53,7 +52,7 @@ class Task(
         validateTriggerActionAlarmTime(
             checkNotNull(this.triggerActionAlarmTime, "triggerActionAlarmTime"),
             this.estimatedTime,
-            this.dueDatetime
+            this.dueDatetime,
         )
     }
 
