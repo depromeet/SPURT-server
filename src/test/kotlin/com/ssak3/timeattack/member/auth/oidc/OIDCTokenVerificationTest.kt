@@ -20,6 +20,7 @@ class OIDCTokenVerificationTest {
     private lateinit var oidcTokenVerification: OIDCTokenVerification
     private lateinit var keyPair: KeyPair
     private lateinit var validToken: String
+    private lateinit var appleValidToken: String
     private lateinit var expiredToken: String
     private lateinit var oidcPublicKey: OIDCPublicKey
 
@@ -37,6 +38,16 @@ class OIDCTokenVerificationTest {
                 .claim("email", "test@example.com")
                 .claim("nickname", "John Doe")
                 .claim("picture", "https://example.com/picture.jpg")
+                .setExpiration(Date(System.currentTimeMillis() + 3600000))
+                .signWith(keyPair.private, SignatureAlgorithm.RS256)
+                .compact()
+
+        appleValidToken =
+            Jwts.builder()
+                .setSubject("1234567890")
+                .setHeaderParam("kid", "test-kid")
+                .setHeaderParam("alg", "RS256")
+                .claim("email", "test@example.com")
                 .setExpiration(Date(System.currentTimeMillis() + 3600000))
                 .signWith(keyPair.private, SignatureAlgorithm.RS256)
                 .compact()
@@ -99,5 +110,21 @@ class OIDCTokenVerificationTest {
         }.apply {
             assertThat(this.exceptionType).isEqualTo(JWT_EXPIRED)
         }
+    }
+
+    @Test
+    @DisplayName("애플 ID 토큰 검증 테스트")
+    fun verifyAppleIdToken() {
+        // given
+        val oidcPublicKeyList = OIDCPublicKeyList(listOf(oidcPublicKey))
+
+        // when
+        val payload = oidcTokenVerification.verifyIdToken(appleValidToken, oidcPublicKeyList)
+
+        // then
+        assertEquals("1234567890", payload.subject)
+        assertEquals("", payload.picture)
+        assertEquals("", payload.name)
+        assertEquals("test@example.com", payload.email)
     }
 }
