@@ -101,5 +101,12 @@ data class TaskUpdateRequest(
                 "isUrgent가 true일 때 dueDatetime은 필수입니다.",
             )
         }
+
+        if (isUrgent && estimatedTime != null) {
+            throw ApplicationException(
+                ApplicationExceptionType.INVALID_UPDATE_VALUE,
+                "isUrgent가 true일 때 estimatedTime은 수정할 수 없습니다.",
+            )
+        }
     }
 }
