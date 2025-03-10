@@ -227,11 +227,20 @@ class TaskTest : DescribeSpec({
         }
 
         context("마감 시간이 줄고, 즉시 몰입 중으로 바뀐다면") {
-            val task = Fixture.createScheduledTaskWithNow(baseTime = now)
+            lateinit var task: Task
+
+            beforeEach {
+                task = Fixture.createScheduledTaskWithNow(now)
+            }
 
             it("상태가 FOCUSED로 바뀐다.") {
                 task.modifyToUrgentDueDatetime(now.plusMinutes(30))
                 task.status shouldBe FOCUSED
+            }
+
+            it("작은 행동 알림 시간이 없어진다.") {
+                task.modifyToUrgentDueDatetime(now.plusMinutes(30))
+                task.triggerActionAlarmTime shouldBe null
             }
         }
     }

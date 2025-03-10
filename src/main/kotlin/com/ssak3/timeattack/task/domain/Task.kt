@@ -167,6 +167,7 @@ class Task(
         validateTaskStatusForUpdate(TaskStatus.BEFORE, "dueDatetime")
         changeStatus(TaskStatus.FOCUSED)
         this.dueDatetime = dueDatetime
+        this.triggerActionAlarmTime = null
     }
 
     private fun validateTaskStatusForUpdate(
