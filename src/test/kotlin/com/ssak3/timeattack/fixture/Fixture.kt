@@ -189,8 +189,11 @@ object Fixture {
         id = id,
         name = name,
         category = category,
+        // 기준 시간으로부터 1시간 뒤 라고 설정된 triggerActionAlarmTime을 수정할 수 없습니다.
         triggerActionAlarmTime = baseTime.plusHours(1),
+        // 기준 시간으로부터 3시간 뒤 라고 설정된 dueDatetime을 수정할 수 없습니다.
         dueDatetime = baseTime.plusHours(3),
+        // 60분이라고 설정된 estimatedTime을 수정할 수 없습니다.
         estimatedTime = 60,
         triggerAction = triggerAction,
         status = status,
