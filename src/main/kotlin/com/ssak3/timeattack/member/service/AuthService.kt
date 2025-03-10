@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.member.service
 
+import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
@@ -38,7 +39,6 @@ class AuthService(
 
         // id token 파싱
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
-        logger.info("OIDC Payload: $oidcPayload")
 
         // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
         var isNewUser = false
@@ -50,24 +50,7 @@ class AuthService(
                     createMember(oidcPayload, request.provider)
                 }
 
-        // JWT 토큰 생성 & 반환
-        checkNotNull(member.id) { "Member ID must not be null" }
-        val tokens = jwtTokenProvider.generateTokens(member.id)
-
-        // refresh token 저장
-        refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
-
-        // 기기 정보 저장 이벤트 발행
-        eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
-
-        val loginResult =
-            LoginResult(
-                tokens,
-                isNewUser,
-                MemberInfo(member.id, member.nickname, member.email, member.profileImageUrl),
-            )
-        logger.info("loginResult = $loginResult")
-        return loginResult
+        return processLogin(member, request.deviceId, request.deviceType, isNewUser)
     }
 
     // 애플 소셜 로그인
@@ -102,17 +85,22 @@ class AuthService(
                     createMember(updatedPayload, OAuthProvider.APPLE)
                 }
 
-        when (isNewUser) {
-            true -> logger.info("신규 회원 생성 완료 : ${member.id}, ${member.nickname}, ${member.email}")
-            false -> logger.info("기존 회원 로그인 완료 : ${member.id}, ${member.nickname}, ${member.email}")
-        }
+        return processLogin(member, request.deviceId, request.deviceType, isNewUser)
+    }
 
+    // 공통 로그인 처리(JWT 토큰 생성, 캐시에 Refresh token 저장, 기기 정보 저장 이벤트 발행)
+    private fun processLogin(
+        member: Member,
+        deviceId: String,
+        deviceType: DevicePlatform,
+        isNewUser: Boolean,
+    ): LoginResult {
         checkNotNull(member.id) { "Member ID must not be null" }
         val tokens = jwtTokenProvider.generateTokens(member.id)
 
         refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
-        // 기기 정보 저장 이벤트 발행
-        eventPublisher.publishEvent(DeviceRegisterEvent(member.id, request.deviceId, request.deviceType))
+
+        eventPublisher.publishEvent(DeviceRegisterEvent(member.id, deviceId, deviceType))
 
         val loginResult =
             LoginResult(
