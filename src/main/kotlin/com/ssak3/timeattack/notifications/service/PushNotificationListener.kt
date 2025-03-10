@@ -7,6 +7,7 @@ import com.ssak3.timeattack.task.service.TaskService
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
+import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -66,5 +67,12 @@ class PushNotificationListener(
         logger.info("DeleteTaskAlarmEvent: $event")
         val task = taskService.getTaskById(event.taskId)
         pushNotificationService.delete(task)
+    }
+
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    fun updateNotification(event: TriggerActionNotificationUpdateEvent) {
+        TODO()
     }
 }

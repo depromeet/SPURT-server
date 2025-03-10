@@ -1,10 +1,12 @@
 package com.ssak3.timeattack.task.service
 
+import com.ninjasquad.springmockk.MockkBean
 import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
+import com.ssak3.timeattack.notifications.service.PushNotificationListener
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
@@ -21,6 +23,7 @@ import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateE
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.event.ApplicationEvents
 import java.time.LocalDateTime
@@ -36,6 +39,7 @@ class TaskServiceTest(
 ) : DescribeSpec() {
 
     @Autowired lateinit var events: ApplicationEvents
+    @MockkBean lateinit var pushNotificationListener: PushNotificationListener
 
     init {
         lateinit var member: Member
@@ -169,20 +173,42 @@ class TaskServiceTest(
                     deleteTaskNotificationEvent.memberId shouldBe member.id
                     deleteTaskNotificationEvent.taskId shouldBe taskId
                 }
+
+                it("기존 알림 삭제 요청 Listener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
+                    // given
+                    val taskId = checkNotNull(task.id, "task.id")
+                    every { pushNotificationListener.deleteNotifications(any()) } throws RuntimeException()
+
+                    // when
+                    taskService.updateTask(member, taskId, taskUpdateRequest)
+
+                    // then
+                    val updatedTask = taskRepository.findById(taskId).get()
+                    updatedTask.shouldNotBeNull()
+                    updatedTask.name shouldBe "modified task"
+                    updatedTask.triggerActionAlarmTime shouldBe null
+                    updatedTask.dueDatetime shouldBe now.plusMinutes(50)
+                    updatedTask.estimatedTime shouldBe 60
+                    updatedTask.triggerAction shouldBe "modified trigger action"
+                    updatedTask.status shouldBe TaskStatus.FOCUSED
+                }
             }
 
             context("작은 행동 알림 업데이트가 있을 경우") {
+                lateinit var taskUpdateRequest: TaskUpdateRequest
 
-                it("작은 행동 알림 업데이트를 요청한다.") {
+                beforeEach {
                     // given
-                    val taskUpdateRequest = TaskUpdateRequest(
+                    taskUpdateRequest = TaskUpdateRequest(
                         name = "modified task",
                         dueDatetime = now.plusMinutes(240),
                         triggerActionAlarmTime = now.plusMinutes(120),
                         triggerAction = "modified trigger action",
                         isUrgent = false,
                     )
+                }
 
+                it("작은 행동 알림 업데이트를 요청한다.") {
                     // when
                     val taskId = checkNotNull(task.id, "task.id")
                     taskService.updateTask(member, taskId, taskUpdateRequest)
@@ -195,6 +221,25 @@ class TaskServiceTest(
                     updateEvent.memberId shouldBe member.id
                     updateEvent.taskId shouldBe taskId
                     updateEvent.alarmTime shouldBe now.plusMinutes(120)
+                }
+
+                it("작은 행동 알림 업데이트 Listener 에서 예외가 발생해도 정상적으로 작업이 수정된다.") {
+                    // given
+                    val taskId = checkNotNull(task.id, "task.id")
+                    every { pushNotificationListener.updateNotification(any()) } throws RuntimeException()
+
+                    // when
+                    taskService.updateTask(member, taskId, taskUpdateRequest)
+
+                    // then
+                    val updatedTask = taskRepository.findById(taskId).get()
+                    updatedTask.shouldNotBeNull()
+                    updatedTask.name shouldBe "modified task"
+                    updatedTask.triggerActionAlarmTime shouldBe now.plusMinutes(120)
+                    updatedTask.dueDatetime shouldBe now.plusMinutes(240)
+                    updatedTask.estimatedTime shouldBe 60
+                    updatedTask.triggerAction shouldBe "modified trigger action"
+                    updatedTask.status shouldBe TaskStatus.BEFORE
                 }
             }
 
