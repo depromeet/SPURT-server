@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.member.auth.client
 
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
 import com.ssak3.timeattack.member.auth.properties.AppleProperties
 import io.jsonwebtoken.Jwts
@@ -21,7 +22,7 @@ class AppleOAuthClient(
     val appleFeignClient: AppleFeignClient,
     @Autowired
     val appleProperties: AppleProperties,
-) : OAuthClient {
+) : OAuthClient, Logger {
     override fun getToken(authCode: String): OAuthTokenResponse {
         return appleFeignClient.getToken(
             code = authCode,
@@ -37,6 +38,7 @@ class AppleOAuthClient(
 
     // client-secret 생성
     private fun createClientSecret(): String {
+
         // JWT 만료 시간 설정 (1시간)
         val expirationDate =
             Date.from(
@@ -47,7 +49,7 @@ class AppleOAuthClient(
             )
 
         // JWT 생성
-        return Jwts.builder()
+        val clientSecret = Jwts.builder()
             .setHeaderParam("kid", appleProperties.keyId)
             .setHeaderParam("alg", "ES256")
             .setIssuer(appleProperties.teamId)
@@ -57,6 +59,9 @@ class AppleOAuthClient(
             .setSubject(appleProperties.clientId)
             .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
             .compact()
+
+        logger.info("Client Secret: $clientSecret")
+        return clientSecret
     }
 
     /**
