@@ -23,6 +23,18 @@ class AppleOAuthClient(
     @Autowired
     val appleProperties: AppleProperties,
 ) : OAuthClient, Logger {
+    fun getAuthCode() {
+        logger.info(
+            "애플 인증 URL 생성: clientId={}, redirectUri={}",
+            appleProperties.clientId,
+            appleProperties.redirectUri,
+        )
+        appleFeignClient.getAuthCode(
+            clientId = appleProperties.clientId,
+            redirectUri = appleProperties.redirectUri,
+        )
+    }
+
     override fun getToken(authCode: String): OAuthTokenResponse {
         return appleFeignClient.getToken(
             code = authCode,

@@ -34,4 +34,11 @@ interface AppleFeignClient {
     @GetMapping("/auth/keys")
     @Cacheable(value = [OIDC_PUBLIC_KEYS], key = "'apple'")
     fun getPublicKeys(): OIDCPublicKeyList
+
+    @GetMapping("/auth/authorize")
+    fun getAuthCode(
+        @RequestParam("response_type") responseType: String = "code",
+        @RequestParam("client_id") clientId: String,
+        @RequestParam("redirect_uri") redirectUri: String,
+    )
 }

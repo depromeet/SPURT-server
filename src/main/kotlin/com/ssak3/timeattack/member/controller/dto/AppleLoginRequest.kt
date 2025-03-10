@@ -7,9 +7,9 @@ import jakarta.validation.constraints.NotBlank
 
 @Schema(description = "애플 로그인 요청")
 data class AppleLoginRequest(
-    @Schema(title = "ID 토큰", requiredMode = RequiredMode.REQUIRED)
+    @Schema(title = "인가 코드", requiredMode = RequiredMode.REQUIRED)
     @field:NotBlank
-    val idToken: String,
+    val authCode: String,
     @Schema(
         title = "이름",
         example = "조익현",

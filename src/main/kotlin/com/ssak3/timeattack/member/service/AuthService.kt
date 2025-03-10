@@ -1,6 +1,8 @@
 package com.ssak3.timeattack.member.service
 
 import com.ssak3.timeattack.common.domain.DevicePlatform
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
@@ -9,8 +11,10 @@ import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
 import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
+import com.ssak3.timeattack.member.domain.AuthToken
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
+import com.ssak3.timeattack.member.repository.AuthTokenRepository
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import com.ssak3.timeattack.member.service.dto.LoginResult
@@ -27,6 +31,7 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
+    private val authTokenRepository: AuthTokenRepository,
 ) : Logger {
     // 카카오 & 구글 소셜 로그인
     fun authenticateAndRegister(request: LoginRequest): LoginResult {
@@ -56,11 +61,13 @@ class AuthService(
     // 애플 소셜 로그인
     fun authenticateAndRegister(request: AppleLoginRequest): LoginResult {
         val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.APPLE)
+        val oAuthTokenResponse = oAuthClient.getToken(request.authCode)
+        logger.info("OAuth Token Response: $oAuthTokenResponse")
 
         val publicKeys = oAuthClient.getPublicKeys()
         logger.info("Public Keys: $publicKeys")
 
-        val oidcPayload = oidcTokenVerification.verifyIdToken(request.idToken, publicKeys)
+        val oidcPayload = oidcTokenVerification.verifyIdToken(oAuthTokenResponse.idToken, publicKeys)
         logger.info("OIDC Payload: $oidcPayload")
 
         var isNewUser = false
@@ -81,11 +88,40 @@ class AuthService(
                             picture = oidcPayload.picture,
                             name = request.nickname,
                         )
-
                     createMember(updatedPayload, OAuthProvider.APPLE)
                 }
 
+        checkNotNull(member.id) { "Member ID must not be null" }
+
+        // apple refresh token 저장
+        val authToken =
+            when (isNewUser) {
+                true -> {
+                    AuthToken(
+                        memberId = member.id,
+                        refreshToken = oAuthTokenResponse.refreshToken,
+                    )
+                }
+                false -> {
+                    val authToken = getAuthToken(member.id)
+                    authToken.updateRefreshToken(oAuthTokenResponse.refreshToken)
+                    authToken
+                }
+            }
+        logger.info("apple refresh Token: $authToken")
+        authTokenRepository.save(authToken.toEntity())
+
         return processLogin(member, request.deviceId, request.deviceType, isNewUser)
+    }
+
+    // 애플 소셜 로그인 시, DB에서 refresh token 조회
+    private fun getAuthToken(id: Long): AuthToken {
+        val authToken =
+            AuthToken.fromEntity(
+                authTokenRepository.findById(id)
+                    .orElseThrow { ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND) },
+            )
+        return authToken
     }
 
     // 공통 로그인 처리(JWT 토큰 생성, 캐시에 Refresh token 저장, 기기 정보 저장 이벤트 발행)
