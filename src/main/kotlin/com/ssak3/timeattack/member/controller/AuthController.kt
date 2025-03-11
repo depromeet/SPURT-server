@@ -3,6 +3,7 @@ package com.ssak3.timeattack.member.controller
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginResponse
@@ -61,5 +62,16 @@ class AuthController(
         val loginResult = authService.authenticateAndRegister(appleLoginRequest)
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
+    }
+
+    @Operation(summary = "로그아웃", security = [SecurityRequirement(name = "BearerAuth")])
+    @PostMapping("/logout")
+    fun logout(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<Void> {
+        checkNotNull(member.id, "memberId")
+        refreshTokenService.deleteRefreshToken(member.id)
+
+        return ResponseEntity.noContent().build()
     }
 }
