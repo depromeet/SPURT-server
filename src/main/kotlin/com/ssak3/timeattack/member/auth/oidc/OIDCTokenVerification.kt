@@ -9,6 +9,8 @@ import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_INVALI
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_MALFORMED
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_UNSUPPORTED
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
+import com.ssak3.timeattack.common.utils.Logger
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
@@ -25,7 +27,7 @@ import java.util.Base64
 @Component
 class OIDCTokenVerification(
     private val objectMapper: ObjectMapper = jacksonObjectMapper(),
-) {
+) : Logger {
     fun verifyIdToken(
         idToken: String,
         oidcPublicKeys: OIDCPublicKeyList,
@@ -69,9 +71,9 @@ class OIDCTokenVerification(
 
             OIDCPayload(
                 subject = claims.subject,
-                email = claims["email"] as String,
-                picture = claims["picture"] as String,
-                name = claims["nickname"] as String,
+                email = claims.getStringOrNull("email"),
+                picture = claims.getStringOrNull("picture"),
+                name = claims.getStringOrNull("nickname"),
             )
         } catch (e: SignatureException) {
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)
@@ -85,6 +87,15 @@ class OIDCTokenVerification(
             throw ApplicationException(JWT_GENERAL_ERR, e)
         } catch (e: Exception) {
             throw ApplicationException(UNDEFINED_EXCEPTION, e)
+        }
+    }
+
+    // 페이로드 claims에서 String 값 추출 (없으면 null 반환)
+    private fun Claims.getStringOrNull(claimName: String): String? {
+        return try {
+            this[claimName] as? String
+        } catch (e: Exception) {
+            null
         }
     }
 }

@@ -8,7 +8,7 @@ class Member(
     val id: Long? = null,
     var nickname: String,
     val email: String,
-    val profileImageUrl: String,
+    val profileImageUrl: String?,
     val oAuthProviderInfo: OAuthProviderInfo,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
