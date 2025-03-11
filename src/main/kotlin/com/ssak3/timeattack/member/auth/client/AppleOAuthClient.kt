@@ -23,18 +23,6 @@ class AppleOAuthClient(
     @Autowired
     val appleProperties: AppleProperties,
 ) : OAuthClient, Logger {
-    fun getAuthCode() {
-        logger.info(
-            "애플 인증 URL 생성: clientId={}, redirectUri={}",
-            appleProperties.clientId,
-            appleProperties.redirectUri,
-        )
-        appleFeignClient.getAuthCode(
-            clientId = appleProperties.clientId,
-            redirectUri = appleProperties.redirectUri,
-        )
-    }
-
     override fun getToken(authCode: String): OAuthTokenResponse {
         return appleFeignClient.getToken(
             code = authCode,
@@ -48,7 +36,7 @@ class AppleOAuthClient(
         return appleFeignClient.getPublicKeys()
     }
 
-    // client-secret 생성
+    // client-secret(JWT 형식) 생성
     private fun createClientSecret(): String {
         // JWT 만료 시간 설정 (1시간)
         val expirationDate =
@@ -77,9 +65,7 @@ class AppleOAuthClient(
     }
 
     /**
-     * YAML 설정에서 가져온 private key 문자열을 PrivateKey 객체로 변환합니다.
-     *
-     * @return 변환된 PrivateKey 객체
+     * decoded private key를 PrivateKey 객체로 변환
      */
     private fun getPrivateKey(): PrivateKey {
         StringReader(appleProperties.getDecodePrivateKey()).use { pemReader ->
