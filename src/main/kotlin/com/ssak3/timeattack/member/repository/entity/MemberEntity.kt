@@ -19,8 +19,8 @@ class MemberEntity(
     val nickname: String,
     @Column(name = "email", length = 100)
     val email: String,
-    @Column(name = "profile_image_url", length = 500)
-    val profileImageUrl: String,
+    @Column(name = "profile_image_url", length = 500, nullable = true)
+    val profileImageUrl: String? = null,
     @Embedded
     val oAuthProviderInfo: OAuthProviderInfo,
     val isDeleted: Boolean = false,
