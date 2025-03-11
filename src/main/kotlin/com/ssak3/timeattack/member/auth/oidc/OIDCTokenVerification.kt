@@ -69,18 +69,11 @@ class OIDCTokenVerification(
                     .parseClaimsJws(token)
                     .body
 
-            // 모든 claims 내용 출력하기
-            logger.info("===== ID Token Claims =====")
-            claims.keys.forEach { key ->
-                logger.info("Claim: $key = ${claims[key]}")
-            }
-            logger.info("==========================")
-
             OIDCPayload(
                 subject = claims.subject,
-                email = claims.getStringOrEmpty("email"),
-                picture = claims.getStringOrEmpty("picture"),
-                name = claims.getStringOrEmpty("nickname"),
+                email = claims.getStringOrNull("email"),
+                picture = claims.getStringOrNull("picture"),
+                name = claims.getStringOrNull("nickname"),
             )
         } catch (e: SignatureException) {
             throw ApplicationException(JWT_INVALID_SIGNATURE, e)
@@ -97,12 +90,12 @@ class OIDCTokenVerification(
         }
     }
 
-    // 페이로드 claims에서 String 값 추출 (없으면 빈 문자열 반환)
-    private fun Claims.getStringOrEmpty(claimName: String): String {
+    // 페이로드 claims에서 String 값 추출 (없으면 null 반환)
+    private fun Claims.getStringOrNull(claimName: String): String? {
         return try {
-            this[claimName] as? String ?: ""
+            this[claimName] as? String
         } catch (e: Exception) {
-            ""
+            null
         }
     }
 }

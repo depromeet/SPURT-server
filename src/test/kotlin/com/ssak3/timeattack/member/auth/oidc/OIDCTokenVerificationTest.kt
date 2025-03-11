@@ -123,8 +123,8 @@ class OIDCTokenVerificationTest {
 
         // then
         assertEquals("1234567890", payload.subject)
-        assertEquals("", payload.picture)
-        assertEquals("", payload.name)
+        assertEquals(null, payload.picture)
+        assertEquals(null, payload.name)
         assertEquals("test@example.com", payload.email)
     }
 }

@@ -82,7 +82,7 @@ class AppleOAuthClient(
      * @return 변환된 PrivateKey 객체
      */
     private fun getPrivateKey(): PrivateKey {
-        StringReader(appleProperties.privateKey).use { pemReader ->
+        StringReader(appleProperties.getDecodePrivateKey()).use { pemReader ->
             PEMParser(pemReader).use { pemParser ->
                 val converter = JcaPEMKeyConverter()
                 val privateKeyInfo = pemParser.readObject() as PrivateKeyInfo

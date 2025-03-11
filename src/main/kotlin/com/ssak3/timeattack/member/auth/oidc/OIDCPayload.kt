@@ -5,7 +5,7 @@ package com.ssak3.timeattack.member.auth.oidc
  */
 data class OIDCPayload(
     val subject: String,
-    val email: String,
-    val picture: String,
-    val name: String,
+    val email: String?,
+    val picture: String? = null,
+    val name: String?,
 )
