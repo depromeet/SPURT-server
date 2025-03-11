@@ -91,7 +91,7 @@ class AuthService(
 
         checkNotNull(member.id, "memberId")
 
-        // apple refresh token 저장
+        // apple refresh token 저장 (신규 유저면 생성, 기존 유저면 DB에서 조회)
         val authToken =
             when (isNewUser) {
                 true -> {
@@ -130,10 +130,14 @@ class AuthService(
         isNewUser: Boolean,
     ): LoginResult {
         checkNotNull(member.id) { "Member ID must not be null" }
+
+        // spurt 용 jwt token 생성
         val tokens = jwtTokenProvider.generateTokens(member.id)
 
+        // redis에 refresh token 저장
         refreshTokenService.saveRefreshToken(member.id, tokens.refreshToken)
 
+        // 기기 저장 event 발행
         eventPublisher.publishEvent(DeviceRegisterEvent(member.id, deviceId, deviceType))
 
         val loginResult =
