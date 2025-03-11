@@ -8,14 +8,15 @@ import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
+import com.ssak3.timeattack.member.auth.client.OAuthTokenResponse
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
 import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
-import com.ssak3.timeattack.member.domain.AuthToken
+import com.ssak3.timeattack.member.domain.AppleAuthToken
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.domain.OAuthProvider
-import com.ssak3.timeattack.member.repository.AuthTokenRepository
+import com.ssak3.timeattack.member.repository.AppleAuthTokenRepository
 import com.ssak3.timeattack.member.repository.MemberRepository
 import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import com.ssak3.timeattack.member.service.dto.LoginResult
@@ -23,6 +24,7 @@ import com.ssak3.timeattack.member.service.dto.MemberInfo
 import com.ssak3.timeattack.member.service.events.DeviceRegisterEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService(
@@ -32,9 +34,10 @@ class AuthService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val refreshTokenService: RefreshTokenService,
     private val eventPublisher: ApplicationEventPublisher,
-    private val authTokenRepository: AuthTokenRepository,
+    private val appleAuthTokenRepository: AppleAuthTokenRepository,
 ) : Logger {
     // 카카오 & 구글 소셜 로그인
+    @Transactional
     fun authenticateAndRegister(request: LoginRequest): LoginResult {
         // id token 요청
         val oAuthClient = oAuthClientFactory.getClient(request.provider)
@@ -47,19 +50,15 @@ class AuthService(
         val oidcPayload = oidcTokenVerification.verifyIdToken(idToken, publicKeys)
 
         // 유저 존재 여부 확인 -> 없으면 유저 생성 (= 자동 회원가입)
-        var isNewUser = false
-        val member =
-            memberRepository.findByProviderAndSubject(request.provider, oidcPayload.subject)
-                ?.let { Member.fromEntity(it) }
-                ?: run {
-                    isNewUser = true
-                    createMember(oidcPayload, request.provider)
-                }
+        val (member, isNewUser) = getMemberOrRegister(request.provider, oidcPayload)
 
+        // 공통 로그인 처리: JWT 생성 및 Redis에 refresh token 저장  & 디바이스 정보 저장 이벤트 발행
         return processLogin(member, request.deviceId, request.deviceType, isNewUser)
     }
 
     // 애플 소셜 로그인
+    // TODO: 애플 로그인 테스트 후 로그 삭제하기
+    @Transactional
     fun authenticateAndRegister(request: AppleLoginRequest): LoginResult {
         val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.APPLE)
         val oAuthTokenResponse = oAuthClient.getToken(request.authCode)
@@ -71,55 +70,82 @@ class AuthService(
         val oidcPayload = oidcTokenVerification.verifyIdToken(oAuthTokenResponse.idToken, publicKeys)
         logger.info("OIDC Payload: $oidcPayload")
 
-        var isNewUser = false
-        val member =
-            memberRepository.findByProviderAndSubject(OAuthProvider.APPLE, oidcPayload.subject)
-                ?.let {
-                    Member.fromEntity(it)
-                }
-                ?: run {
-                    isNewUser = true
-                    val updatedPayload =
-                        OIDCPayload(
-                            subject = oidcPayload.subject,
-                            email = request.email,
-                            picture = oidcPayload.picture,
-                            name = request.nickname,
-                        )
-                    createMember(updatedPayload, OAuthProvider.APPLE)
-                }
+        val updatedPayload =
+            OIDCPayload(
+                subject = oidcPayload.subject,
+                email = request.email,
+                picture = oidcPayload.picture,
+                name = request.nickname,
+            )
+
+        val (member, isNewUser) = getMemberOrRegister(OAuthProvider.APPLE, updatedPayload)
 
         checkNotNull(member.id, "memberId")
 
-        // apple refresh token 저장 (신규 유저면 생성, 기존 유저면 DB에서 조회) -> 회원 탈퇴 시, refresh token 필요해서 저장
-        val authToken =
+        // apple oauth refresh token DB에 저장 or 업데이트
+        createOrUpdateAppleAuthToken(member.id, isNewUser, oAuthTokenResponse)
+
+        // 공통 로그인 처리
+        return processLogin(member, request.deviceId, request.deviceType, isNewUser)
+    }
+
+    /**
+     * Apple OAuth 인증 토큰을 생성하거나 업데이트
+     * 새로운 사용자인 경우 새 AppleAuthToken 생성
+     * 기존 사용자인 경우 데이터베이스에서 기존 토큰을 조회하여 refresh token을 업데이트
+     * 이 토큰은 나중에 사용자 계정 탈퇴 같은 작업에서 Apple 서비스와 통신할 때 필요
+     */
+    private fun createOrUpdateAppleAuthToken(
+        memberId: Long,
+        isNewUser: Boolean,
+        oAuthTokenResponse: OAuthTokenResponse,
+    ) {
+        val appleAuthToken =
             when (isNewUser) {
                 true -> {
-                    AuthToken(
-                        memberId = member.id,
+                    AppleAuthToken(
+                        memberId = memberId,
                         refreshToken = oAuthTokenResponse.refreshToken,
                     )
                 }
                 false -> {
-                    val authToken = getAuthToken(member.id)
+                    val authToken = getAuthToken(memberId)
                     authToken.updateRefreshToken(oAuthTokenResponse.refreshToken)
                     authToken
                 }
             }
-        logger.info("apple refresh Token: $authToken")
-        authTokenRepository.save(authToken.toEntity())
 
-        return processLogin(member, request.deviceId, request.deviceType, isNewUser)
+        logger.info("apple refresh Token: $appleAuthToken")
+
+        appleAuthTokenRepository.save(appleAuthToken.toEntity())
+    }
+
+    /**
+     * provider, oidc payload로 멤버 조회, 없으면 새 멤버 생성
+     */
+    private fun getMemberOrRegister(
+        provider: OAuthProvider,
+        oidcPayload: OIDCPayload,
+    ): Pair<Member, Boolean> {
+        var isNewUser = false
+        val member =
+            memberRepository.findByProviderAndSubject(provider, oidcPayload.subject)
+                ?.let { Member.fromEntity(it) }
+                ?: run {
+                    isNewUser = true
+                    createMember(oidcPayload, provider)
+                }
+        return Pair(member, isNewUser)
     }
 
     // 애플 소셜 로그인 시, DB에서 refresh token 조회
-    private fun getAuthToken(id: Long): AuthToken {
-        val authToken =
-            AuthToken.fromEntity(
-                authTokenRepository.findById(id)
+    private fun getAuthToken(id: Long): AppleAuthToken {
+        val appleAuthToken =
+            AppleAuthToken.fromEntity(
+                appleAuthTokenRepository.findById(id)
                     .orElseThrow { ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND) },
             )
-        return authToken
+        return appleAuthToken
     }
 
     /**
@@ -134,7 +160,7 @@ class AuthService(
         deviceType: DevicePlatform,
         isNewUser: Boolean,
     ): LoginResult {
-        checkNotNull(member.id) { "Member ID must not be null" }
+        checkNotNull(member.id, "memberId")
 
         // spurt 용 jwt token 생성
         val tokens = jwtTokenProvider.generateTokens(member.id)
