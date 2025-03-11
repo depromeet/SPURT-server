@@ -91,7 +91,7 @@ class AuthService(
 
         checkNotNull(member.id, "memberId")
 
-        // apple refresh token 저장 (신규 유저면 생성, 기존 유저면 DB에서 조회)
+        // apple refresh token 저장 (신규 유저면 생성, 기존 유저면 DB에서 조회) -> 회원 탈퇴 시, refresh token 필요해서 저장
         val authToken =
             when (isNewUser) {
                 true -> {
@@ -122,7 +122,12 @@ class AuthService(
         return authToken
     }
 
-    // 공통 로그인 처리(JWT 토큰 생성, 캐시에 Refresh token 저장, 기기 정보 저장 이벤트 발행)
+    /**
+     * 공통 로그인 처리
+     * JWT 토큰 생성
+     * 캐시에 Refresh token 저장
+     * 기기 정보 저장 이벤트 발행
+     */
     private fun processLogin(
         member: Member,
         deviceId: String,
