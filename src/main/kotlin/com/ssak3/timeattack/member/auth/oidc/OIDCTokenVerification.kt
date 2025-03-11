@@ -9,6 +9,7 @@ import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_INVALI
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_MALFORMED
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.JWT_UNSUPPORTED
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.UNDEFINED_EXCEPTION
+import com.ssak3.timeattack.common.utils.Logger
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.JwtException
@@ -26,7 +27,7 @@ import java.util.Base64
 @Component
 class OIDCTokenVerification(
     private val objectMapper: ObjectMapper = jacksonObjectMapper(),
-) {
+) : Logger {
     fun verifyIdToken(
         idToken: String,
         oidcPublicKeys: OIDCPublicKeyList,
@@ -67,6 +68,13 @@ class OIDCTokenVerification(
                     .build()
                     .parseClaimsJws(token)
                     .body
+
+            // 모든 claims 내용 출력하기
+            logger.info("===== ID Token Claims =====")
+            claims.keys.forEach { key ->
+                logger.info("Claim: $key = ${claims[key]}")
+            }
+            logger.info("==========================")
 
             OIDCPayload(
                 subject = claims.subject,
