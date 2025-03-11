@@ -6,6 +6,7 @@ import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.auth.client.OAuthClientFactory
 import com.ssak3.timeattack.member.auth.oidc.OIDCPayload
 import com.ssak3.timeattack.member.auth.oidc.OIDCTokenVerification
@@ -78,9 +79,6 @@ class AuthService(
                 }
                 ?: run {
                     isNewUser = true
-                    checkNotNull(request.nickname) { "Nickname must not be null" }
-                    checkNotNull(request.email) { "Email must not be null" }
-
                     val updatedPayload =
                         OIDCPayload(
                             subject = oidcPayload.subject,
@@ -91,7 +89,7 @@ class AuthService(
                     createMember(updatedPayload, OAuthProvider.APPLE)
                 }
 
-        checkNotNull(member.id) { "Member ID must not be null" }
+        checkNotNull(member.id, "memberId")
 
         // apple refresh token 저장
         val authToken =
@@ -151,8 +149,10 @@ class AuthService(
     private fun createMember(
         oidcPayload: OIDCPayload,
         provider: OAuthProvider,
-    ): Member =
-        Member.fromEntity(
+    ): Member {
+        checkNotNull(oidcPayload.name, "nickname")
+        checkNotNull(oidcPayload.email, "email")
+        return Member.fromEntity(
             memberRepository.save(
                 Member(
                     nickname = oidcPayload.name,
@@ -162,4 +162,5 @@ class AuthService(
                 ).toEntity(),
             ),
         )
+    }
 }
