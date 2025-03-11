@@ -73,6 +73,19 @@ class PushNotificationListener(
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun updateNotification(event: TriggerActionNotificationUpdateEvent) {
-        TODO()
+        val member = memberService.getMemberById(event.memberId)
+        val task = taskService.getTaskById(event.taskId)
+
+        // 기존 알림 제거
+        pushNotificationService.delete(task)
+
+        val pushNotification =
+            PushNotification(
+                member = member,
+                task = task,
+                scheduledAt = event.alarmTime.withSecond(0),
+                order = 0,
+            )
+        pushNotificationService.save(pushNotification)
     }
 }

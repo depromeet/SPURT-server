@@ -26,6 +26,7 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain,
     ) {
         val requestUri = request.requestURI
+        logger.info("Request URI: $requestUri, Method: ${request.method}")
 
         // 공개 엔드포인트인 경우 토큰 체크를 하지 않고 필터 체인 진행
         if (isPermittedUrl(requestUri)) {

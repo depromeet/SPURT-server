@@ -46,6 +46,8 @@ dependencies {
     // Swagger
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
+    implementation("org.bouncycastle:bcpkix-jdk18on:1.77")
+
     // Kotest
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.9.1")
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")

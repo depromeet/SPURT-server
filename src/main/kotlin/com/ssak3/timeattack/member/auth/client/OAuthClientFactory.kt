@@ -6,11 +6,13 @@ import org.springframework.stereotype.Component
 @Component
 class OAuthClientFactory(
     private val kakaoOAuthClient: KakaoOAuthClient,
+    private val appleOAuthClient: AppleOAuthClient,
 ) {
     fun getClient(provider: OAuthProvider): OAuthClient {
         return when (provider) {
             OAuthProvider.KAKAO -> kakaoOAuthClient
             OAuthProvider.GOOGLE -> TODO()
+            OAuthProvider.APPLE -> appleOAuthClient
         }
     }
 }
