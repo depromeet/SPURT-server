@@ -1,11 +1,11 @@
 package com.ssak3.timeattack.member.controller
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
-import com.ssak3.timeattack.member.auth.client.AppleAuthCodeResponse.UserInfo
 import com.ssak3.timeattack.member.auth.properties.AppleProperties
 import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
@@ -134,4 +134,20 @@ class AuthController(
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
+}
+
+data class UserInfo(
+    // 사용자 이메일
+    @JsonProperty("email")
+    val email: String?,
+    // 사용자 이름 정보
+    @JsonProperty("name")
+    val name: NameInfo?,
+) {
+    data class NameInfo(
+        @JsonProperty("firstName")
+        val firstName: String?,
+        @JsonProperty("lastName")
+        val lastName: String?,
+    )
 }
