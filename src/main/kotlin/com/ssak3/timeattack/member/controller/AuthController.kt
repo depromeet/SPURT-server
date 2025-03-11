@@ -77,16 +77,18 @@ class AuthController(
     fun testAppleLogin(): RedirectView {
         logger.info("========== 애플 로그인 페이지로 리다이렉트")
 
+        val state = UUID.randomUUID().toString()
+        val nonce = UUID.randomUUID().toString()
         // 애플 로그인 URL 생성
         val authUrl =
             "https://appleid.apple.com/auth/authorize" +
-                "?response_type=code" +
+                "?response_type=code id_token" +
                 "&client_id=${appleProperties.clientId}" +
                 "&redirect_uri=${URLEncoder.encode(appleProperties.redirectUri, "UTF-8")}" +
                 "&response_mode=form_post" +
                 "&scope=name email" +
-                "&state=${UUID.randomUUID()}"
-
+                "&state=$state" +
+                "&nonce=$nonce"
         logger.info("애플 로그인 URL: $authUrl")
 
         // 생성된 URL로 리다이렉트
