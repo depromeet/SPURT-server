@@ -5,8 +5,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "auth_token")
-class AuthTokenEntity(
+@Table(name = "apple_auth_token")
+class AppleAuthTokenEntity(
     @Id
     val memberId: Long,
     var refreshToken: String,

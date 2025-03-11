@@ -1,8 +1,8 @@
 package com.ssak3.timeattack.member.domain
 
-import com.ssak3.timeattack.member.repository.entity.AuthTokenEntity
+import com.ssak3.timeattack.member.repository.entity.AppleAuthTokenEntity
 
-class AuthToken(
+class AppleAuthToken(
     val memberId: Long,
     var refreshToken: String,
 ) {
@@ -11,16 +11,16 @@ class AuthToken(
     }
 
     fun toEntity() =
-        AuthTokenEntity(
+        AppleAuthTokenEntity(
             memberId = memberId,
             refreshToken = refreshToken,
         )
 
     companion object {
-        fun fromEntity(authTokenEntity: AuthTokenEntity) =
-            AuthToken(
-                memberId = authTokenEntity.memberId,
-                refreshToken = authTokenEntity.refreshToken,
+        fun fromEntity(appleAuthTokenEntity: AppleAuthTokenEntity) =
+            AppleAuthToken(
+                memberId = appleAuthTokenEntity.memberId,
+                refreshToken = appleAuthTokenEntity.refreshToken,
             )
     }
 }
