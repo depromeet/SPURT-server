@@ -1,12 +1,8 @@
 package com.ssak3.timeattack.member.controller
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
-import com.ssak3.timeattack.member.auth.properties.AppleProperties
 import com.ssak3.timeattack.member.controller.dto.AppleLoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginRequest
 import com.ssak3.timeattack.member.controller.dto.LoginResponse
@@ -22,19 +18,13 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.servlet.view.RedirectView
-import java.net.URLEncoder
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/auth")
 class AuthController(
     private val authService: AuthService,
     private val refreshTokenService: RefreshTokenService,
-    private val appleProperties: AppleProperties,
-    private val objectMapper: ObjectMapper,
 ) : Logger {
     @Operation(summary = "소셜 로그인", description = "소셜 로그인 후 JWT access, refresh 토큰 반환")
     @PostMapping("/login")
@@ -72,82 +62,4 @@ class AuthController(
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
-
-    @GetMapping("/test-login/apple")
-    fun testAppleLogin(): RedirectView {
-        logger.info("========== 애플 로그인 페이지로 리다이렉트")
-
-        val state = UUID.randomUUID().toString()
-        val nonce = UUID.randomUUID().toString()
-        // 애플 로그인 URL 생성
-        val authUrl =
-            "https://appleid.apple.com/auth/authorize" +
-                "?response_type=code id_token" +
-                "&client_id=${appleProperties.clientId}" +
-                "&redirect_uri=${URLEncoder.encode(appleProperties.redirectUri, "UTF-8")}" +
-                "&response_mode=form_post" +
-                "&scope=name email" +
-                "&state=$state" +
-                "&nonce=$nonce"
-        logger.info("애플 로그인 URL: $authUrl")
-
-        // 생성된 URL로 리다이렉트
-        return RedirectView(authUrl)
-    }
-
-    @PostMapping("/callback/apple")
-    fun appleCallback(
-        @RequestParam("code") code: String,
-        @RequestParam("id_token", required = false) idToken: String?,
-        @RequestParam("state", required = false) state: String?,
-        @RequestParam("user", required = false) userJson: String?,
-    ): ResponseEntity<LoginResponse> {
-        logger.info(
-            "===== Apple Callback Parameters: code={}, idToken={}, state={}, userJson={}",
-            code.take(10) + "...",
-            idToken?.take(10) + "...",
-            state,
-            userJson,
-        )
-
-        // user JSON 문자열을 파싱 (존재하는 경우)
-        val user =
-            userJson?.let {
-                try {
-                    objectMapper.readValue(it, UserInfo::class.java)
-                } catch (e: Exception) {
-                    logger.warn("========== Failed to parse user JSON: {}", e.message, e)
-                    null
-                }
-            }
-        logger.info("Apple Login Callback: code=$code, idToken=$idToken, state=$state, user=$user")
-        val appleLoginRequest =
-            AppleLoginRequest(
-                code,
-                user?.name?.lastName + user?.name?.firstName,
-                user?.email,
-                "test-device-id",
-                DevicePlatform.IOS,
-            )
-
-        val loginResult = authService.authenticateAndRegister(appleLoginRequest)
-
-        return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
-    }
-}
-
-data class UserInfo(
-    // 사용자 이메일
-    @JsonProperty("email")
-    val email: String?,
-    // 사용자 이름 정보
-    @JsonProperty("name")
-    val name: NameInfo?,
-) {
-    data class NameInfo(
-        @JsonProperty("firstName")
-        val firstName: String?,
-        @JsonProperty("lastName")
-        val lastName: String?,
-    )
 }
