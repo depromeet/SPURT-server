@@ -25,6 +25,7 @@ jwt:
   secret: ${DEV_JWT_SECRET}
   access-token-validity-in-seconds: ${DEV_JWT_ACCESS_TOKEN_VALIDITY}
   refresh-token-validity-in-seconds: ${DEV_JWT_REFRESH_TOKEN_VALIDITY}
+
 fcm:
   secret-key: ${FIREBASE_SECRET_KEY}
   scheduler:
@@ -34,6 +35,7 @@ cors:
     - ${DEV_CORS_ALLOWED_ORIGINS_01}
     - ${DEV_CORS_ALLOWED_ORIGINS_02}
     - ${DEV_CORS_ALLOWED_ORIGINS_03}
+    - ${DEV_CORS_ALLOWED_ORIGINS_04}
   allowed-headers:
     - ${DEV_CORS_ALLOWED_HEADERS}
   allowed-methods:
@@ -45,6 +47,7 @@ security:
     - ${DEV_SECURITY_PERMIT_URLS_02}
     - ${DEV_SECURITY_PERMIT_URLS_03}
     - ${DEV_SECURITY_PERMIT_URLS_04}
+    - ${DEV_SECURITY_PERMIT_URLS_05}
 
 springdoc:
   swagger-ui:
@@ -54,3 +57,12 @@ springdoc:
 
 server:
   url: ${DEV_SERVER_URL}
+
+apple:
+  client-id: ${DEV_APPLE_CLIENT_ID}
+  redirect-uri: ${DEV_APPLE_REDIRECT_URI}
+  aud: ${DEV_APPLE_AUD}
+  team-id: ${DEV_APPLE_TEAM_ID}
+  key-id: ${DEV_APPLE_KEY_ID}
+  private-key: ${DEV_APPLE_PRIVATE_KEY}
+
