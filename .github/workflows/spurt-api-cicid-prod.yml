@@ -25,7 +25,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Create environment variable file from DEV_ENV secret
+      - name: Create environment variable file from PROD_ENV secret
         run: |
           echo "${{ secrets.PROD_ENV }}" > .env
           echo "Environment variable file (.env) created:"
@@ -64,7 +64,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Server
+      - name: Deploy to Prod Server
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.PROD_HOST }}
@@ -88,4 +88,4 @@ jobs:
             docker compose up -d
 
             echo "Checking container status..."
-            docker ps -a | grep spurt-api-dev
+            docker ps -a | grep spurt-api-prod
