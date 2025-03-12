@@ -1,0 +1,70 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DEV_MYSQL_URL}
+    username: ${DEV_MYSQL_USERNAME}
+    password: ${DEV_MYSQL_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: ${DEV_REDIS_HOST}
+      port: ${DEV_REDIS_PORT}
+      password: ${DEV_REDIS_PASSWORD}
+kakao:
+  client-id: ${DEV_KAKAO_CLIENT_ID}
+  client-secret: ${DEV_KAKAO_CLIENT_SECRET}
+  redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
+jwt:
+  secret: ${DEV_JWT_SECRET}
+  access-token-validity-in-seconds: ${DEV_JWT_ACCESS_TOKEN_VALIDITY}
+  refresh-token-validity-in-seconds: ${DEV_JWT_REFRESH_TOKEN_VALIDITY}
+
+fcm:
+  secret-key: ${FIREBASE_SECRET_KEY}
+  scheduler:
+    status: ${FCM_SEND_SCHEDULER_STATUS:true}
+cors:
+  allowed-origins:
+    - ${DEV_CORS_ALLOWED_ORIGINS_01}
+    - ${DEV_CORS_ALLOWED_ORIGINS_02}
+    - ${DEV_CORS_ALLOWED_ORIGINS_03}
+    - ${DEV_CORS_ALLOWED_ORIGINS_04}
+    - ${DEV_CORS_ALLOWED_ORIGINS_05}
+    - ${DEV_CORS_ALLOWED_ORIGINS_06}
+  allowed-headers:
+    - ${DEV_CORS_ALLOWED_HEADERS}
+  allowed-methods:
+    - ${DEV_CORS_ALLOWED_METHODS}
+  allow-credentials: ${DEV_CORS_ALLOW_CREDENTIALS}
+security:
+  permit-urls:
+    - ${DEV_SECURITY_PERMIT_URLS_01}
+    - ${DEV_SECURITY_PERMIT_URLS_02}
+    - ${DEV_SECURITY_PERMIT_URLS_03}
+    - ${DEV_SECURITY_PERMIT_URLS_04}
+    - ${DEV_SECURITY_PERMIT_URLS_05}
+
+springdoc:
+  swagger-ui:
+    path: ${DEV_SPRINGDOC_SWAGGER_UI_PATH}
+  api-docs:
+    path: ${DEV_SPRINGDOC_API_DOCS_PATH}
+
+server:
+  url: ${DEV_SERVER_URL}
+
+apple:
+  client-id: ${DEV_APPLE_CLIENT_ID}
+  redirect-uri: ${DEV_APPLE_REDIRECT_URI}
+  aud: ${DEV_APPLE_AUD}
+  team-id: ${DEV_APPLE_TEAM_ID}
+  key-id: ${DEV_APPLE_KEY_ID}
+  private-key: ${DEV_APPLE_PRIVATE_KEY}
+

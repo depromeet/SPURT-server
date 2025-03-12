@@ -1,0 +1,9 @@
+addReviewers: true
+addAssignees: author
+reviewers:
+  - CEO-Nick
+  - skydreamer21
+  - keongmini
+numberOfReviewers: 0
+skipKeywords:
+  - wip

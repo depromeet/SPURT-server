@@ -1,0 +1,75 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: 'jdbc:h2:mem:timeattack'
+    username: 'user'
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  h2:
+    console:
+      enabled: true
+      path: '/h2-console'
+
+  sql:
+    init:
+      mode: never
+
+  data:
+    redis:
+      port: 6379
+
+jwt:
+  access-token-validity-in-seconds: 3600
+  refresh-token-validity-in-seconds: 604800
+  secret: dummyKeyForTestsdummyKeyForTestsdummyKeyForTests
+
+kakao:
+  client-id: ${DEV_KAKAO_CLIENT_ID}
+  client-secret: ${DEV_KAKAO_CLIENT_SECRET}
+  redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
+fcm:
+  secret-key: ${FIREBASE_SECRET_KEY}
+  scheduler:
+    status: false
+cors:
+  allowed-origins:
+    - ${DEV_CORS_ALLOWED_ORIGINS_01}
+    - ${DEV_CORS_ALLOWED_ORIGINS_02}
+    - ${DEV_CORS_ALLOWED_ORIGINS_03}
+    - ${DEV_CORS_ALLOWED_ORIGINS_04}
+  allowed-headers:
+    - ${DEV_CORS_ALLOWED_HEADERS}
+  allowed-methods:
+    - ${DEV_CORS_ALLOWED_METHODS}
+  allow-credentials: ${DEV_CORS_ALLOW_CREDENTIALS}
+
+security:
+  permit-urls:
+    - ${DEV_SECURITY_PERMIT_URLS_01}
+    - ${DEV_SECURITY_PERMIT_URLS_02}
+    - ${DEV_SECURITY_PERMIT_URLS_03}
+    - ${DEV_SECURITY_PERMIT_URLS_04}
+    - ${DEV_SECURITY_PERMIT_URLS_05}
+
+springdoc:
+  swagger-ui:
+    path: ${DEV_SPRINGDOC_SWAGGER_UI_PATH}
+  api-docs:
+    path: ${DEV_SPRINGDOC_API_DOCS_PATH}
+
+server:
+  url: ${DEV_SERVER_URL}
+
+apple:
+  client-id: ${DEV_APPLE_CLIENT_ID}
+  redirect-uri: ${DEV_APPLE_REDIRECT_URI}
+  aud: ${DEV_APPLE_AUD}
+  team-id: ${DEV_APPLE_TEAM_ID}
+  key-id: ${DEV_APPLE_KEY_ID}
+  private-key: ${DEV_APPLE_PRIVATE_KEY}
