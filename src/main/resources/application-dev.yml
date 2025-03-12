@@ -36,6 +36,8 @@ cors:
     - ${DEV_CORS_ALLOWED_ORIGINS_02}
     - ${DEV_CORS_ALLOWED_ORIGINS_03}
     - ${DEV_CORS_ALLOWED_ORIGINS_04}
+    - ${DEV_CORS_ALLOWED_ORIGINS_05}
+    - ${DEV_CORS_ALLOWED_ORIGINS_06}
   allowed-headers:
     - ${DEV_CORS_ALLOWED_HEADERS}
   allowed-methods:
