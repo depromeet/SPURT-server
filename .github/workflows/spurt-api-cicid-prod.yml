@@ -54,7 +54,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_IMAGE_NAME_PROD }}:latest .
+          docker build -f Dockerfile-prod -t ${{ secrets.DOCKER_IMAGE_NAME_PROD }}:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
