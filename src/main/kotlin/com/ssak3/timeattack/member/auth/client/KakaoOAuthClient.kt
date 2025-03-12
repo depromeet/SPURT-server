@@ -24,4 +24,8 @@ class KakaoOAuthClient(
     override fun getPublicKeys(): OIDCPublicKeyList {
         return kakaoFeignClient.getPublicKeys()
     }
+
+    override fun unlink(identifier: String) {
+        TODO("Not yet implemented")
+    }
 }
