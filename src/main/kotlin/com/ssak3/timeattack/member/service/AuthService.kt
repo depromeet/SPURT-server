@@ -143,7 +143,7 @@ class AuthService(
         val appleAuthToken =
             AppleAuthToken.fromEntity(
                 appleAuthTokenRepository.findById(id)
-                    .orElseThrow { ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND) },
+                    .orElseThrow { ApplicationException(ApplicationExceptionType.APPLE_REFRESH_TOKEN_NOT_FOUND) },
             )
         return appleAuthToken
     }
@@ -197,5 +197,29 @@ class AuthService(
                 ).toEntity(),
             ),
         )
+    }
+
+    fun withdraw(member: Member) {
+        val requestedMemberId = checkNotNull(member.id, "memberId")
+
+        // 1. 회원 정보 지우기
+        member.delete()
+        memberRepository.save(member.toEntity())
+
+        // 2. Social 연결 끊기 -> 바뀌는 과정
+        when (member.oAuthProviderInfo.oauthProvider) {
+            OAuthProvider.KAKAO -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                oAuthClient.unlink(member.oAuthProviderInfo.subject)
+            }
+            OAuthProvider.APPLE -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                oAuthClient.unlink(requestedMemberId.toString())
+            }
+            OAuthProvider.GOOGLE -> TODO()
+        }
+
+        // 3. refreshToken 지우기
+        refreshTokenService.deleteRefreshToken(requestedMemberId)
     }
 }

@@ -169,7 +169,7 @@ enum class ApplicationExceptionType(
     // ======================== [START] AUTHENTICATION ========================
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR_AUTH_001", "인증된 사용자 정보가 없습니다."),
 
-    AUTH_TOKEN_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_AUTH_002", "apple refresh 토큰이 존재하지 않습니다."),
+    APPLE_REFRESH_TOKEN_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_AUTH_002", "apple refresh 토큰이 존재하지 않습니다."),
 
     // ======================== [END] AUTHENTICATION ========================
 

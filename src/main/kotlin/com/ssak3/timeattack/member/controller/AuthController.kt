@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
+import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
@@ -39,7 +40,7 @@ class AuthController(
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 
-    @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = "BearerAuth")])
+    @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/test")
     fun testFilter(
         @AuthenticationPrincipal member: Member,
@@ -64,13 +65,23 @@ class AuthController(
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 
-    @Operation(summary = "로그아웃", security = [SecurityRequirement(name = "BearerAuth")])
+    @Operation(summary = "로그아웃", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping("/logout")
     fun logout(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<Void> {
         checkNotNull(member.id, "memberId")
         refreshTokenService.deleteRefreshToken(member.id)
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "회원 탈퇴", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @PostMapping("/withdraw")
+    fun withdraw(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<Void> {
+        authService.withdraw(member)
 
         return ResponseEntity.noContent().build()
     }

@@ -34,4 +34,12 @@ interface AppleFeignClient {
     @GetMapping("/auth/keys")
     @Cacheable(value = [OIDC_PUBLIC_KEYS], key = "'apple'")
     fun getPublicKeys(): OIDCPublicKeyList
+
+    @PostMapping("/auth/revoke")
+    fun unlink(
+        @RequestParam("client_id") clientId: String,
+        @RequestParam("client_secret") clientSecret: String,
+        @RequestParam("token") token: String,
+        @RequestParam("token_type_hint") tokenTypeHint: String = "refresh_token",
+    )
 }

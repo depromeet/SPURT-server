@@ -20,6 +20,7 @@ class MemberRepositoryCustomImpl(
             .select(qMemberEntity)
             .from(qMemberEntity)
             .where(
+                qMemberEntity.isDeleted.isFalse,
                 qMemberEntity.oAuthProviderInfo.oauthProvider.eq(oauthProvider),
                 qMemberEntity.oAuthProviderInfo.subject.eq(subject),
             )
