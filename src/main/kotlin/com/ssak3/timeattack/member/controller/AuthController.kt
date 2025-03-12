@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.member.controller
 
+import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.common.security.JwtTokenDto
 import com.ssak3.timeattack.common.security.refreshtoken.RefreshTokenService
 import com.ssak3.timeattack.common.utils.Logger
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -62,4 +64,14 @@ class AuthController(
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
+
+    @Operation(summary = "회원 탈퇴", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @DeleteMapping("/withdraw")
+    fun withdraw(
+        @AuthenticationPrincipal member: Member,
+    ) : ResponseEntity<Unit> {
+        authService.withdraw(member)
+        return ResponseEntity.noContent().build()
+    }
+
 }
