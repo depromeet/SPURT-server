@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component
 @Component
 class KakaoOAuthClient(
     @Autowired
-    val kakaoFeignClient: KakaoFeignClient,
+    val kakaoOAuthFeignClient: KakaoOAuthFeignClient,
     @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
     override fun getToken(authCode: String): OAuthTokenResponse {
-        return kakaoFeignClient.getToken(
+        return kakaoOAuthFeignClient.getToken(
             code = authCode,
             clientId = kakaoProperties.clientId,
             clientSecret = kakaoProperties.clientSecret,
@@ -22,6 +22,6 @@ class KakaoOAuthClient(
     }
 
     override fun getPublicKeys(): OIDCPublicKeyList {
-        return kakaoFeignClient.getPublicKeys()
+        return kakaoOAuthFeignClient.getPublicKeys()
     }
 }

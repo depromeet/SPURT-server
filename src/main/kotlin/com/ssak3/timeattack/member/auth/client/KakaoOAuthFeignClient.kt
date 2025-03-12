@@ -2,11 +2,14 @@ package com.ssak3.timeattack.member.auth.client
 
 import com.ssak3.timeattack.common.constant.CacheConst.OIDC_PUBLIC_KEYS
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
+import feign.Headers
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 
 @Component
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam
     name = "kakaoAuthClient",
     url = "https://kauth.kakao.com",
 )
-interface KakaoFeignClient {
+interface KakaoOAuthFeignClient {
     /**
      * 인가 코드로 카카오 인증 서버에 ID token 요청하기
      */
