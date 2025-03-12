@@ -198,4 +198,25 @@ class AuthService(
             ),
         )
     }
+
+    fun withdraw(member: Member) {
+        val requestedMemberId = checkNotNull(member.id, "memberId")
+
+        // 1. 회원 정보 지우기
+        member.delete()
+        memberRepository.save(member.toEntity())
+
+        // 2. 카카오 연결 끊기 -> 바뀌는 과정
+        when(member.oAuthProviderInfo.oauthProvider) {
+            OAuthProvider.KAKAO -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                oAuthClient.unlink(member.oAuthProviderInfo.subject)
+            }
+            else -> TODO()
+        }
+
+        // 3. refreshToken 지우기
+        refreshTokenService.deleteRefreshToken(requestedMemberId)
+
+    }
 }

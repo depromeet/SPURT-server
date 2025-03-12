@@ -12,8 +12,13 @@ class Member(
     val oAuthProviderInfo: OAuthProviderInfo,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null,
-    val isDeleted: Boolean = false,
+    var isDeleted: Boolean = false,
 ) {
+
+    fun delete() {
+        isDeleted = true
+    }
+
     fun toEntity() =
         MemberEntity(
             id = id,
