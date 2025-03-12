@@ -72,20 +72,20 @@ jobs:
           key: ${{ secrets.PROD_SSH_KEY }}
           script: |
             cd ${{ secrets.PROD_COMPOSE_PATH }}
-            
+
             echo "${{ secrets.PROD_ENV }}" > .env
             cat .env || echo ".env file is missing!"
-            
+
             docker pull ${{ secrets.DOCKER_IMAGE_NAME_PROD }}:latest
-            
-            if [ "$(docker ps -q -f name=spurt-api-dev)" ]; then
+
+            if [ "$(docker ps -q -f name=spurt-api-prod)" ]; then
               echo "Stopping and removing existing container..."
               docker compose down
             else
               echo "No running container found."
             fi
-            
+
             docker compose up -d
-            
+
             echo "Checking container status..."
             docker ps -a | grep spurt-api-dev
