@@ -1,8 +1,12 @@
 package com.ssak3.timeattack.member.auth.client
 
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
 import com.ssak3.timeattack.member.auth.properties.AppleProperties
+import com.ssak3.timeattack.member.domain.AppleAuthToken
+import com.ssak3.timeattack.member.repository.AppleAuthTokenRepository
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
@@ -22,6 +26,8 @@ class AppleOAuthClient(
     val appleFeignClient: AppleFeignClient,
     @Autowired
     val appleProperties: AppleProperties,
+    @Autowired
+    val appleAuthTokenRepository: AppleAuthTokenRepository,
 ) : OAuthClient, Logger {
     override fun getToken(authCode: String): OAuthTokenResponse {
         return appleFeignClient.getToken(
@@ -34,6 +40,16 @@ class AppleOAuthClient(
 
     override fun getPublicKeys(): OIDCPublicKeyList {
         return appleFeignClient.getPublicKeys()
+    }
+
+    // identifier =  memberId
+    override fun unlink(identifier: String) {
+        val appleRefreshToken = getAppleRefreshToken(identifier.toLong())
+        appleFeignClient.unlink(
+            clientId = appleProperties.clientId,
+            clientSecret = createClientSecret(),
+            token = appleRefreshToken,
+        )
     }
 
     // client-secret(JWT 형식) 생성
@@ -75,5 +91,15 @@ class AppleOAuthClient(
                 return converter.getPrivateKey(privateKeyInfo)
             }
         }
+    }
+
+    private fun getAppleRefreshToken(memberId: Long): String {
+        val appleAuthToken =
+            AppleAuthToken.fromEntity(
+                appleAuthTokenRepository.findById(memberId).orElseThrow {
+                    ApplicationException(ApplicationExceptionType.APPLE_REFRESH_TOKEN_NOT_FOUND)
+                },
+            )
+        return appleAuthToken.refreshToken
     }
 }

@@ -6,4 +6,6 @@ interface OAuthClient {
     fun getToken(authCode: String): OAuthTokenResponse
 
     fun getPublicKeys(): OIDCPublicKeyList
+
+    fun unlink(identifier: String)
 }
