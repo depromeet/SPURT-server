@@ -143,7 +143,7 @@ class AuthService(
         val appleAuthToken =
             AppleAuthToken.fromEntity(
                 appleAuthTokenRepository.findById(id)
-                    .orElseThrow { ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND) },
+                    .orElseThrow { ApplicationException(ApplicationExceptionType.APPLE_REFRESH_TOKEN_NOT_FOUND) },
             )
         return appleAuthToken
     }
