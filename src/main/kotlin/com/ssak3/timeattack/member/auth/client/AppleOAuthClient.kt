@@ -44,12 +44,19 @@ class AppleOAuthClient(
 
     // identifier =  memberId
     override fun unlink(identifier: String) {
-        val appleRefreshToken = getAppleRefreshToken(identifier.toLong())
+        val memberId = identifier.toLong()
+        // DB에서 apple refresh token 조회
+        val appleRefreshToken = getAppleRefreshToken(memberId)
+
+        // 애플 연결 끊기 요청
         appleFeignClient.unlink(
             clientId = appleProperties.clientId,
             clientSecret = createClientSecret(),
             token = appleRefreshToken,
         )
+
+        // DB에서 apple refresh token 삭제
+        appleAuthTokenRepository.deleteById(memberId)
     }
 
     // client-secret(JWT 형식) 생성
