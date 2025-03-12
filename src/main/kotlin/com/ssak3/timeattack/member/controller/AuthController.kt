@@ -74,4 +74,14 @@ class AuthController(
 
         return ResponseEntity.noContent().build()
     }
+
+    @Operation(summary = "회원 탈퇴", security = [SecurityRequirement(name = "BearerAuth")])
+    @PostMapping("/withdraw")
+    fun withdraw(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<Void> {
+        authService.withdraw(member)
+
+        return ResponseEntity.noContent().build()
+    }
 }
