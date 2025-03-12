@@ -81,7 +81,7 @@ object Fixture {
         triggerAction: String? = null,
         triggerActionAlarmTime: LocalDateTime? = null,
         estimatedTime: Int? = null,
-        status: TaskStatus = TaskStatus.BEFORE,
+        status: TaskStatus = TaskStatus.FOCUSED,
         member: Member = createMember(),
         persona: Persona = createPersona(),
         createdAt: LocalDateTime = now,
@@ -103,6 +103,39 @@ object Fixture {
         isDeleted = isDeleted,
     )
 
+    fun createUrgentTask(
+        id: Long? = 1L,
+        name: String = "Urgent Test Task",
+        dueDatetime: LocalDateTime = now.plusDays(1),
+        status: TaskStatus = TaskStatus.FOCUSED,
+        member: Member = createMember(),
+        persona: Persona = createPersona(),
+        createdAt: LocalDateTime = now,
+        updatedAt: LocalDateTime = now,
+        isDeleted: Boolean = false,
+    ) = Task(
+        id = id,
+        name = name,
+        category = TaskCategory.URGENT,
+        dueDatetime = dueDatetime,
+        triggerAction = null,
+        triggerActionAlarmTime = null,
+        estimatedTime = null,
+        status = status,
+        member = member,
+        persona = persona,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        isDeleted = isDeleted,
+    )
+
+    /**
+     * 다음 조건의 Scheduled Task 생성
+     * <br>
+     * - 마감시간은 현재시간보다 1일 뒤
+     * - 예상 소요 시간은 1시간
+     * - 작은 행동 알림 시간은 현재시간보다 10시간 뒤
+     */
     fun createScheduledTask(
         id: Long? = 1L,
         name: String = "Test Task",
@@ -125,6 +158,44 @@ object Fixture {
         triggerAction = triggerAction,
         triggerActionAlarmTime = triggerActionAlarmTime,
         estimatedTime = estimatedTime,
+        status = status,
+        member = member,
+        persona = persona,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        isDeleted = isDeleted,
+    )
+
+    /**
+     * 기준 시간를 주입 받아 다음 조건의 Scheduled Task 생성
+     * <br>
+     * - 마감시간은 현재시간보다 3시간 뒤
+     * - 작은 행동 알림 시간은 현재시간보다 1시간 뒤
+     * - 예상 소요 시간은 1시간
+     */
+    fun createScheduledTaskWithNow(
+        baseTime: LocalDateTime,
+        id: Long? = 1L,
+        name: String = "Test Task",
+        category: TaskCategory = TaskCategory.SCHEDULED,
+        triggerAction: String = "Trigger Action",
+        status: TaskStatus = TaskStatus.BEFORE,
+        member: Member = createMember(),
+        persona: Persona = createPersona(),
+        createdAt: LocalDateTime = baseTime,
+        updatedAt: LocalDateTime = baseTime,
+        isDeleted: Boolean = false,
+    ) = Task(
+        id = id,
+        name = name,
+        category = category,
+        // 기준 시간으로부터 1시간 뒤 라고 설정된 triggerActionAlarmTime을 수정할 수 없습니다.
+        triggerActionAlarmTime = baseTime.plusHours(1),
+        // 기준 시간으로부터 3시간 뒤 라고 설정된 dueDatetime을 수정할 수 없습니다.
+        dueDatetime = baseTime.plusHours(3),
+        // 60분이라고 설정된 estimatedTime을 수정할 수 없습니다.
+        estimatedTime = 60,
+        triggerAction = triggerAction,
         status = status,
         member = member,
         persona = persona,

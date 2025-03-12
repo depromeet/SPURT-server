@@ -18,7 +18,7 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
-import com.ssak3.timeattack.task.service.events.DeleteTaskAlarmEvent
+import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
@@ -85,8 +85,6 @@ class TaskService(
                 member = member,
                 persona = persona,
             )
-
-        task.validateTriggerActionAlarmTime(scheduledTaskRequest.triggerActionAlarmTime)
 
         // 3. Task 저장
         val savedTaskEntity = taskRepository.save(task.toEntity())
@@ -232,7 +230,7 @@ class TaskService(
         taskRepository.save(task.toEntity())
 
         // Task 삭제 이벤트 발행
-        eventPublisher.publishEvent(DeleteTaskAlarmEvent(member.id, checkNotNull(task.id)))
+        eventPublisher.publishEvent(DeleteTaskNotificationEvent(member.id, checkNotNull(task.id)))
         // TODO: 이벤트 처리 실패시 어떻게 처리할지 고민
     }
 
@@ -288,7 +286,7 @@ class TaskService(
             } else {
                 // 즉시 몰입 시작이 아닌 경우 작은행동 알림 검증을 통해 마감시간 업데이트
                 checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime")
-                task.modifyToUrgentDueDatetime(updatedDueDatetime, request.triggerActionAlarmTime)
+                task.modifyDueDatetime(updatedDueDatetime, request.triggerActionAlarmTime)
             }
         }
 
@@ -309,7 +307,7 @@ class TaskService(
     ) {
         // 즉시 시작하게 되면 기존 알림을 삭제
         if (request.isUrgent) {
-            eventPublisher.publishEvent(DeleteTaskAlarmEvent(memberId, taskId))
+            eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId, taskId))
         }
 
         // 작은 행동 알림이 업데이트 되면 새로운 작은 행동 알림 업데이트 이벤트 발행

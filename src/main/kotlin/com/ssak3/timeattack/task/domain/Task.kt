@@ -23,6 +23,13 @@ class Task(
     val updatedAt: LocalDateTime? = null,
     var isDeleted: Boolean = false,
 ) {
+    init {
+        // scheduled 작업에서 FOCUSED 일 경우는 아래의 검증 로직에서 벗어나는 케이스 존재
+        if (category == TaskCategory.SCHEDULED && status == TaskStatus.BEFORE) {
+            validateTriggerActionAlarmTime()
+        }
+    }
+
     fun toEntity() =
         TaskEntity(
             id = id,
@@ -41,8 +48,12 @@ class Task(
     /**
      * 입력된 triggerActionAlarmTime 이 기존 task 의 estimatedTime 과 dueDatetime 에 대해 유효한지 검증
      */
-    fun validateTriggerActionAlarmTime(triggerActionAlarmTime: LocalDateTime) {
-        validateTriggerActionAlarmTime(triggerActionAlarmTime, this.estimatedTime, this.dueDatetime)
+    private fun validateTriggerActionAlarmTime() {
+        validateTriggerActionAlarmTime(
+            checkNotNull(this.triggerActionAlarmTime, "triggerActionAlarmTime"),
+            this.estimatedTime,
+            this.dueDatetime,
+        )
     }
 
     /**
@@ -69,7 +80,7 @@ class Task(
      * 작은 행동 알림 시간을 검증합니다.
      * 작은 행동 알림시간에 예상 소요 시간(estimatedTime)을 더한 시간이 마감 시간(dueDatetime)보다 뒤에 있으면 예외를 발생시킵니다.
      */
-    fun validateTriggerActionAlarmTime(
+    private fun validateTriggerActionAlarmTime(
         triggerActionAlarmTime: LocalDateTime,
         estimatedTime: Int?,
         dueDatetime: LocalDateTime,
@@ -80,8 +91,7 @@ class Task(
             throw ApplicationException(ApplicationExceptionType.TASK_CATEGORY_MISMATCH, category)
         }
         checkNotNull(estimatedTime, "estimatedTime")
-        val checkedEstimatedTime = (checkNotNull(estimatedTime) { "estimatedTime must not be null" }).toLong()
-        if (triggerActionAlarmTime.plusMinutes(checkedEstimatedTime).isAfter(dueDatetime)) {
+        if (triggerActionAlarmTime.plusMinutes(estimatedTime.toLong()).isAfter(dueDatetime)) {
             throw ApplicationException(
                 ApplicationExceptionType.INVALID_TRIGGER_ACTION_ALARM_TIME,
                 triggerActionAlarmTime,
@@ -141,7 +151,7 @@ class Task(
         this.triggerActionAlarmTime = triggerActionAlarmTime
     }
 
-    fun modifyToUrgentDueDatetime(
+    fun modifyDueDatetime(
         dueDatetime: LocalDateTime,
         triggerActionAlarmTime: LocalDateTime,
     ) {
@@ -156,9 +166,10 @@ class Task(
         validateTaskStatusForUpdate(TaskStatus.BEFORE, "dueDatetime")
         changeStatus(TaskStatus.FOCUSED)
         this.dueDatetime = dueDatetime
+        this.triggerActionAlarmTime = null
     }
 
-    fun validateTaskStatusForUpdate(
+    private fun validateTaskStatusForUpdate(
         status: TaskStatus,
         attribute: String,
     ) {
