@@ -41,4 +41,12 @@ interface AppleFeignClient {
         @RequestParam("client_id") clientId: String,
         @RequestParam("redirect_uri") redirectUri: String,
     )
+
+    @PostMapping("/auth/revoke")
+    fun unlink(
+        @RequestParam("client_id") clientId: String,
+        @RequestParam("client_secret") clientSecret: String,
+        @RequestParam("token") token: String,
+        @RequestParam("token_type_hint") tokenTypeHint: String = "refresh_token",
+    )
 }

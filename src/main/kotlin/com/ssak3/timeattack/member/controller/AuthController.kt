@@ -134,6 +134,16 @@ class AuthController(
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
+
+    @PostMapping("/withdraw")
+    fun withdraw(
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<Void> {
+        logger.info("==================== 회원 탈퇴 요청 In")
+        authService.withdraw(member)
+
+        return ResponseEntity.noContent().build()
+    }
 }
 
 data class UserInfo(

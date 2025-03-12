@@ -38,13 +38,14 @@ class RefreshTokenService(
         return tokens
     }
 
-    /**
-     * refresh token을 저장한다.
-     */
     fun saveRefreshToken(
         memberId: Long,
         refreshToken: String,
     ) {
         refreshTokenRedisRepository.save(RefreshTokenEntity(memberId.toString(), refreshToken))
+    }
+
+    fun deleteRefreshToken(memberId: Long) {
+        refreshTokenRedisRepository.deleteById(memberId.toString())
     }
 }

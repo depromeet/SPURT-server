@@ -1,8 +1,12 @@
 package com.ssak3.timeattack.member.auth.client
 
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
 import com.ssak3.timeattack.member.auth.properties.AppleProperties
+import com.ssak3.timeattack.member.domain.AuthToken
+import com.ssak3.timeattack.member.repository.AuthTokenRepository
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo
@@ -22,6 +26,8 @@ class AppleOAuthClient(
     val appleFeignClient: AppleFeignClient,
     @Autowired
     val appleProperties: AppleProperties,
+    @Autowired
+    val authTokenRepository: AuthTokenRepository,
 ) : OAuthClient, Logger {
     fun getAuthCode() {
         logger.info(
@@ -46,6 +52,22 @@ class AppleOAuthClient(
 
     override fun getPublicKeys(): OIDCPublicKeyList {
         return appleFeignClient.getPublicKeys()
+    }
+
+    // identifier =  memberId
+    override fun unlink(identifier: String) {
+        logger.info("==================== memberId($identifier) apple 로그인 연결 끊기 START!! ")
+        val appleRefreshToken = getAppleRefreshToken(identifier.toLong())
+
+        logger.info("==================== find apple refresh token in db: $appleRefreshToken")
+        appleFeignClient.unlink(
+            clientId = appleProperties.clientId,
+            clientSecret = createClientSecret(),
+            token = appleRefreshToken,
+        )
+
+        authTokenRepository.deleteById(identifier.toLong())
+        logger.info("==================== memberId($identifier) apple 로그인 연결 끊기 END!! ")
     }
 
     // client-secret 생성
@@ -89,5 +111,15 @@ class AppleOAuthClient(
                 return converter.getPrivateKey(privateKeyInfo)
             }
         }
+    }
+
+    private fun getAppleRefreshToken(memberId: Long): String {
+        val appleAuthToken =
+            AuthToken.fromEntity(
+                authTokenRepository.findById(memberId).orElseThrow {
+                    ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND)
+                },
+            )
+        return appleAuthToken.refreshToken
     }
 }

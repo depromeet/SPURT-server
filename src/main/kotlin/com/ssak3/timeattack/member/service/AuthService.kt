@@ -112,6 +112,32 @@ class AuthService(
         return processLogin(member, request.deviceId, request.deviceType, isNewUser)
     }
 
+    // 회원 탈퇴
+    fun withdraw(member: Member) {
+        val requestedMemberId = checkNotNull(member.id, "memberId")
+
+        // 1. 회원 정보 지우기
+        member.delete()
+        memberRepository.save(member.toEntity())
+        logger.info("==================== 회원 정보 삭제 -> id: ${member.id} isDeleted: ${member.isDeleted}")
+
+        // 2. Social 연결 끊기 -> 바뀌는 과정
+        when (member.oAuthProviderInfo.oauthProvider) {
+            OAuthProvider.KAKAO -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                oAuthClient.unlink(member.oAuthProviderInfo.subject)
+            }
+            OAuthProvider.APPLE -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.APPLE)
+                oAuthClient.unlink(member.id.toString())
+            }
+            OAuthProvider.GOOGLE -> TODO()
+        }
+
+        // 3. refreshToken 지우기
+        refreshTokenService.deleteRefreshToken(requestedMemberId)
+    }
+
     // 애플 소셜 로그인 시, DB에서 refresh token 조회
     private fun getAuthToken(id: Long): AuthToken {
         val authToken =
