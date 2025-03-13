@@ -143,7 +143,7 @@ class AuthService(
         val appleAuthToken =
             AppleAuthToken.fromEntity(
                 appleAuthTokenRepository.findById(id)
-                    .orElseThrow { ApplicationException(ApplicationExceptionType.AUTH_TOKEN_NOT_FOUND) },
+                    .orElseThrow { ApplicationException(ApplicationExceptionType.APPLE_REFRESH_TOKEN_NOT_FOUND) },
             )
         return appleAuthToken
     }
@@ -206,13 +206,17 @@ class AuthService(
         member.delete()
         memberRepository.save(member.toEntity())
 
-        // 2. 카카오 연결 끊기 -> 바뀌는 과정
-        when(member.oAuthProviderInfo.oauthProvider) {
+        // 2. Social 연결 끊기 -> 바뀌는 과정
+        when (member.oAuthProviderInfo.oauthProvider) {
             OAuthProvider.KAKAO -> {
                 val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
                 oAuthClient.unlink(member.oAuthProviderInfo.subject)
             }
-            else -> TODO()
+            OAuthProvider.APPLE -> {
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                oAuthClient.unlink(requestedMemberId.toString())
+            }
+            OAuthProvider.GOOGLE -> TODO()
         }
 
         // 3. refreshToken 지우기

@@ -14,9 +14,8 @@ class Member(
     val updatedAt: LocalDateTime? = null,
     var isDeleted: Boolean = false,
 ) {
-
     fun delete() {
-        isDeleted = true
+        this.isDeleted = true
     }
 
     fun toEntity() =

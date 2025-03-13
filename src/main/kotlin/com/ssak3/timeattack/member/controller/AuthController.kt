@@ -41,7 +41,7 @@ class AuthController(
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 
-    @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = "BearerAuth")])
+    @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @GetMapping("/test")
     fun testFilter(
         @AuthenticationPrincipal member: Member,
@@ -66,7 +66,7 @@ class AuthController(
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
 
-    @Operation(summary = "로그아웃", security = [SecurityRequirement(name = "BearerAuth")])
+    @Operation(summary = "로그아웃", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping("/logout")
     fun logout(
         @AuthenticationPrincipal member: Member,
@@ -78,12 +78,12 @@ class AuthController(
     }
 
     @Operation(summary = "회원 탈퇴", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
-    @DeleteMapping("/withdraw")
+    @PostMapping("/withdraw")
     fun withdraw(
         @AuthenticationPrincipal member: Member,
-    ) : ResponseEntity<Unit> {
+    ): ResponseEntity<Void> {
         authService.withdraw(member)
+
         return ResponseEntity.noContent().build()
     }
-
 }

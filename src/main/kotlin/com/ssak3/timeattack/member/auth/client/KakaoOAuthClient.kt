@@ -36,4 +36,8 @@ class KakaoOAuthClient(
             target_id = identifier,
         )
     }
+
+    override fun unlink(identifier: String) {
+        TODO("Not yet implemented")
+    }
 }
