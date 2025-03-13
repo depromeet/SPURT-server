@@ -25,7 +25,6 @@ class JwtAuthenticationFilter(
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
-        throw IllegalArgumentException("Not implemented yet")
         val requestUri = request.requestURI
         logger.info("Request URI: $requestUri, Method: ${request.method}")
 
