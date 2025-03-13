@@ -76,4 +76,8 @@ class AppleOAuthClient(
             }
         }
     }
+
+    override fun unlink(identifier: String) {
+        TODO("Not yet implemented")
+    }
 }

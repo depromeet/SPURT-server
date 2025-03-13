@@ -7,4 +7,5 @@ data class KakaoProperties(
     val clientId: String,
     val clientSecret: String,
     val redirectUri: String,
+    val adminKey: String,
 )

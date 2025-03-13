@@ -217,6 +217,5 @@ class AuthService(
 
         // 3. refreshToken 지우기
         refreshTokenService.deleteRefreshToken(requestedMemberId)
-
     }
 }

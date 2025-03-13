@@ -10,6 +10,8 @@ class KakaoOAuthClient(
     @Autowired
     val kakaoOAuthFeignClient: KakaoOAuthFeignClient,
     @Autowired
+    val kakaoFeignClient: KakaoFeignClient,
+    @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
     override fun getToken(authCode: String): OAuthTokenResponse {
@@ -23,5 +25,15 @@ class KakaoOAuthClient(
 
     override fun getPublicKeys(): OIDCPublicKeyList {
         return kakaoOAuthFeignClient.getPublicKeys()
+    }
+
+    // identifier =  OAuth Subject
+    override fun unlink(identifier: String) {
+        kakaoFeignClient.unlink(
+            adminKey = "KakaoAK ${kakaoProperties.adminKey}",
+//            contentType = "application/x-www-form-urlencoded;charset=utf-8",
+//            unlinkRequest = KakaoUnlinkRequest(target_id = identifier),
+            target_id = identifier,
+        )
     }
 }
