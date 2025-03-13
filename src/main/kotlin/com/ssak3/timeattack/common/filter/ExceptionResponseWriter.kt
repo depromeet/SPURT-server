@@ -11,11 +11,13 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 
 class ExceptionResponseWriter {
-
     companion object {
-
         @Throws(IOException::class)
-        fun writeException(response: HttpServletResponse, exceptionType: ApplicationExceptionType, vararg args: Any?) {
+        fun writeException(
+            response: HttpServletResponse,
+            exceptionType: ApplicationExceptionType,
+            vararg args: Any?,
+        ) {
             setResponseInfo(response, exceptionType.httpStatus)
             val writer = response.writer
             val mapper = ObjectMapper()
@@ -24,7 +26,10 @@ class ExceptionResponseWriter {
         }
 
         @Throws(IOException::class)
-        fun writeException(response: HttpServletResponse, exception: ApplicationException) {
+        fun writeException(
+            response: HttpServletResponse,
+            exception: ApplicationException,
+        ) {
             setResponseInfo(response, exception.exceptionType.httpStatus)
             val writer = response.writer
             val mapper = ObjectMapper()
@@ -32,7 +37,10 @@ class ExceptionResponseWriter {
             writer.flush()
         }
 
-        private fun setResponseInfo(response: HttpServletResponse, httpStatus: HttpStatus) {
+        private fun setResponseInfo(
+            response: HttpServletResponse,
+            httpStatus: HttpStatus,
+        ) {
             response.status = httpStatus.value()
             response.contentType = MediaType.APPLICATION_JSON_VALUE
             response.characterEncoding = StandardCharsets.UTF_8.name()
