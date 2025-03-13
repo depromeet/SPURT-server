@@ -14,7 +14,6 @@ class KakaoOAuthClient(
     @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
-
     companion object {
         const val KAKAO_ADMIN_KEY_TOKEN_TYPE = "KakaoAK"
     }

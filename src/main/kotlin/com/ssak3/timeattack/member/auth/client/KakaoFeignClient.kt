@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam
     url = "https://kapi.kakao.com",
 )
 interface KakaoFeignClient {
-
     /**
      * 카카오 인증 서버에 연결된 계정과의 연결 해제
      */
@@ -23,5 +22,5 @@ interface KakaoFeignClient {
         @RequestHeader("Authorization") authorization: String,
         @RequestParam target_id_type: String = "user_id",
         @RequestParam target_id: String,
-    ) : KakaoUnlinkResponse
+    ): KakaoUnlinkResponse
 }

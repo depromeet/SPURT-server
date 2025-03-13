@@ -31,8 +31,10 @@ class MemberRepositoryCustomImpl(
         return queryFactory
             .select(qMemberEntity)
             .from(qMemberEntity)
-            .where(qMemberEntity.id.eq(id)
-                .and(qMemberEntity.isDeleted.isFalse))
+            .where(
+                qMemberEntity.id.eq(id)
+                    .and(qMemberEntity.isDeleted.isFalse),
+            )
             .fetchOne()
     }
 }
