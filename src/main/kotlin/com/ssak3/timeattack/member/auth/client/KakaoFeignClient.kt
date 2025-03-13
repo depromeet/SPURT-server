@@ -20,7 +20,7 @@ interface KakaoFeignClient {
     @PostMapping("/v1/user/unlink", consumes = ["application/x-www-form-urlencoded"])
     @Headers("Content-Type: application/x-www-form-urlencoded;charset=utf-8")
     fun unlink(
-        @RequestHeader("Authorization") adminKey: String,
+        @RequestHeader("Authorization") authorization: String,
         @RequestParam target_id_type: String = "user_id",
         @RequestParam target_id: String,
     ) : KakaoUnlinkResponse

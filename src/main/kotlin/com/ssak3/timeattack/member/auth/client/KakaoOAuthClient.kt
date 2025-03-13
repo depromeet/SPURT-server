@@ -14,6 +14,11 @@ class KakaoOAuthClient(
     @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
+
+    companion object {
+        const val KAKAO_ADMIN_KEY_TOKEN_TYPE = "KakaoAK"
+    }
+
     override fun getToken(authCode: String): OAuthTokenResponse {
         return kakaoOAuthFeignClient.getToken(
             code = authCode,
@@ -30,14 +35,8 @@ class KakaoOAuthClient(
     // identifier =  OAuth Subject
     override fun unlink(identifier: String) {
         kakaoFeignClient.unlink(
-            adminKey = "KakaoAK ${kakaoProperties.adminKey}",
-//            contentType = "application/x-www-form-urlencoded;charset=utf-8",
-//            unlinkRequest = KakaoUnlinkRequest(target_id = identifier),
+            authorization = "$KAKAO_ADMIN_KEY_TOKEN_TYPE ${kakaoProperties.adminKey}",
             target_id = identifier,
         )
-    }
-
-    override fun unlink(identifier: String) {
-        TODO("Not yet implemented")
     }
 }
