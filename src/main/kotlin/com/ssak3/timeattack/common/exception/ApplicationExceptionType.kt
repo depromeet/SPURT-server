@@ -196,6 +196,15 @@ enum class ApplicationExceptionType(
     ),
 
     /**
+     * - {0} : Exception Message
+     */
+    FILTER_EXCEPTION(
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "ERR_GLOBAL_003",
+        "Filter 에러 중 처리되지 못한 에러 발생 : {0}",
+    ),
+
+    /**
      * - {0} : Custom Exception Message
      */
     UNDEFINED_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "ERR_GLOBAL_999", "정의되지 않은 에러입니다. : {0}"),
