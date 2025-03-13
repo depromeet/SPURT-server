@@ -27,11 +27,14 @@ class MemberRepositoryCustomImpl(
             .fetchOne()
     }
 
-    override fun findByIdOrThrow(id: Long): MemberEntity? {
+    override fun findMemberById(id: Long): MemberEntity? {
         return queryFactory
             .select(qMemberEntity)
             .from(qMemberEntity)
-            .where(qMemberEntity.id.eq(id))
+            .where(
+                qMemberEntity.id.eq(id)
+                    .and(qMemberEntity.isDeleted.isFalse),
+            )
             .fetchOne()
     }
 }
