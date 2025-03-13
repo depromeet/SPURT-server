@@ -2,7 +2,6 @@ package com.ssak3.timeattack.member.auth.client
 
 import com.ssak3.timeattack.member.auth.oidc.OIDCPublicKeyList
 import com.ssak3.timeattack.member.auth.properties.KakaoProperties
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
