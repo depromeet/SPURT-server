@@ -24,7 +24,7 @@ class ExceptionHandlerFilter : OncePerRequestFilter(), Logger {
             ExceptionResponseWriter.writeException(
                 response,
                 ApplicationExceptionType.FILTER_EXCEPTION,
-                exception.localizedMessage,
+                exception.message ?: "Empty Exception Message",
             )
         }
     }

@@ -16,12 +16,12 @@ class ExceptionResponseWriter {
         fun writeException(
             response: HttpServletResponse,
             exceptionType: ApplicationExceptionType,
-            vararg args: Any?,
+            vararg args: Any,
         ) {
             setResponseInfo(response, exceptionType.httpStatus)
             val writer = response.writer
             val mapper = ObjectMapper()
-            writer.write(mapper.writeValueAsString(ExceptionResponse.from(exceptionType, args)))
+            writer.write(mapper.writeValueAsString(ExceptionResponse.from(exceptionType, *args)))
             writer.flush()
         }
 
