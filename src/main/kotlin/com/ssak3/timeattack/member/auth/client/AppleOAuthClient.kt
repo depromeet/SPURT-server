@@ -22,11 +22,8 @@ import java.util.Date
 
 @Component
 class AppleOAuthClient(
-    @Autowired
     val appleFeignClient: AppleFeignClient,
-    @Autowired
     val appleProperties: AppleProperties,
-    @Autowired
     val appleAuthTokenRepository: AppleAuthTokenRepository,
 ) : OAuthClient, Logger {
     override fun getToken(authCode: String): OAuthTokenResponse {

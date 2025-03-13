@@ -7,11 +7,8 @@ import org.springframework.stereotype.Component
 
 @Component
 class KakaoOAuthClient(
-    @Autowired
     val kakaoOAuthFeignClient: KakaoOAuthFeignClient,
-    @Autowired
     val kakaoFeignClient: KakaoFeignClient,
-    @Autowired
     val kakaoProperties: KakaoProperties,
 ) : OAuthClient {
     companion object {
