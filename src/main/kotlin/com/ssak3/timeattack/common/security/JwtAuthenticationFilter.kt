@@ -41,7 +41,7 @@ class JwtAuthenticationFilter(
         if (jwtTokenProvider.validateToken(accessToken)) {
             val memberId = jwtTokenProvider.getMemberIdFromToken(accessToken)
             setAuthenticationInSecurityContext(memberId)
-            log.info("SecurityContextHolder 설정 성공: ${SecurityContextHolder.getContext().authentication}")
+            log.info("SecurityContextHolder 설정 성공: ${SecurityContextHolder.getContext().authentication.name}")
         }
 
         // 유효기간 지난 경우, getClaims()에서 JWT_EXPIRED 예외 발생
