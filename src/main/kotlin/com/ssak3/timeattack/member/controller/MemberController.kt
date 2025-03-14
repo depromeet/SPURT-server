@@ -2,8 +2,8 @@ package com.ssak3.timeattack.member.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.common.utils.checkNotNull
+import com.ssak3.timeattack.member.controller.dto.MemberInfoResponse
 import com.ssak3.timeattack.member.domain.Member
-import com.ssak3.timeattack.member.service.dto.MemberInfo
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.http.ResponseEntity
@@ -19,10 +19,10 @@ class MemberController {
     @GetMapping("/me")
     fun getCurrentUser(
         @AuthenticationPrincipal member: Member,
-    ): ResponseEntity<MemberInfo> {
+    ): ResponseEntity<MemberInfoResponse> {
         checkNotNull(member.id, "memberId")
         return ResponseEntity.ok(
-            MemberInfo(
+            MemberInfoResponse(
                 memberId = member.id,
                 nickname = member.nickname,
                 email = member.email,
