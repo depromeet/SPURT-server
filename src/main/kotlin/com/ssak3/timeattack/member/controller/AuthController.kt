@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -39,12 +38,6 @@ class AuthController(
 
         return ResponseEntity.ok(LoginResponse(loginResult.jwtTokenDto, loginResult.isNewUser, loginResult.memberInfo))
     }
-
-    @Operation(summary = "인증 필터 테스트", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
-    @GetMapping("/test")
-    fun testFilter(
-        @AuthenticationPrincipal member: Member,
-    ): Member = member
 
     @Operation(summary = "JWT 토큰 재발급", description = "refresh 토큰을 이용하여 access, refresh 토큰 재발급")
     @PostMapping("/token/refresh")
