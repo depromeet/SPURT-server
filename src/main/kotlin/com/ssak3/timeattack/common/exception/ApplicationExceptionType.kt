@@ -132,7 +132,7 @@ enum class ApplicationExceptionType(
     /**
      * {0} : JWT 파싱 에러 중 토큰 만료 에러 메시지
      */
-    JWT_EXPIRED(HttpStatus.BAD_REQUEST, "ERR_JWT_002", "만료된 토큰입니다. : {0}"),
+    JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "ERR_JWT_002", "만료된 토큰입니다. : {0}"),
 
     /**
      * {0} : JWT 파싱 에러 중 잘못된 형식 에러 메시지
