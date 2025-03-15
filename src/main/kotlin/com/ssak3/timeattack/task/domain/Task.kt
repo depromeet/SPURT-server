@@ -122,7 +122,7 @@ class Task(
         if (this.member.id != memberId) {
             throw ApplicationException(
                 ApplicationExceptionType.TASK_OWNER_MISMATCH,
-                kotlin.checkNotNull(this.id),
+                checkNotNull(this.id, "taskId"),
                 memberId,
             )
         }
