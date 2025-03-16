@@ -117,6 +117,19 @@ enum class ApplicationExceptionType(
 
     // ======================== [END] TASK ========================
 
+    // ======================== [START] SUBTASK ========================
+
+    /**
+     * - {0} : Subtask ID
+     */
+    SUBTASK_NOT_FOUND_BY_ID(
+        HttpStatus.BAD_REQUEST,
+        "ERR_SUBTASK_001",
+        "해당 ID로 Subtask를 찾을 수 없습니다. : {0}",
+    ),
+
+    // ======================== [END] SUBTASK ========================
+
     /**
      * - {0} : BindException 에러 메시지
      */
