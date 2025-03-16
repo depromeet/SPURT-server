@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.common.config
 
+import com.ssak3.timeattack.common.filter.ExceptionHandlerFilter
 import com.ssak3.timeattack.common.security.JwtAuthenticationFilter
 import com.ssak3.timeattack.common.security.JwtTokenProvider
 import com.ssak3.timeattack.member.service.MemberService
@@ -26,6 +27,11 @@ class SecurityConfig(
     @Bean
     fun jwtAuthenticationFilter(): JwtAuthenticationFilter {
         return JwtAuthenticationFilter(jwtTokenProvider, memberService, securityProperties)
+    }
+
+    @Bean
+    fun exceptionHandlerFilter(): ExceptionHandlerFilter {
+        return ExceptionHandlerFilter()
     }
 
     @Bean
@@ -60,6 +66,10 @@ class SecurityConfig(
             .addFilterBefore(
                 jwtAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter::class.java,
+            )
+            .addFilterBefore(
+                exceptionHandlerFilter(),
+                JwtAuthenticationFilter::class.java,
             )
 
         return http.build()

@@ -122,7 +122,7 @@ class Task(
         if (this.member.id != memberId) {
             throw ApplicationException(
                 ApplicationExceptionType.TASK_OWNER_MISMATCH,
-                checkNotNull(this.member.id),
+                checkNotNull(this.id, "taskId"),
                 memberId,
             )
         }

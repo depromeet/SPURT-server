@@ -21,6 +21,7 @@ kakao:
   client-id: ${DEV_KAKAO_CLIENT_ID}
   client-secret: ${DEV_KAKAO_CLIENT_SECRET}
   redirect-uri: ${DEV_KAKAO_REDIRECT_URI}
+  admin-key: ${DEV_KAKAO_ADMIN_KEY}
 jwt:
   secret: ${DEV_JWT_SECRET}
   access-token-validity-in-seconds: ${DEV_JWT_ACCESS_TOKEN_VALIDITY}

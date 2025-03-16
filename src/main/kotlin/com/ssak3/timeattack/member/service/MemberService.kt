@@ -1,5 +1,7 @@
 package com.ssak3.timeattack.member.service
 
+import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -9,7 +11,7 @@ class MemberService(
     private val memberRepository: MemberRepository,
 ) {
     fun getMemberById(id: Long): Member =
-        memberRepository.findByIdOrThrow(id)?.let {
+        memberRepository.findMemberById(id)?.let {
             Member.fromEntity(it)
-        } ?: throw IllegalArgumentException("Member not found")
+        } ?: throw ApplicationException(ApplicationExceptionType.MEMBER_NOT_FOUND_BY_ID, id)
 }
