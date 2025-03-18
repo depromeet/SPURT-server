@@ -1,9 +1,8 @@
 package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
-import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.task.controller.dto.SubTaskResponse
-import com.ssak3.timeattack.task.controller.dto.SubtaskCreateRequest
+import com.ssak3.timeattack.task.controller.dto.SubtaskUpsertRequest
 import com.ssak3.timeattack.task.domain.Subtask
 import com.ssak3.timeattack.task.service.SubtaskService
 import com.ssak3.timeattack.task.service.TaskService
@@ -29,7 +28,7 @@ class SubtaskController(
     @Operation(summary = "세부목표 생성/수정", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping
     fun upsert(
-        @RequestBody @Valid request: SubtaskCreateRequest,
+        @RequestBody @Valid request: SubtaskUpsertRequest,
     ): ResponseEntity<SubTaskResponse> {
         val task = taskService.getTaskById(request.taskId)
         val subtask =
