@@ -24,6 +24,7 @@ class SubtaskService(
         return Subtask.fromEntity(entity)
     }
 
+    @Transactional
     fun delete(id: Long) {
         val entity =
             subtaskRepository.findByIdOrNull(id)

@@ -30,13 +30,13 @@ class Subtask(
     }
 
     companion object {
-        fun fromEntity(e: SubtaskEntity) =
+        fun fromEntity(entity: SubtaskEntity) =
             Subtask(
-                id = e.id,
-                task = Task.fromEntity(e.task),
-                name = e.name,
-                isDeleted = e.isDeleted,
-                isCompleted = e.isCompleted,
+                id = entity.id,
+                task = Task.fromEntity(entity.task),
+                name = entity.name,
+                isDeleted = entity.isDeleted,
+                isCompleted = entity.isCompleted,
             )
     }
 }
