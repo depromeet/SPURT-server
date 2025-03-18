@@ -3,9 +3,7 @@ package com.ssak3.timeattack.task.controller
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.task.controller.dto.SubTaskResponse
 import com.ssak3.timeattack.task.controller.dto.SubtaskUpsertRequest
-import com.ssak3.timeattack.task.domain.Subtask
 import com.ssak3.timeattack.task.service.SubtaskService
-import com.ssak3.timeattack.task.service.TaskService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.validation.Valid
@@ -23,21 +21,13 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/subtasks")
 class SubtaskController(
     private val subtaskService: SubtaskService,
-    private val taskService: TaskService,
 ) {
     @Operation(summary = "세부목표 생성/수정", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping
     fun upsert(
         @RequestBody @Valid request: SubtaskUpsertRequest,
     ): ResponseEntity<SubTaskResponse> {
-        val task = taskService.getTaskById(request.taskId)
-        val subtask =
-            Subtask(
-                id = request.id,
-                task = task,
-                name = request.name,
-            )
-        val upsertedSubtask = subtaskService.upsert(subtask)
+        val upsertedSubtask = subtaskService.upsert(request)
         return ResponseEntity.ok(SubTaskResponse.fromSubtask(upsertedSubtask))
     }
 

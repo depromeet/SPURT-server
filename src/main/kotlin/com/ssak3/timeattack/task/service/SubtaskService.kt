@@ -2,6 +2,7 @@ package com.ssak3.timeattack.task.service
 
 import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType
+import com.ssak3.timeattack.task.controller.dto.SubtaskUpsertRequest
 import com.ssak3.timeattack.task.domain.Subtask
 import com.ssak3.timeattack.task.repository.SubtaskRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -11,9 +12,17 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class SubtaskService(
     private val subtaskRepository: SubtaskRepository,
+    private val taskService: TaskService,
 ) {
     @Transactional
-    fun upsert(subtask: Subtask): Subtask {
+    fun upsert(subtaskUpsertRequest: SubtaskUpsertRequest): Subtask {
+        val task = taskService.getTaskById(subtaskUpsertRequest.taskId)
+        val subtask =
+            Subtask(
+                id = subtaskUpsertRequest.id,
+                task = task,
+                name = subtaskUpsertRequest.name,
+            )
         val entity =
             subtaskRepository.findByIdOrNull(subtask.id)?.let {
                 val originalSubtask = Subtask.fromEntity(it)
