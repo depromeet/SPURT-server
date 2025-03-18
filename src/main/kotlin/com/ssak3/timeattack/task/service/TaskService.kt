@@ -62,8 +62,9 @@ class TaskService(
         // 3. Task 저장
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
+        val savedTask = Task.fromEntity(savedTaskEntity)
         // 종료 시간에 실패 체크 스케줄러 등록
-        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(task)
+        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(savedTask)
 
         // 4. Task 반환
         return Task.fromEntity(savedTaskEntity)
@@ -106,7 +107,7 @@ class TaskService(
         val savedTask = Task.fromEntity(savedTaskEntity)
 
         // 종료 시간에 실패 체크 스케줄러 등록
-        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(task)
+        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(savedTask)
 
         // 5. Task 반환
         return savedTask
