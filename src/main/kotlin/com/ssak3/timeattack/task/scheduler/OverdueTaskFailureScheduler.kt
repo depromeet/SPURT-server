@@ -41,6 +41,7 @@ class OverdueTaskFailureScheduler(
                     )
 
             if (task.status in statusesToFail) {
+                logger.info("현재 상태가 ${task.status}인 Task(${task.id})는 마감 시간이 지나 Fail 처리 됩니다.")
                 task.status = TaskStatus.FAIL
                 taskRepository.save(task.toEntity())
             }
