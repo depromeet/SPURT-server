@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/immersion")
+@RequestMapping("/v1/immersion-tasks")
 class ImmersionTaskController(
     private val immersionTaskService: ImmersionTaskService,
 ) {
