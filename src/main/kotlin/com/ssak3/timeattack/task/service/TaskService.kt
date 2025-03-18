@@ -300,6 +300,11 @@ class TaskService(
         return Task.fromEntity(updatedTaskEntity)
     }
 
+    fun getActiveTasks(member: Member): List<Task> {
+        checkNotNull(member.id, "member.id")
+        return taskRepository.findActiveTasks(member.id).map { Task.fromEntity(it) }
+    }
+
     private fun publishEventForUpdateTask(
         memberId: Long,
         taskId: Long,
