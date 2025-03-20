@@ -31,7 +31,7 @@ jwt:
 fcm:
   secret-key: ${FIREBASE_SECRET_KEY}
   scheduler:
-    status: false
+    status: true
 cors:
   allowed-origins:
     - ${CORS_ALLOWED_ORIGINS_01}
