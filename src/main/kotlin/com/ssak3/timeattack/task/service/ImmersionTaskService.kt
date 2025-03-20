@@ -14,7 +14,7 @@ class ImmersionTaskService(
         val activeTasks = taskService.getActiveTasks(member)
         val immersionTasks: List<ImmersionTask> =
             activeTasks.map { task ->
-                checkNotNull(task.id, "task id")
+                checkNotNull(task.id, "taskId")
                 val subtask = subtaskService.getAll(task)
                 ImmersionTask(
                     taskId = task.id,

@@ -294,14 +294,14 @@ class TaskService(
         val updatedTaskEntity = taskRepository.save(task.toEntity())
 
         // 작업 수정 관련 이벤트 발행
-        checkNotNull(member.id, "member.id")
+        checkNotNull(member.id, "memberId")
         publishEventForUpdateTask(member.id, taskId, request)
 
         return Task.fromEntity(updatedTaskEntity)
     }
 
     fun getActiveTasks(member: Member): List<Task> {
-        checkNotNull(member.id, "member.id")
+        checkNotNull(member.id, "memberId")
         return taskRepository.findActiveTasks(member.id).map { Task.fromEntity(it) }
     }
 
