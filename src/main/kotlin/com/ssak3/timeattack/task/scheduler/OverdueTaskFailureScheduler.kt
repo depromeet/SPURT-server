@@ -20,10 +20,15 @@ class OverdueTaskFailureScheduler(
 ) : Logger {
     fun scheduleTaskTimeoutFailure(task: Task) {
         checkNotNull(task.id, "taskId")
+
+        val scheduledTime = task.dueDatetime.plusMinutes(1)
+
         taskScheduler.schedule(
             { checkAndUpdateTaskStatus(task.id) },
-            task.dueDatetime.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant(),
+            scheduledTime.atZone(ZoneId.systemDefault()).toInstant(),
         )
+
+        logger.info("Task(${task.id}) 실패 체크 스케줄러 등록 완료: 예정 실행 시간 = $scheduledTime")
     }
 
     /**
@@ -41,9 +46,10 @@ class OverdueTaskFailureScheduler(
                     )
 
             if (task.status in statusesToFail) {
-                logger.info("현재 상태가 ${task.status}인 Task(${task.id})는 마감 시간이 지나 Fail 처리 됩니다.")
+                val beforeStatus = task.status
                 task.status = TaskStatus.FAIL
                 taskRepository.save(task.toEntity())
+                logger.info("현재 상태가 ${beforeStatus}인 Task(${task.id})는 마감 시간이 지나 Fail 처리되었습니다.")
             }
         }
     }
