@@ -43,4 +43,9 @@ interface TaskRepositoryCustom {
      * - 애플리케이션 완전 시작된 후 조회된 작업들을 모두 스케줄러에 등록하기 위한 쿼리
      */
     fun findTasksToFail(statusesToFail: List<TaskStatus>): List<TaskEntity>
+
+    /*
+     * 현재 활성화된(몰입중인) 작업 목록 조회
+     */
+    fun findActiveTasks(memberId: Long): List<TaskEntity>
 }
