@@ -80,6 +80,20 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
+    override fun findTasksToFail(statusesToFail: List<TaskStatus>): List<TaskEntity> {
+        val now = LocalDateTime.now()
+
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.status.`in`(statusesToFail)
+                    .and(qTask.dueDatetime.after(now))
+                    .and(qTask.isDeleted.isFalse),
+            )
+            .fetch()
+    }
+
     override fun findAbandonedOrIgnoredTasks(memberId: Long): TaskEntity? {
         val now = LocalDateTime.now()
         val threeMinutesAgo = now.minusMinutes(3)
