@@ -18,4 +18,16 @@ class FcmDeviceRepositoryCustomImpl(
                 fcmDevice.status.isTrue,
             ).fetch()
     }
+
+    override fun findActiveByMemberAndFcmToken(
+        memberId: Long,
+        fcmToken: String,
+    ): FcmDeviceEntity? {
+        return queryFactory.selectFrom(fcmDevice)
+            .where(
+                fcmDevice.member.id.eq(memberId),
+                fcmDevice.fcmRegistrationToken.eq(fcmToken),
+                fcmDevice.status.isTrue,
+            ).fetchOne()
+    }
 }

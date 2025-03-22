@@ -15,9 +15,18 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 
 @Entity
-@Table(name = "fcm_devices")
+@Table(
+    name = "fcm_devices",
+    uniqueConstraints = [
+        UniqueConstraint(
+            name = "uk_member_token",
+            columnNames = ["member_id", "fcm_registration_token"],
+        ),
+    ],
+)
 class FcmDeviceEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
