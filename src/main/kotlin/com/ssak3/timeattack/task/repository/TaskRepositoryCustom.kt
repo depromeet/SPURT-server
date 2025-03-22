@@ -35,4 +35,9 @@ interface TaskRepositoryCustom {
      * 전체 할일 조회
      */
     fun findAllTodos(id: Long): List<TaskEntity>
+
+    /*
+     * 현재 활성화된(몰입중인) 작업 목록 조회
+     */
+    fun findActiveTasks(memberId: Long): List<TaskEntity>
 }

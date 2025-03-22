@@ -101,4 +101,15 @@ class TaskRepositoryCustomImpl(
             .orderBy(qTask.triggerActionAlarmTime.desc(), qTask.dueDatetime.asc())
             .fetchFirst()
     }
+
+    override fun findActiveTasks(memberId: Long): List<TaskEntity> {
+        return queryFactory
+            .select(qTask)
+            .from(qTask)
+            .where(
+                qTask.member.id.eq(memberId),
+                qTask.isDeleted.isFalse,
+                qTask.status.eq(FOCUSED),
+            ).fetch()
+    }
 }
