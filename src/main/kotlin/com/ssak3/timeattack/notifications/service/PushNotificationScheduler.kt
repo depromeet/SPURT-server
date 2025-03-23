@@ -18,7 +18,7 @@ class PushNotificationScheduler(
     private val fcmDeviceService: FcmDeviceService,
     private val fcmPushNotificationService: FcmPushNotificationService,
 ) : Logger {
-    @Scheduled(cron = "0 0/5 * * * ?") // 5분 단위
+    @Scheduled(cron = "0 0/1 * * * ?") // 1분 단위 prod 테스트를 위해 임시로 변경
     fun sendNotifications() {
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
         logger.info("[ Push Notification Scheduler ] currentScheduledNotifications: $currentScheduledNotifications")
