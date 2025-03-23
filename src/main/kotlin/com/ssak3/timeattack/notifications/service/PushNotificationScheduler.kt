@@ -4,7 +4,6 @@ import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
 import com.ssak3.timeattack.notifications.domain.FcmMessage
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getRoute
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Async
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -22,9 +21,7 @@ class PushNotificationScheduler(
     @Async
     @Scheduled(cron = "0 0/5 * * * ?") // 5분 단위
     fun sendNotifications() {
-        val logger = LoggerFactory.getLogger(this::class.java)
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
-        logger.info("< Notification Scheduler > currentScheduledNotifications: $currentScheduledNotifications")
         currentScheduledNotifications.forEach {
             checkNotNull(it.member.id)
             checkNotNull(it.task.id)
