@@ -25,7 +25,7 @@ class PushNotificationScheduler(
     @Scheduled(cron = "0 0/5 * * * ?") // 5분 단위
     fun sendNotifications() {
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
-        logger.info("[Push Notification Scheduler] currentScheduledNotifications: $currentScheduledNotifications")
+        logger.info("[ Push Notification Scheduler ] currentScheduledNotifications: $currentScheduledNotifications")
         currentScheduledNotifications.forEach {
             checkNotNull(it.member.id)
             checkNotNull(it.task.id)
