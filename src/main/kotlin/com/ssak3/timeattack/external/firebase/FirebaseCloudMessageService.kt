@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class FirebaseCloudMessageService : Logger {
     fun send(message: FcmMessage): String {
+        logger.info("[Firebase Messaging] start to send: $message")
         val firebaseMessaging = FirebaseMessaging.getInstance()
 
         val fcmMessage =

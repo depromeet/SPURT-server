@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.notifications.service
 
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
 import com.ssak3.timeattack.notifications.domain.FcmMessage
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
@@ -17,11 +18,12 @@ class PushNotificationScheduler(
     private val pushNotificationService: PushNotificationService,
     private val fcmDeviceService: FcmDeviceService,
     private val fcmPushNotificationService: FcmPushNotificationService,
-) {
+) : Logger {
     @Async
     @Scheduled(cron = "0 0/5 * * * ?") // 5분 단위
     fun sendNotifications() {
         val currentScheduledNotifications = pushNotificationService.getNotificationsByCurrentTime()
+        logger.info("< Notification Scheduler > currentScheduledNotifications: $currentScheduledNotifications")
         currentScheduledNotifications.forEach {
             checkNotNull(it.member.id)
             checkNotNull(it.task.id)
