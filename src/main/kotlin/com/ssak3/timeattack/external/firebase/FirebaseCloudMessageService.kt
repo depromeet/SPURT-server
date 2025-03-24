@@ -50,7 +50,7 @@ class FirebaseCloudMessageService : Logger {
         return ApnsConfig.builder()
             .setAps(
                 Aps.builder()
-                    .setSound("default")
+                    .setSound(DEFAULT_SOUND)
                     .build(),
             )
             .build()
@@ -60,7 +60,7 @@ class FirebaseCloudMessageService : Logger {
         return AndroidConfig.builder()
             .setNotification(
                 AndroidNotification.builder()
-                    .setSound("default")
+                    .setSound(DEFAULT_SOUND)
                     .build(),
             )
             .build()
@@ -68,5 +68,6 @@ class FirebaseCloudMessageService : Logger {
 
     companion object {
         const val TITLE = "SPURT"
+        const val DEFAULT_SOUND = "default"
     }
 }
