@@ -164,7 +164,7 @@ class TaskController(
         @RequestBody @Valid taskHoldOffRequest: TaskHoldOffRequest,
     ): ResponseEntity<MessageResponse> {
         taskService.holdOffTask(taskId, member, taskHoldOffRequest)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(MessageResponse("Task hold-off successfully"))
     }
 
     @Operation(

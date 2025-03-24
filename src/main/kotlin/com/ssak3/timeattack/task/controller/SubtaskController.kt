@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.task.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
+import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.task.controller.dto.SubTaskResponse
 import com.ssak3.timeattack.task.controller.dto.SubtaskUpsertRequest
 import com.ssak3.timeattack.task.service.SubtaskService
@@ -35,9 +36,9 @@ class SubtaskController(
     @DeleteMapping("/{id}")
     fun remove(
         @PathVariable(required = true) @Positive id: Long,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<MessageResponse> {
         subtaskService.delete(id)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(MessageResponse("Subtask deleted successfully"))
     }
 
     @Operation(summary = "세부작업 완료 상태 업데이트", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
