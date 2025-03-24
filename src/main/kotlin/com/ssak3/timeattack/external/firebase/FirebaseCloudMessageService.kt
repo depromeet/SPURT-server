@@ -1,5 +1,9 @@
 package com.ssak3.timeattack.external.firebase
 
+import com.google.firebase.messaging.AndroidConfig
+import com.google.firebase.messaging.AndroidNotification
+import com.google.firebase.messaging.ApnsConfig
+import com.google.firebase.messaging.Aps
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingException
 import com.google.firebase.messaging.Message
@@ -20,6 +24,8 @@ class FirebaseCloudMessageService : Logger {
                 .setNotification(
                     Notification.builder().setTitle(TITLE).setBody(message.body).build(),
                 )
+                .setApnsConfig(getAPNSConfig())
+                .setAndroidConfig(getAndroidConfig())
                 .putAllData(
                     mapOf(
                         "route" to message.route,
@@ -38,6 +44,26 @@ class FirebaseCloudMessageService : Logger {
         }
 
         return response
+    }
+
+    fun getAPNSConfig(): ApnsConfig {
+        return ApnsConfig.builder()
+            .setAps(
+                Aps.builder()
+                    .setSound("default")
+                    .build(),
+            )
+            .build()
+    }
+
+    fun getAndroidConfig(): AndroidConfig {
+        return AndroidConfig.builder()
+            .setNotification(
+                AndroidNotification.builder()
+                    .setSound("default")
+                    .build(),
+            )
+            .build()
     }
 
     companion object {
