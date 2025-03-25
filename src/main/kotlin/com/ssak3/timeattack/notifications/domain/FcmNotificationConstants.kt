@@ -83,7 +83,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 남은 시간, 더 빨리 달려볼까요?⚡️
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 남은 시간, 더 빨리 달려볼까요?⚡️
+                    마감 하루 전! 남은 시간, 더 빨리 달려볼까요?⚡️
                     """.trimIndent(),
                     """
                     마지막 1시간! 막판 스퍼트 올려서 전력 질주!🔥
@@ -102,7 +102,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 마감까지 계속 써볼까요?🚀
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 마감까지 계속 써볼까요?🚀
+                    마감 하루 전! 마감까지 계속 써볼까요?🚀
                     """.trimIndent(),
                     """
                     마지막 1시간! 손가락에 불나게 스퍼트 ON!💥
@@ -121,7 +121,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 남은 세트도 끝까지 가요!💪
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 남은 세트도 끝까지 가요!💪
+                    마감 하루 전! 남은 세트도 끝까지 가요!💪
                     """.trimIndent(),
                     """
                     마지막 1시간! 막판 스퍼트로 심박수 올려요!🔥
@@ -140,7 +140,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 디버깅 없이 풀가속 유지!🚀
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 디버깅 없이 풀가속 유지!🚀
+                    마감 하루 전! 디버깅 없이 풀가속 유지!🚀
                     """.trimIndent(),
                     """
                     마지막 1시간! 배포까지 막판 스퍼트 ON!💥
@@ -159,7 +159,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 마감까지 스피드 올려봐요!🖌
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 마감까지 스피드 올려봐요!🖌
+                    마감 하루 전! 마감까지 스피드 올려봐요!🖌
                     """.trimIndent(),
                     """
                     마지막 1시간! 마지막 터치까지 스퍼트 ON!🔥
@@ -178,7 +178,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 남은 시간도 같이 달려봐요!⏳
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 남은 시간도 같이 달려봐요!⏳
+                    마감 하루 전! 남은 시간도 같이 달려봐요!⏳
                     """.trimIndent(),
                     """
                     마지막 1시간! 스퍼트 올려서 눈물 닦고 끝까지!🔥
@@ -197,7 +197,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 남은 시간도 이 기세로 신나게!🎸
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 남은 시간도 이 기세로 신나게!🎸
+                    마감 하루 전! 남은 시간도 이 기세로 신나게!🎸
                     """.trimIndent(),
                     """
                     마지막 1시간! 하이텐션으로 스퍼트 ON!🔥
@@ -216,7 +216,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 이대로 남은 글도 계속 써요!🎯
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 이대로 남은 글도 계속 써요!🎯
+                    마감 하루 전! 이대로 남은 글도 계속 써요!🎯
                     """.trimIndent(),
                     """
                     마지막 1시간! 스퍼트 ON! 비트도 최대로!💥
@@ -235,7 +235,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 펌핑하기 딱 좋은 타이밍!🏋
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 펌핑하기 딱 좋은 타이밍!🏋
+                    마감 하루 전! 펌핑하기 딱 좋은 타이밍!🏋
                     """.trimIndent(),
                     """
                     마지막 1시간! 최고 컨디션으로 끝까지 스퍼트!💥
@@ -254,7 +254,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 이 흐름대로, 완벽한 코드 완성!🚀
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 이 흐름대로, 완벽한 코드 완성!🚀
+                    마감 하루 전! 이 흐름대로, 완벽한 코드 완성!🚀
                     """.trimIndent(),
                     """
                     마지막 1시간! 키보드 풀파워로 스퍼트 올려요!🔥
@@ -273,7 +273,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 단축키 리듬 놓치지 마요!🥁
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 단축키 리듬 놓치지 마요!🥁
+                    마감 하루 전! 단축키 리듬 놓치지 마요!🥁
                     """.trimIndent(),
                     """
                     마지막 1시간! 스퍼트 올려서 단축키 폭풍 클릭!🔥
@@ -292,7 +292,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 지금 텐션대로라면 과탑 각!🏅
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 지금 텐션대로라면 과탑 각!🏅
+                    마감 하루 전! 지금 텐션대로라면 과탑 각!🏅
                     """.trimIndent(),
                     """
                     마지막 1시간! 에너지 풀가동! 막판 스퍼트!💥
@@ -311,7 +311,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 재즈와 함께 흐름을 이어가요.🎹
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 재즈와 함께 흐름을 이어가요.🎹
+                    마감 하루 전! 재즈와 함께 흐름을 이어가요.🎹
                     """.trimIndent(),
                     """
                     마지막 1시간! 집중의 온도를 끌어올려 스퍼트!💥
@@ -330,7 +330,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 글의 향기가 깊어지고 있어요.☕️
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 글의 향기가 깊어지고 있어요.☕️
+                    마감 하루 전! 글의 향기가 깊어지고 있어요.☕️
                     """.trimIndent(),
                     """
                     마지막 1시간! 흐름을 살려 마지막까지 스퍼트!🔥
@@ -349,7 +349,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 몸과의 대화에 더 집중해봐요.🧘
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 몸과의 대화에 더 집중해봐요.🧘
+                    마감 하루 전! 몸과의 대화에 더 집중해봐요.🧘
                     """.trimIndent(),
                     """
                     마지막 1시간! 감각을 깨워 끝까지 스퍼트!💥
@@ -368,7 +368,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 마지막까지 코드에 몰입해봐요.🚀
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 마지막까지 코드에 몰입해봐요.🚀
+                    마감 하루 전! 마지막까지 코드에 몰입해봐요.🚀
                     """.trimIndent(),
                     """
                     마지막 1시간! 집중을 끌어올려 스퍼트 ON!🔥
@@ -387,7 +387,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 디테일도 섬세하게 다듬어봐요.🖌️
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 디테일도 섬세하게 다듬어봐요.🖌️
+                    마감 하루 전! 디테일도 섬세하게 다듬어봐요.🖌️
                     """.trimIndent(),
                     """
                     마지막 1시간! 완성도 높이며 스퍼트 올려봐요!💥
@@ -406,7 +406,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 낭만을 담아 끝까지 나아가요.📖
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 낭만을 담아 끝까지 나아가요.📖
+                    마감 하루 전! 낭만을 담아 끝까지 나아가요.📖
                     """.trimIndent(),
                     """
                     마지막 1시간! 깊이 몰입하며 끝까지 스퍼트!🔥
@@ -425,7 +425,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 남은 페이지도 조용히 돌파!🔕
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 남은 페이지도 조용히 돌파!🔕
+                    마감 하루 전! 남은 페이지도 조용히 돌파!🔕
                     """.trimIndent(),
                     """
                     마지막 1시간! 소리 없이 완벽하게 스퍼트 ON!🔥
@@ -444,7 +444,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 한 줄씩 차곡차곡 마무리까지!📖
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 한 줄씩 차곡차곡 마무리까지!📖
+                    마감 하루 전! 한 줄씩 차곡차곡 마무리까지!📖
                     """.trimIndent(),
                     """
                     마지막 1시간! 조용하지만 강력한 막판 스퍼트!💥
@@ -463,7 +463,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 지금 템포 그대로 마지막까지!💪
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 지금 템포 그대로 마지막까지!💪
+                    마감 하루 전! 지금 템포 그대로 마지막까지!💪
                     """.trimIndent(),
                     """
                     마지막 1시간! 한 번 더, 묵묵히 스퍼트!🔥
@@ -482,7 +482,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 키보드 ASMR, 계속 이어가요.🧑‍💻
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 키보드 ASMR, 계속 이어가요.🧑‍💻
+                    마감 하루 전! 키보드 ASMR, 계속 이어가요.🧑‍💻
                     """.trimIndent(),
                     """
                     마지막 1시간! 스퍼트 올려 완벽한 코드로!💥
@@ -501,7 +501,7 @@ object FcmNotificationConstants {
                     절반 왔어요! 마무리까지 깊게 몰입해봐요.🧑‍💻
                     """.trimIndent(),
                     """
-                    오늘이 마감일! 마무리까지 깊게 몰입해봐요.🧑‍💻
+                    마감 하루 전! 마무리까지 깊게 몰입해봐요.🧑‍💻
                     """.trimIndent(),
                     """
                     마지막 1시간! 정교한 터치로 마무리 스퍼트!🔥
@@ -520,7 +520,7 @@ object FcmNotificationConstants {
                     절반 왔어요! A+을 향해 한 걸음 더!💯
                     """.trimIndent(),
                     """
-                    오늘이 마감일! A+을 향해 한 걸음 더!💯
+                    마감 하루 전! A+을 향해 한 걸음 더!💯
                     """.trimIndent(),
                     """
                     마지막 1시간! 소리 없이 강하게 스퍼트 ON!💥
