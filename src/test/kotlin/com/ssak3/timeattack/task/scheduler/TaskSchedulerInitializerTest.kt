@@ -104,7 +104,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             taskRepository.findTodoTasks(statusesToFail)
         } returns emptyList()
 
-        When("애플리케이션이 시작되면") {
+        When("initializeTaskSchedulers가 호출되면") {
             taskSchedulerInitializer.initializeTaskSchedulers()
 
             Then("스케줄러 등록이 호출되지 않아야 한다") {
