@@ -76,7 +76,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(any())
         } just Runs
 
-        When("애플리케이션이 시작되면") {
+        When("initializeTaskSchedulers가 호출되면") {
             taskSchedulerInitializer.initializeTaskSchedulers()
 
             Then("모든 대상 작업에 대해 스케줄러가 등록되어야 한다") {
