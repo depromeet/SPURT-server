@@ -3,6 +3,7 @@ package com.ssak3.timeattack.task.scheduler
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
+import com.ssak3.timeattack.task.domain.TaskStatus.Companion.statusesToFail
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import io.kotest.core.spec.style.BehaviorSpec
@@ -67,7 +68,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
         // 리포지토리 모킹 설정
         every {
-            taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
+            taskRepository.findTodoTasks(statusesToFail)
         } returns listOf(taskEntity1, taskEntity2, taskEntity3)
 
         // 스케줄러 모킹 설정
@@ -81,7 +82,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("모든 대상 작업에 대해 스케줄러가 등록되어야 한다") {
                 // 메서드 호출 횟수 검증
                 verify(exactly = 1) {
-                    taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
+                    taskRepository.findTodoTasks(statusesToFail)
                 }
 
                 // 각 작업에 대해 스케줄러 등록 검증
@@ -100,7 +101,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
         // 리포지토리 모킹 설정 - 빈 리스트 반환
         every {
-            taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
+            taskRepository.findTodoTasks(statusesToFail)
         } returns emptyList()
 
         When("애플리케이션이 시작되면") {
@@ -109,7 +110,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("스케줄러 등록이 호출되지 않아야 한다") {
                 // 메서드 호출 검증
                 verify(exactly = 1) {
-                    taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
+                    taskRepository.findTodoTasks(statusesToFail)
                 }
 
                 // 스케줄러 등록 호출 안 됨 검증
