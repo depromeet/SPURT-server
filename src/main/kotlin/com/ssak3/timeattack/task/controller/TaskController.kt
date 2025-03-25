@@ -15,6 +15,7 @@ import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
+import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.service.TaskService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -68,6 +69,11 @@ class TaskController(
     ): ResponseEntity<TaskStatusResponse> {
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
         val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest)
+
+        // 몰입상태가 되면 응원 문구 푸시 알림 요청
+        if (taskStatusRequest.status == TaskStatus.FOCUSED) {
+            taskService.requestSupportNotifications(taskId = taskId, memberId = member.id)
+        }
 
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
