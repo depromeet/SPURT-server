@@ -80,14 +80,14 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    override fun findTodoTasks(statusesToFail: List<TaskStatus>): List<TaskEntity> {
+    override fun findTodoTasks(todoStatuses: List<TaskStatus>): List<TaskEntity> {
         val now = LocalDateTime.now()
 
         return queryFactory
             .select(qTask)
             .from(qTask)
             .where(
-                qTask.status.`in`(statusesToFail)
+                qTask.status.`in`(todoStatuses)
                     .and(qTask.dueDatetime.after(now))
                     .and(qTask.isDeleted.isFalse),
             )
