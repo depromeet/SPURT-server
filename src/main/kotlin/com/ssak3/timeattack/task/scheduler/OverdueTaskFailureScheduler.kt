@@ -6,6 +6,7 @@ import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
+import com.ssak3.timeattack.task.domain.TaskStatus.Companion.statusesToFail
 import com.ssak3.timeattack.task.repository.TaskRepository
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
@@ -52,15 +53,5 @@ class OverdueTaskFailureScheduler(
                 logger.info("현재 상태가 ${beforeStatus}인 Task(${task.id})는 마감 시간이 지나 Fail 처리되었습니다.")
             }
         }
-    }
-
-    companion object {
-        val statusesToFail =
-            listOf(
-                TaskStatus.BEFORE,
-                TaskStatus.PROCRASTINATING,
-                TaskStatus.HOLDING_OFF,
-                TaskStatus.WARMING_UP,
-            )
     }
 }
