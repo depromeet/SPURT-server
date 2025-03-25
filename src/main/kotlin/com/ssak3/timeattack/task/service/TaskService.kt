@@ -18,7 +18,6 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
-import com.ssak3.timeattack.task.scheduler.OverdueTaskFailureScheduler
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
@@ -39,7 +38,6 @@ class TaskService(
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
     private val eventPublisher: ApplicationEventPublisher,
-    private val overdueTaskFailureScheduler: OverdueTaskFailureScheduler,
 ) : Logger {
     @Transactional
     fun createUrgentTask(
@@ -63,8 +61,9 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         val savedTask = Task.fromEntity(savedTaskEntity)
+
         // 종료 시간에 실패 체크 스케줄러 등록
-        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(savedTask)
+        eventPublisher.publishEvent(savedTask)
 
         // 4. Task 반환
         return Task.fromEntity(savedTaskEntity)
@@ -107,7 +106,7 @@ class TaskService(
         val savedTask = Task.fromEntity(savedTaskEntity)
 
         // 종료 시간에 실패 체크 스케줄러 등록
-        overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(savedTask)
+        eventPublisher.publishEvent(savedTask)
 
         // 5. Task 반환
         return savedTask

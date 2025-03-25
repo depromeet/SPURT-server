@@ -8,6 +8,7 @@ import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.domain.TaskStatus.Companion.statusesToFail
 import com.ssak3.timeattack.task.repository.TaskRepository
+import org.springframework.context.event.EventListener
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
@@ -19,6 +20,7 @@ class OverdueTaskFailureScheduler(
     private val taskScheduler: TaskScheduler,
     private val transactionTemplate: TransactionTemplate,
 ) : Logger {
+    @EventListener
     fun scheduleTaskTimeoutFailure(task: Task) {
         checkNotNull(task.id, "taskId")
 
