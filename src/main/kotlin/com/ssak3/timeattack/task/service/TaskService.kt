@@ -439,4 +439,12 @@ class TaskService(
 
         return dateTimes
     }
+
+    // 몰입이 완료되면 등록된 푸시알림 비활성화
+    fun inactiveSupportNotifications(
+        taskId: Long,
+        memberId: Long,
+    ) {
+        eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId = memberId, taskId = taskId))
+    }
 }
