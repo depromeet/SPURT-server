@@ -210,7 +210,7 @@ object Fixture {
         scheduledAt: LocalDateTime = LocalDateTime.now(),
         isDeleted: Boolean = false,
         order: Int = 0,
-        message: String = "push notification message"
+        message: String = "push notification message",
     ) = PushNotification(
         member = member,
         task = task,
