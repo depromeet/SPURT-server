@@ -18,7 +18,7 @@ class TaskSchedulerInitializer(
 
         // 실패 처리 대상이 되는 작업들 조회
         val tasksToSchedule =
-            taskRepository.findTasksToFail(
+            taskRepository.findTodoTasks(
                 OverdueTaskFailureScheduler.statusesToFail,
             )
 

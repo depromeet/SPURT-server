@@ -67,7 +67,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
         // 리포지토리 모킹 설정
         every {
-            taskRepository.findTasksToFail(OverdueTaskFailureScheduler.statusesToFail)
+            taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
         } returns listOf(taskEntity1, taskEntity2, taskEntity3)
 
         // 스케줄러 모킹 설정
@@ -81,7 +81,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("모든 대상 작업에 대해 스케줄러가 등록되어야 한다") {
                 // 메서드 호출 횟수 검증
                 verify(exactly = 1) {
-                    taskRepository.findTasksToFail(OverdueTaskFailureScheduler.statusesToFail)
+                    taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
                 }
 
                 // 각 작업에 대해 스케줄러 등록 검증
@@ -100,7 +100,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
         // 리포지토리 모킹 설정 - 빈 리스트 반환
         every {
-            taskRepository.findTasksToFail(OverdueTaskFailureScheduler.statusesToFail)
+            taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
         } returns emptyList()
 
         When("애플리케이션이 시작되면") {
@@ -109,7 +109,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("스케줄러 등록이 호출되지 않아야 한다") {
                 // 메서드 호출 검증
                 verify(exactly = 1) {
-                    taskRepository.findTasksToFail(OverdueTaskFailureScheduler.statusesToFail)
+                    taskRepository.findTodoTasks(OverdueTaskFailureScheduler.statusesToFail)
                 }
 
                 // 스케줄러 등록 호출 안 됨 검증

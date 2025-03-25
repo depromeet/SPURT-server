@@ -80,7 +80,7 @@ class TaskRepositoryCustomImpl(
             .fetch()
     }
 
-    override fun findTasksToFail(statusesToFail: List<TaskStatus>): List<TaskEntity> {
+    override fun findTodoTasks(statusesToFail: List<TaskStatus>): List<TaskEntity> {
         val now = LocalDateTime.now()
 
         return queryFactory
