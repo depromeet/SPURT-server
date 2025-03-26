@@ -24,4 +24,14 @@ enum class TaskStatus {
             COMPLETE, FAIL -> false
         }
     }
+
+    companion object {
+        val statusesToFail =
+            listOf(
+                BEFORE,
+                PROCRASTINATING,
+                HOLDING_OFF,
+                WARMING_UP,
+            )
+    }
 }
