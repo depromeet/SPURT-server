@@ -14,10 +14,4 @@ data class LoginRequest(
     @Schema(title = "OAuth 제공자", example = "KAKAO", requiredMode = RequiredMode.REQUIRED)
     @field:NotBlank
     val provider: OAuthProvider,
-    @Schema(title = "기기 ID", example = "0f365b39-c33d-39be-bdfc-74aaf55", requiredMode = RequiredMode.REQUIRED)
-    @field:NotBlank
-    val deviceId: String,
-    @Schema(title = "기기 타입", example = "ANDROID or IOS", requiredMode = RequiredMode.REQUIRED)
-    @field:NotBlank
-    val deviceType: DevicePlatform,
 )
