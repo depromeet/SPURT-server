@@ -79,7 +79,6 @@ class AppleOAuthClient(
                 .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
                 .compact()
 
-        logger.info("Client Secret: $clientSecret")
         return clientSecret
     }
 
