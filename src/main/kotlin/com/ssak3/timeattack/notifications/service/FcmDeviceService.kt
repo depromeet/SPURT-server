@@ -18,7 +18,7 @@ class FcmDeviceService(
         member: Member,
         request: FcmDeviceCreateRequest,
     ) {
-        val memberId = checkNotNull(member.id)
+        val memberId = checkNotNull(member.id, "MemberId")
 
         // 해당 유저의 기기가 이미 등록되어 있으면 등록하지 않음
         val isExist =
