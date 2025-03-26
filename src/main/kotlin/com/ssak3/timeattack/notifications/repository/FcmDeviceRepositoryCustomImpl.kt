@@ -19,15 +19,18 @@ class FcmDeviceRepositoryCustomImpl(
             ).fetch()
     }
 
-    override fun findActiveByMemberAndFcmToken(
+    override fun existActiveByMemberAndFcmToken(
         memberId: Long,
         fcmToken: String,
-    ): FcmDeviceEntity? {
-        return queryFactory.selectFrom(fcmDevice)
-            .where(
-                fcmDevice.member.id.eq(memberId),
-                fcmDevice.fcmRegistrationToken.eq(fcmToken),
-                fcmDevice.status.isTrue,
-            ).fetchOne()
+    ): Boolean {
+        val result =
+            queryFactory.selectFrom(fcmDevice)
+                .where(
+                    fcmDevice.member.id.eq(memberId),
+                    fcmDevice.fcmRegistrationToken.eq(fcmToken),
+                    fcmDevice.status.isTrue,
+                ).fetch()
+
+        return result.size > 0
     }
 }

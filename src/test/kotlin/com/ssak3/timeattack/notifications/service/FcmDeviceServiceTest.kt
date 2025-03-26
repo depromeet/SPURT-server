@@ -1,8 +1,7 @@
 package com.ssak3.timeattack.notifications.service
 
-import com.ssak3.timeattack.common.domain.DevicePlatform
 import com.ssak3.timeattack.fixture.Fixture
-import com.ssak3.timeattack.notifications.domain.FcmDevice
+import com.ssak3.timeattack.notifications.controller.dto.FcmDeviceCreateRequest
 import com.ssak3.timeattack.notifications.repository.FcmDeviceRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -34,21 +33,20 @@ class FcmDeviceServiceTest {
         // given
         val member = Fixture.createMember(id = 1L)
         val fcmToken = "test-fcm-token"
-        val fcmDevice =
-            FcmDevice(
-                member = member,
+
+        val request =
+            FcmDeviceCreateRequest(
                 fcmRegistrationToken = fcmToken,
-                devicePlatform = DevicePlatform.IOS,
-                status = true,
+                deviceType = "IOS",
             )
 
-        `when`(fcmDeviceRepository.findActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(null)
+        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(true)
 
         // when
-        fcmDeviceService.save(fcmDevice)
+        fcmDeviceService.save(member, request)
 
         // then
-        verify(fcmDeviceRepository, times(1)).findActiveByMemberAndFcmToken(1L, fcmToken)
+        verify(fcmDeviceRepository, times(1)).existActiveByMemberAndFcmToken(1L, fcmToken)
         verify(fcmDeviceRepository, times(1)).save(any())
     }
 
@@ -58,22 +56,20 @@ class FcmDeviceServiceTest {
         // given
         val member = Fixture.createMember(id = 1L)
         val fcmToken = "test-fcm-token"
-        val fcmDevice =
-            FcmDevice(
-                member = member,
+
+        val request =
+            FcmDeviceCreateRequest(
                 fcmRegistrationToken = fcmToken,
-                devicePlatform = DevicePlatform.IOS,
-                status = true,
+                deviceType = "IOS",
             )
 
-        val fcmEntity = fcmDevice.toEntity()
-        `when`(fcmDeviceRepository.findActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(fcmEntity)
+        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(false)
 
         // when
-        fcmDeviceService.save(fcmDevice)
+        fcmDeviceService.save(member, request)
 
         // then
-        verify(fcmDeviceRepository, times(1)).findActiveByMemberAndFcmToken(1L, fcmToken)
+        verify(fcmDeviceRepository, times(1)).existActiveByMemberAndFcmToken(1L, fcmToken)
         verify(fcmDeviceRepository, never()).save(any())
     }
 }
