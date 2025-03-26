@@ -1,6 +1,5 @@
 package com.ssak3.timeattack.member.controller.dto
 
-import com.ssak3.timeattack.common.domain.DevicePlatform
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode
 import jakarta.validation.constraints.NotBlank
