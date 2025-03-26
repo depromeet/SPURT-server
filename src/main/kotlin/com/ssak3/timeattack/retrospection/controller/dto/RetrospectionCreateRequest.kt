@@ -27,5 +27,5 @@ data class RetrospectionCreateRequest(
         example = "더 일찍 시작할껄..껄무새 등장!",
         requiredMode = RequiredMode.NOT_REQUIRED,
     )
-    val comment: String?,
+    val comment: String?=null,
 )
