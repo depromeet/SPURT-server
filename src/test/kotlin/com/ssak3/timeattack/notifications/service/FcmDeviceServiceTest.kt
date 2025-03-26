@@ -40,7 +40,7 @@ class FcmDeviceServiceTest {
                 deviceType = "IOS",
             )
 
-        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(true)
+        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(false)
 
         // when
         fcmDeviceService.save(member, request)
@@ -63,7 +63,7 @@ class FcmDeviceServiceTest {
                 deviceType = "IOS",
             )
 
-        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(false)
+        `when`(fcmDeviceRepository.existActiveByMemberAndFcmToken(1L, fcmToken)).thenReturn(true)
 
         // when
         fcmDeviceService.save(member, request)
