@@ -3,7 +3,6 @@ package com.ssak3.timeattack.notifications.service
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
 import com.ssak3.timeattack.notifications.domain.FcmMessage
-import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getRoute
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.EnableScheduling
@@ -31,7 +30,7 @@ class PushNotificationScheduler(
                         token = device.fcmRegistrationToken,
                         platform = DevicePlatform.valueOf(device.devicePlatform.toString()),
                         taskId = it.task.id,
-                        body = getMessage(it.order),
+                        body = it.message,
                         route = getRoute(it.order),
                     )
 
