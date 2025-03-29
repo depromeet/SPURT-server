@@ -1,7 +1,8 @@
-package com.ssak3.timeattack.retrospection.controller.dto
+package com.ssak3.timeattack.retrospection.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
 import com.ssak3.timeattack.member.domain.Member
+import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.service.RetrospectionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Retrospection APIs")
 @RestController
+@RequestMapping("/v1/tasks")
 class RetrospectionController(
     private val retrospectionService: RetrospectionService,
 ) {
     @Operation(summary = "회고 생성", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
-    @PostMapping
-    @RequestMapping("/v1/tasks/{taskId}/retrospectives")
+    @PostMapping("/{taskId}/retrospectives")
     fun createRetrospection(
         @AuthenticationPrincipal member: Member,
         @PathVariable taskId: Long,
