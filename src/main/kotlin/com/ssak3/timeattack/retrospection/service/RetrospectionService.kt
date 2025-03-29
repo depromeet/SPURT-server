@@ -12,7 +12,6 @@ import com.ssak3.timeattack.task.service.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-@Suppress("NAME_SHADOWING")
 @Service
 class RetrospectionService(
     private val retrospectionRepository: RetrospectionRepository,
@@ -28,8 +27,8 @@ class RetrospectionService(
 
         // 회고는 완료된 작업에 대해서만 생성할 수 있습니다.
         if (task.status != TaskStatus.COMPLETE) {
-            val taskId = checkNotNull(task.id, "TaskId")
-            throw ApplicationException(ApplicationExceptionType.CREATE_RETROSPECTION_NOT_ALLOWED, taskId, task.status)
+            checkNotNull(task.id, "TaskId")
+            throw ApplicationException(ApplicationExceptionType.CREATE_RETROSPECTION_NOT_ALLOWED, task.id, task.status)
         }
 
         val retrospection =
