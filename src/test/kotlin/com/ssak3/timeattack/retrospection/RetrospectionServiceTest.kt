@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.retrospection
 
 import com.ssak3.timeattack.common.exception.ApplicationException
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.repository.entity.RetrospectionEntity
@@ -24,13 +25,23 @@ class RetrospectionServiceTest : BehaviorSpec({
     given("회고를 생성할 때") {
         // 테스트에 필요한 데이터 준비
         val completedTask = Fixture.createTask(member = member, status = TaskStatus.COMPLETE)
-        val notCompletedTask = Fixture.createTask(id = 2L, member = member, status = TaskStatus.FOCUSED)
+        val notCompletedTask = Fixture.createTask(id = 2L, member = member, status = TaskStatus.BEFORE)
+        val focusedTask = Fixture.createTask(id = 3L, member = member, status = TaskStatus.FOCUSED)
         val taskId = 1L
         val notCompletedTaskId = 2L
+        val focusedTaskId = 3L
 
         // 모킹 설정
         every { taskService.findTaskByIdAndMember(member, taskId) } returns completedTask
         every { taskService.findTaskByIdAndMember(member, notCompletedTaskId) } returns notCompletedTask
+        every { taskService.findTaskByIdAndMember(member, focusedTaskId) } returns focusedTask
+        every {
+            taskService.changeTaskStatus(
+                focusedTaskId,
+                checkNotNull(member.id),
+                TaskStatus.COMPLETE,
+            )
+        } returns mockk()
         every { retrospectionRepository.save(any<RetrospectionEntity>()) } returns mockk()
 
         `when`("완료된 작업에 대한 유효한 요청이 주어지면") {
@@ -45,6 +56,23 @@ class RetrospectionServiceTest : BehaviorSpec({
 
             then("회고가 저장된다") {
                 verify { retrospectionRepository.save(any<RetrospectionEntity>()) }
+            }
+        }
+
+        `when`("몰입중인 작업에 대한 유효한 요청이 주어지면") {
+            val request =
+                RetrospectionCreateRequest(
+                    satisfaction = 40,
+                    concentration = 60,
+                    comment = "작업을 효율적으로 완료했습니다.",
+                )
+
+            retrospectionService.createRetrospection(request, member, focusedTaskId)
+
+            then("회고가 저장되고 작업 상태가 완료로 변경된다") {
+                verify { retrospectionRepository.save(any<RetrospectionEntity>()) }
+                val memberId = checkNotNull(member.id, "MemberId")
+                verify { taskService.changeTaskStatus(focusedTaskId, memberId, TaskStatus.COMPLETE) }
             }
         }
 
