@@ -7,7 +7,8 @@ import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.domain.Retrospection
 import com.ssak3.timeattack.retrospection.repository.entity.RetrospectionRepository
-import com.ssak3.timeattack.task.domain.TaskStatus
+import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
+import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.service.TaskService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,11 +25,18 @@ class RetrospectionService(
         taskId: Long,
     ) {
         val task = taskService.findTaskByIdAndMember(member, taskId)
+        checkNotNull(task.id, "TaskId")
+        checkNotNull(member.id, "MemberId")
 
-        // 회고는 완료된 작업에 대해서만 생성할 수 있습니다.
-        if (task.status != TaskStatus.COMPLETE) {
-            checkNotNull(task.id, "TaskId")
+        // 회고는 완료 또는 집중 상태의 Task에 대해서만 생성 가능
+        if (task.status != COMPLETE && task.status != FOCUSED) {
             throw ApplicationException(ApplicationExceptionType.CREATE_RETROSPECTION_NOT_ALLOWED, task.id, task.status)
+        }
+
+        // 회고 푸시 알림을 통해서 들어온 경우, 현재 Task 상태는 FOCUSED -> 회고 진행 시, Task 상태를 COMPLETE로 변경
+        if (task.status == FOCUSED) {
+            task.changeStatus(COMPLETE)
+            taskService.changeTaskStatus(task.id, member.id, COMPLETE)
         }
 
         val retrospection =
