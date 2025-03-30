@@ -9,7 +9,6 @@ import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
-import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
@@ -138,7 +137,7 @@ class TaskService(
     fun changeTaskStatus(
         taskId: Long,
         memberId: Long,
-        request: TaskStatusRequest,
+        newStatus: TaskStatus,
     ): Task {
         // Task 가져오기
         val task =
@@ -156,12 +155,12 @@ class TaskService(
         task.assertOwnedBy(memberId)
 
         // Task 상태 변경
-        task.changeStatus(request.status)
+        task.changeStatus(newStatus)
 
         // Task 수정 반영
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
-        logger.info("Task 상태 변경 반영: ${request.status} -> ${savedTaskEntity.status}")
+        logger.info("Task 상태 변경 반영: $newStatus -> ${savedTaskEntity.status}")
         return Task.fromEntity(savedTaskEntity)
     }
 
@@ -242,7 +241,7 @@ class TaskService(
     ) {
         checkNotNull(member.id)
         // 1. Task 상태 변경
-        val task = changeTaskStatus(taskId, member.id, TaskStatusRequest(TaskStatus.HOLDING_OFF))
+        val task = changeTaskStatus(taskId, member.id, TaskStatus.HOLDING_OFF)
 
         // 2. 리마인더 알림 시간 계산
         // 횟수만큼 반복하면서 기준 시간에서 remindInterval을 더한 시간을 계산
