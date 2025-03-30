@@ -116,6 +116,20 @@ class Task(
     }
 
     /**
+     * 회고 생성 가능한 상태인지 검증한다.
+     * - COMPLETE or FOCUSED 상태에서만 회고 생성 가능
+     */
+    fun validateRetrospectionCreation() {
+        if (this.status != TaskStatus.COMPLETE && this.status != TaskStatus.FOCUSED) {
+            throw ApplicationException(
+                ApplicationExceptionType.CREATE_RETROSPECTION_NOT_ALLOWED,
+                checkNotNull(this.id, "taskId"),
+                this.status,
+            )
+        }
+    }
+
+    /**
      * Task 수정 가능한지 확인한다.
      */
     fun assertOwnedBy(memberId: Long) {

@@ -192,6 +192,20 @@ enum class ApplicationExceptionType(
 
     // ======================== [END] OIDC ========================
 
+    // ======================== [START] RETROSPECTION ========================
+
+    /**
+     * - {0} : Task ID
+     * - {1} : Task Status
+     */
+    CREATE_RETROSPECTION_NOT_ALLOWED(
+        HttpStatus.BAD_REQUEST,
+        "ERR_RETRO_001",
+        "현재 task({0})의 상태가 {1} 이기에 회고 생성이 허용되지 않습니다.(COMPLETE or FOCUSED인 task에 대해서만 회고 생성 가능)",
+    ),
+
+    // ======================== [END] RETROSPECTION ========================
+
     // ======================== [START] GLOBAL ========================
 
     /**

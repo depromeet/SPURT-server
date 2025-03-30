@@ -67,7 +67,7 @@ class TaskController(
         @RequestBody @Valid taskStatusRequest: TaskStatusRequest,
     ): ResponseEntity<TaskStatusResponse> {
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
-        val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest)
+        val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest.status)
 
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
