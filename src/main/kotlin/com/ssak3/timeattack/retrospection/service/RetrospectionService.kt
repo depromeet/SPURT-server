@@ -1,7 +1,5 @@
 package com.ssak3.timeattack.retrospection.service
 
-import com.ssak3.timeattack.common.exception.ApplicationException
-import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
@@ -29,9 +27,7 @@ class RetrospectionService(
         checkNotNull(member.id, "MemberId")
 
         // 회고는 완료 또는 집중 상태의 Task에 대해서만 생성 가능
-        if (task.status != COMPLETE && task.status != FOCUSED) {
-            throw ApplicationException(ApplicationExceptionType.CREATE_RETROSPECTION_NOT_ALLOWED, task.id, task.status)
-        }
+        task.validateRetrospectionCreation()
 
         // 회고 푸시 알림을 통해서 들어온 경우, 현재 Task 상태는 FOCUSED -> 회고 진행 시, Task 상태를 COMPLETE로 변경
         if (task.status == FOCUSED) {

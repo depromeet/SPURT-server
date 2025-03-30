@@ -1,6 +1,7 @@
 package com.ssak3.timeattack.retrospection.controller
 
 import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEME_NAME
+import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.service.RetrospectionService
@@ -27,8 +28,8 @@ class RetrospectionController(
         @AuthenticationPrincipal member: Member,
         @PathVariable taskId: Long,
         @RequestBody retrospectionRequest: RetrospectionCreateRequest,
-    ): ResponseEntity<String> {
+    ): ResponseEntity<MessageResponse> {
         retrospectionService.createRetrospection(retrospectionRequest, member, taskId)
-        return ResponseEntity.ok("Retrospection created successfully")
+        return ResponseEntity.ok(MessageResponse("Retrospection created successfully"))
     }
 }
