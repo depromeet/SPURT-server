@@ -1,5 +1,6 @@
 package com.ssak3.timeattack.task.repository
 
+import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.entity.TaskEntity
 import java.time.LocalDateTime
 
@@ -35,6 +36,13 @@ interface TaskRepositoryCustom {
      * 전체 할일 조회
      */
     fun findAllTodos(id: Long): List<TaskEntity>
+
+    /**
+     * 현재 시점에서 해야 할 일 조회(=Fail 처리할 가능성 있는 작업들만 조회)
+     * - 아직 마감 시간 안지났고, 현재 상태가 BEFORE, PROCRASTINATING, HOLDING_OFF, WARMING_UP인 작업들 조회
+     * - 애플리케이션 완전 시작된 후 조회된 작업들을 모두 스케줄러에 등록하기 위한 쿼리
+     */
+    fun findTodoTasks(todoStatuses: List<TaskStatus>): List<TaskEntity>
 
     /*
      * 현재 활성화된(몰입중인) 작업 목록 조회
