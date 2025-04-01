@@ -16,8 +16,8 @@ import java.time.LocalDateTime
 class TaskSchedulerInitializerTest : BehaviorSpec({
     // 테스트 대상 객체와 의존성
     val taskRepository = mockk<TaskRepository>()
-    val overdueTaskFailureScheduler = mockk<OverdueTaskFailureScheduler>()
-    val taskSchedulerInitializer = TaskSchedulerInitializer(taskRepository, overdueTaskFailureScheduler)
+    val overdueTaskStatusUpdateScheduler = mockk<OverdueTaskStatusUpdateScheduler>()
+    val taskSchedulerInitializer = TaskSchedulerInitializer(taskRepository, overdueTaskStatusUpdateScheduler)
 
     // 테스트 데이터 준비
     val now = LocalDateTime.now()
@@ -56,7 +56,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
     Given("실패 처리 대상이 되는 작업들이 있을 때") {
         // 이전 테스트의 모킹 초기화
-        clearMocks(overdueTaskFailureScheduler, taskRepository)
+        clearMocks(overdueTaskStatusUpdateScheduler, taskRepository)
 
         // 리포지토리 모킹 설정
         every {
@@ -65,7 +65,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
         // 스케줄러 모킹 설정
         every {
-            overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(any())
+            overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(any())
         } just Runs
 
         When("initializeTaskSchedulers가 호출되면") {
@@ -74,14 +74,14 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("모든 대상 작업에 대해 스케줄러가 등록되어야 한다") {
                 // 등록된 작업 수 검증
                 verify(exactly = 3) {
-                    overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(any())
+                    overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(any())
                 }
 
                 // ID로 작업 검증
                 verify {
-                    overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(match { it.id == 1L })
-                    overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(match { it.id == 2L })
-                    overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(match { it.id == 3L })
+                    overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(match { it.id == 1L })
+                    overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(match { it.id == 2L })
+                    overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(match { it.id == 3L })
                 }
             }
         }
@@ -89,7 +89,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
 
     Given("실패 처리 대상 작업이 없을 때") {
         // 이전 테스트의 모킹 초기화
-        clearMocks(overdueTaskFailureScheduler, taskRepository)
+        clearMocks(overdueTaskStatusUpdateScheduler, taskRepository)
 
         // 리포지토리 모킹 설정 - 빈 리스트 반환
         every {
@@ -102,7 +102,7 @@ class TaskSchedulerInitializerTest : BehaviorSpec({
             Then("스케줄러 등록이 호출되지 않아야 한다") {
                 // 스케줄러 등록 호출 안 됨 검증
                 verify(exactly = 0) {
-                    overdueTaskFailureScheduler.scheduleTaskTimeoutFailure(any())
+                    overdueTaskStatusUpdateScheduler.scheduleTaskStatusUpdate(any())
                 }
             }
         }
