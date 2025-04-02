@@ -57,7 +57,7 @@ class SubtaskService(
     }
 
     fun getAll(taskId: Long): List<Subtask> {
-        val task = taskService.getTaskById(taskId)
-        return subtaskRepository.findAllByTaskAndIsDeletedIs(task = task).map { Subtask.fromEntity(it) }
+        val taskEntity = taskService.getTaskById(taskId).toEntity()
+        return subtaskRepository.findAllByTaskAndIsDeletedIs(task = taskEntity).map { Subtask.fromEntity(it) }
     }
 }
