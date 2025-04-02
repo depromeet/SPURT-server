@@ -9,4 +9,5 @@ class ImmersionTask(
     val personaId: Long,
     val personaName: String,
     val subtasks: List<Subtask>,
+    val playlistIds: List<String>,
 )
