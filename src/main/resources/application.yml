@@ -67,3 +67,6 @@ apple:
   team-id: ${APPLE_TEAM_ID}
   key-id: ${APPLE_KEY_ID}
   private-key: ${APPLE_PRIVATE_KEY}
+google:
+  cloud:
+    api-key: ${GOOGLE_CLOUD_API_KEY}
