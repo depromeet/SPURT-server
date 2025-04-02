@@ -21,19 +21,15 @@ class MyPageService(
         checkNotNull(member.id, "MemberId")
         // 회고 만족도, 집중도 평균 조회
         val (satisfactionAvg, concentrationAvg) = retrospectionService.getRetrospectionAverage(member.id)
-        logger.info("satisfactionAvg: $satisfactionAvg, concentrationAvg: $concentrationAvg")
 
         // 역대 페르소나 조회
         val personas = personaService.getAllPersonas(member.id)
-        logger.info("personas: $personas")
 
         // 완료한 일 목록 조회
         val completedTasks = taskService.getCompletedTasksOrderByCompletedTimeDesc(member.id)
-        logger.info("completedTasks: $completedTasks")
 
         // 미룬일 목록 조회
         val procrastinatedTasks = taskService.getProcrastinatedTasksOrderByDueDateDesc(member.id)
-        logger.info("procrastinatedTasks: $procrastinatedTasks")
 
         // MyPageResponse 반환
         return MyPageResponse(
