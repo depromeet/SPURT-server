@@ -1,8 +1,7 @@
 package com.ssak3.timeattack.persona.service
 
-import com.ssak3.timeattack.common.utils.checkNotNull
+import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
-import com.ssak3.timeattack.persona.service.dto.PersonaDto
 import org.springframework.stereotype.Service
 
 @Service
@@ -10,16 +9,11 @@ class PersonaService(
     private val personaRepository: PersonaRepository,
 ) {
     /**
-     * 해당 유저의 모든 페르소나 종류 조회
-     * - 최신 추가순 정렬
-     * - 중복x
+     * 특정 회원의 페르소나 목록을 가장 최근에 업데이트된 태스크 기준으로 정렬하여 조회한다.
+     *
+     * 각 페르소나마다 최대 1개의 결과만 반환하며, 여러 태스크가 있는 경우 최신 업데이트 기준으로 정렬한다.
+     * 삭제된 태스크(isDeleted=true)는 제외된다.
      */
-    fun findAllPersonas(memberId: Long): List<PersonaDto> =
-        personaRepository.findAllPersonas(memberId).map { persona ->
-            val personaId = checkNotNull(persona.id, "PersonaId")
-            PersonaDto(
-                personaId = personaId,
-                personaName = persona.name,
-            )
-        }
+    fun getAllPersonas(memberId: Long): List<Persona> =
+        personaRepository.findPersonasByMemberIdOrderByLatestTask(memberId).map { Persona.fromEntity(it) }
 }

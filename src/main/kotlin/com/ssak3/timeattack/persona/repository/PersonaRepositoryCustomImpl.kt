@@ -13,7 +13,7 @@ class PersonaRepositoryCustomImpl(
     private val qPersona: QPersonaEntity = QPersonaEntity.personaEntity
     private val qTask: QTaskEntity = QTaskEntity.taskEntity
 
-    override fun findAllPersonas(memberId: Long): List<PersonaEntity> {
+    override fun findPersonasByMemberIdOrderByLatestTask(memberId: Long): List<PersonaEntity> {
         return queryFactory
             .select(qPersona)
             .from(qPersona)
