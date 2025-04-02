@@ -314,6 +314,20 @@ class TaskService(
         return taskRepository.findActiveTasks(member.id).map { Task.fromEntity(it) }
     }
 
+    /**
+     * 완료한 일 목록 조회(마이페이지용)
+     */
+    fun getCompletedTasksOrderByCompletedTimeDesc(memberId: Long): List<Task> {
+        return taskRepository.findCompletedTasksOrderByCompletedTimeDesc(memberId).map { Task.fromEntity(it) }
+    }
+
+    /**
+     * 미룬 일 목록 조회(마이페이지용)
+     */
+    fun getProcrastinatedTasksOrderByDueDateDesc(memberId: Long): List<Task> {
+        return taskRepository.findProcrastinatedTasksOrderByDueDateDesc(memberId).map { Task.fromEntity(it) }
+    }
+
     private fun publishEventForUpdateTask(
         memberId: Long,
         taskId: Long,
