@@ -69,4 +69,4 @@ apple:
   private-key: ${APPLE_PRIVATE_KEY}
 google:
   cloud:
-    api-key: ${GOOGLE_CLOUD_API_KEY}
+    api-key: ${GOOGLE_CLOUD_API_KEY:key}
