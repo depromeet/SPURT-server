@@ -57,9 +57,10 @@ class SubtaskController(
         @PathVariable(required = true) @Positive taskId: Long,
     ): ResponseEntity<List<SubTaskResponse>> {
         val subtasks = subtaskService.getAll(taskId)
-        val response = subtasks.map {
-            SubTaskResponse.fromSubtask(it)
-        }
+        val response =
+            subtasks.map {
+                SubTaskResponse.fromSubtask(it)
+            }
 
         return ResponseEntity.ok(response)
     }

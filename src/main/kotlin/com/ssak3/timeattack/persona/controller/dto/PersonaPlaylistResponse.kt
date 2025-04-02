@@ -1,5 +1,5 @@
 package com.ssak3.timeattack.persona.controller.dto
 
-data class PersonaPlaylistResponse (
+data class PersonaPlaylistResponse(
     val playlistIds: List<String>,
 )
