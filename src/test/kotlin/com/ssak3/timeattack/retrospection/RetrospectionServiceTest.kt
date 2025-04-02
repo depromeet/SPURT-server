@@ -11,6 +11,7 @@ import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.service.TaskService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -109,6 +110,42 @@ class RetrospectionServiceTest : BehaviorSpec({
                         },
                     )
                 }
+            }
+        }
+    }
+
+    given("회고 평균 조회 시") {
+        val memberId = 1L
+
+        `when`("회고가 있는 경우") {
+            val mockRetrospectives =
+                listOf(
+                    mockk<RetrospectionEntity>().apply {
+                        every { satisfaction } returns 40
+                        every { concentration } returns 60
+                    },
+                    mockk<RetrospectionEntity>().apply {
+                        every { satisfaction } returns 80
+                        every { concentration } returns 20
+                    },
+                )
+
+            every { retrospectionRepository.findAllByMemberId(memberId) } returns mockRetrospectives
+
+            then("만족도와 집중도의 평균이 올바르게 계산된다") {
+                val (satisfactionAvg, concentrationAvg) = retrospectionService.getRetrospectionAverage(memberId)
+                satisfactionAvg shouldBe 60
+                concentrationAvg shouldBe 40
+            }
+        }
+
+        `when`("회고가 없는 경우") {
+            every { retrospectionRepository.findAllByMemberId(memberId) } returns emptyList()
+
+            then("만족도와 집중도 평균은 0이 된다") {
+                val (satisfactionAvg, concentrationAvg) = retrospectionService.getRetrospectionAverage(memberId)
+                satisfactionAvg shouldBe 0
+                concentrationAvg shouldBe 0
             }
         }
     }
