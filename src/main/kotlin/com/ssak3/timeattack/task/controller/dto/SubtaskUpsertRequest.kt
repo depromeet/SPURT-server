@@ -14,7 +14,6 @@ data class SubtaskUpsertRequest(
         example = "1",
         requiredMode = RequiredMode.NOT_REQUIRED,
     )
-    @field:Positive
     val id: Long = 0,
     @Schema(
         title = "작업 id",
