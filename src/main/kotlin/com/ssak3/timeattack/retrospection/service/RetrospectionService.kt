@@ -4,7 +4,7 @@ import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.domain.Retrospection
-import com.ssak3.timeattack.retrospection.repository.entity.RetrospectionRepository
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.service.TaskService
@@ -49,9 +49,8 @@ class RetrospectionService(
     /**
      * 해당 유저의 만족도, 집중도 평균 조회
      */
-    fun getRetrospectionAverage(member: Member): Pair<Int, Int> {
-        checkNotNull(member.id, "MemberId")
-        val retrospectives = retrospectionRepository.findAllByMemberId(member.id)
+    fun getRetrospectionAverage(memberId: Long): Pair<Int, Int> {
+        val retrospectives = retrospectionRepository.findAllByMemberId(memberId)
         val satisfactionAverage = retrospectives.map { it.satisfaction }.average().toInt()
         val concentrationAverage = retrospectives.map { it.concentration }.average().toInt()
 
