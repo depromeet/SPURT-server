@@ -206,6 +206,19 @@ enum class ApplicationExceptionType(
 
     // ======================== [END] RETROSPECTION ========================
 
+    // ======================== [START] PERSONA ========================
+
+    /**
+     * - {0} : Persona ID
+     */
+    PERSONA_NOT_FOUND_BY_ID(
+        HttpStatus.BAD_REQUEST,
+        "ERR_PERSONA_001",
+        "해당 ID로 Persona를 찾을 수 없습니다. : {0}",
+    ),
+
+    // ======================== [END] PERSONA ========================
+
     // ======================== [START] GLOBAL ========================
 
     /**
