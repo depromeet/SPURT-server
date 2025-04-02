@@ -20,6 +20,8 @@ import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
+import com.ssak3.timeattack.task.service.events.SupportAlarm
+import com.ssak3.timeattack.task.service.events.SupportNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import org.springframework.context.ApplicationEventPublisher
@@ -27,7 +29,9 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
 @Service
@@ -334,5 +338,122 @@ class TaskService(
                 )
             eventPublisher.publishEvent(triggerActionNotificationUpdateEvent)
         }
+    }
+
+    /**
+     * [푸시 알림 문구 정책(index)]
+     * - 초단기 할 일 (1시간 이하)
+     *   1. 10분 전(5)
+     * - 단기 할 일 (1~4시간 이하)
+     *   1. 1시간 전(4)
+     * - 중장기 할 일 (4~24시간 이하)
+     *   1. 중간 지점(2)
+     *   2. 1시간 전(4)
+     * - 장기 할 일 (1일 이상)
+     *   1. 매일 오전 9시(2)
+     *   2. 마감 24시간 전(3)
+     *   3. 1시간 전(4)
+     */
+    fun requestSupportNotifications(
+        taskId: Long,
+        memberId: Long,
+    ) {
+        val task =
+            taskRepository.findByIdOrNull(taskId)
+                ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, taskId)
+
+        val dueDatetime = task.dueDatetime
+        val startAlarmTime = task.triggerActionAlarmTime
+        val interval = Duration.between(dueDatetime, startAlarmTime).toMinutes()
+
+        val supportAlarms = mutableListOf<SupportAlarm>()
+
+        if (interval <= 60) {
+            supportAlarms.add(
+                SupportAlarm(
+                    index = 5,
+                    alarmTime = dueDatetime.minusMinutes(10),
+                ),
+            )
+        } else if (interval <= 240) {
+            supportAlarms.add(
+                SupportAlarm(
+                    index = 4,
+                    alarmTime = dueDatetime.minusHours(1),
+                ),
+            )
+        } else if (interval <= 1440) {
+            supportAlarms.addAll(
+                listOf(
+                    SupportAlarm(
+                        index = 2,
+                        alarmTime = dueDatetime.minusMinutes(interval / 2),
+                    ),
+                    SupportAlarm(
+                        index = 4,
+                        alarmTime = dueDatetime.minusHours(1),
+                    ),
+                ),
+            )
+        } else {
+            val dateTimes = getBetweenDateTimes(dueDatetime)
+            dateTimes.forEach { dateTime ->
+                supportAlarms.add(
+                    SupportAlarm(
+                        index = 1,
+                        alarmTime = dateTime,
+                    ),
+                )
+            }
+            supportAlarms.addAll(
+                listOf(
+                    SupportAlarm(
+                        index = 3,
+                        alarmTime = dueDatetime.minusDays(1),
+                    ),
+                    SupportAlarm(
+                        index = 3,
+                        alarmTime = dueDatetime.minusDays(1),
+                    ),
+                    SupportAlarm(
+                        index = 4,
+                        alarmTime = dueDatetime.minusHours(1),
+                    ),
+                ),
+            )
+        }
+
+        eventPublisher.publishEvent(
+            SupportNotificationSaveEvent(
+                memberId = memberId,
+                taskId = taskId,
+                alarmTimes = supportAlarms,
+            ),
+        )
+    }
+
+    private fun getBetweenDateTimes(dueDatetime: LocalDateTime): List<LocalDateTime> {
+        var current = LocalDateTime.now()
+        val dateTimes = mutableListOf<LocalDateTime>()
+
+        // 오늘 이미 오전 9시가 지났으면 오늘은 알림 대상에 포함하지 않습니다.(내일부터 시작)
+        if (current.hour >= 9) {
+            current = current.plusDays(1)
+        }
+
+        while (current < dueDatetime) {
+            dateTimes.add(current.toLocalDate().atTime(9, 0))
+            current = current.plusDays(1)
+        }
+
+        return dateTimes
+    }
+
+    // 몰입이 완료되면 등록된 푸시알림 비활성화
+    fun inactiveSupportNotifications(
+        taskId: Long,
+        memberId: Long,
+    ) {
+        eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId = memberId, taskId = taskId))
     }
 }
