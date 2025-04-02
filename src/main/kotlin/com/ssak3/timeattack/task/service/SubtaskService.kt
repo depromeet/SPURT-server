@@ -4,7 +4,6 @@ import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.task.controller.dto.SubtaskUpsertRequest
 import com.ssak3.timeattack.task.domain.Subtask
-import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.repository.SubtaskRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
