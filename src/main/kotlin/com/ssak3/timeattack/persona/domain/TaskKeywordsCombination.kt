@@ -6,6 +6,4 @@ import com.ssak3.timeattack.task.domain.TaskType
 class TaskKeywordsCombination(
     val taskType: TaskType,
     val taskMode: TaskMode,
-) {
-    val keyword = "${this.taskType.name} ${this.taskMode.name}"
-}
+)

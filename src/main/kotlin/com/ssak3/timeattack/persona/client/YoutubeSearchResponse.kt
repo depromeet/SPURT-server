@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.task.client
+package com.ssak3.timeattack.persona.client
 
 data class YoutubeSearchResponse(
     val items: List<Item>,

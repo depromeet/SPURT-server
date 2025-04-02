@@ -1,4 +1,4 @@
-package com.ssak3.timeattack.task.client
+package com.ssak3.timeattack.persona.client
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
