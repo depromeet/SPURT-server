@@ -6,6 +6,7 @@ import com.ssak3.timeattack.member.repository.entity.OAuthProviderInfo
 import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.domain.TaskKeywordsCombination
+import com.ssak3.timeattack.retrospection.domain.Retrospection
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskMode
@@ -218,5 +219,25 @@ object Fixture {
         isDeleted = isDeleted,
         order = order,
         message = message,
+    )
+
+    fun createRetrospection(
+        id: Long? = 1L,
+        member: Member = createMember(),
+        task: Task = createTask(),
+        satisfaction: Int = 60,
+        concentration: Int = 80,
+        comment: String? = null,
+        createdAt: LocalDateTime = now,
+        updatedAt: LocalDateTime = now,
+    ) = Retrospection(
+        id = id,
+        member = member,
+        task = task,
+        satisfaction = satisfaction,
+        concentration = concentration,
+        comment = comment,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }
