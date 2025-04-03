@@ -45,15 +45,4 @@ class RetrospectionService(
             )
         retrospectionRepository.save(retrospection.toEntity())
     }
-
-    /**
-     * 해당 유저의 만족도, 집중도 평균 조회
-     */
-    fun getRetrospectionAverage(memberId: Long): Pair<Int, Int> {
-        val retrospectives = retrospectionRepository.findAllByMemberId(memberId)
-        val satisfactionAverage = retrospectives.map { it.satisfaction }.average().toInt()
-        val concentrationAverage = retrospectives.map { it.concentration }.average().toInt()
-
-        return Pair(satisfactionAverage, concentrationAverage)
-    }
 }

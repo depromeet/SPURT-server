@@ -17,7 +17,7 @@ class MyPageService(
     private val personaRepository: PersonaRepository,
     private val retrospectionRepository: RetrospectionRepository,
 ) : Logger {
-    fun getMyPage(member: Member): MyPageDto  {
+    fun getMyPage(member: Member): MyPageDto {
         checkNotNull(member.id, "MemberId")
         // 회고 만족도, 집중도 평균 조회
         val retrospectives = retrospectionRepository.findAllByMemberId(member.id)

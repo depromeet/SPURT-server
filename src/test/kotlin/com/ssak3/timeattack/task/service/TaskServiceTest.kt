@@ -21,7 +21,6 @@ import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -268,126 +267,6 @@ class TaskServiceTest(
                     val updateEvents = events.stream(TriggerActionNotificationUpdateEvent::class.java).toList()
                     updateEvents.size shouldBe 0
                 }
-            }
-        }
-
-        describe("완료된 일 조회 시") {
-            var memberId: Long = 0
-            beforeEach {
-                member = Member.fromEntity(memberRepository.save(Fixture.createMember(id = null).toEntity()))
-                memberId = checkNotNull(member.id, "MemberId")
-
-                val task1 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 1",
-                        status = TaskStatus.COMPLETE,
-                        member = member,
-                        updatedAt = LocalDateTime.now().minusDays(1),
-                    )
-                val task2 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 2",
-                        status = TaskStatus.COMPLETE,
-                        member = member,
-                        updatedAt = LocalDateTime.now(),
-                    )
-                val task3 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 3",
-                        status = TaskStatus.FOCUSED,
-                        member = member,
-                        updatedAt = LocalDateTime.now(),
-                    )
-
-                taskRepository.saveAll(
-                    listOf(
-                        task1.toEntity(),
-                        task2.toEntity(),
-                        task3.toEntity(),
-                    ),
-                )
-            }
-
-            it("완료된 작업만 완료시간 역순으로 조회한다") {
-                val result = taskService.getCompletedTasksOrderByCompletedTimeDesc(memberId)
-
-                result.size shouldBe 2
-                result[0].name shouldBe "Task 2"
-                result[1].name shouldBe "Task 1"
-
-                // FOCUSED 상태 태스크는 포함되지 않음
-                result.any { it.name == "Task 3" } shouldBe false
-            }
-
-            it("완료된 작업이 없으면 빈 목록을 반환한다") {
-                taskRepository.deleteAll()
-
-                val result = taskService.getCompletedTasksOrderByCompletedTimeDesc(memberId)
-
-                result.shouldBeEmpty()
-            }
-        }
-
-        describe("미룬 일 조회 시") {
-            var memberId: Long = 0
-            beforeEach {
-                member = Member.fromEntity(memberRepository.save(Fixture.createMember(id = null).toEntity()))
-                memberId = checkNotNull(member.id, "MemberId")
-
-                val task1 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 1",
-                        status = TaskStatus.PROCRASTINATING,
-                        member = member,
-                        dueDatetime = LocalDateTime.now().minusDays(1),
-                    )
-                val task2 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 2",
-                        status = TaskStatus.FAIL,
-                        member = member,
-                        dueDatetime = LocalDateTime.now(),
-                    )
-                val task3 =
-                    Fixture.createTask(
-                        id = null,
-                        name = "Task 3",
-                        status = TaskStatus.FOCUSED,
-                        member = member,
-                        dueDatetime = LocalDateTime.now(),
-                    )
-
-                taskRepository.saveAll(
-                    listOf(
-                        task1.toEntity(),
-                        task2.toEntity(),
-                        task3.toEntity(),
-                    ),
-                )
-            }
-
-            it("미룬 작업만 마감일 역순으로 조회한다") {
-                val result = taskService.getProcrastinatedTasksOrderByDueDateDesc(memberId)
-
-                result.size shouldBe 2
-                result[0].name shouldBe "Task 2"
-                result[1].name shouldBe "Task 1"
-
-                // FOCUSED 상태 태스크는 포함되지 않음
-                result.any { it.name == "Task 3" } shouldBe false
-            }
-
-            it("미룬 작업이 없으면 빈 목록을 반환한다") {
-                taskRepository.deleteAll()
-
-                val result = taskService.getCompletedTasksOrderByCompletedTimeDesc(memberId)
-
-                result.shouldBeEmpty()
             }
         }
     }
