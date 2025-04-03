@@ -3,6 +3,7 @@ package com.ssak3.timeattack.task.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.domain.TaskStatus.BEFORE
+import com.ssak3.timeattack.task.domain.TaskStatus.FAIL
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.domain.TaskStatus.PROCRASTINATING
 import com.ssak3.timeattack.task.domain.TaskStatus.WARMING_UP
@@ -125,5 +126,29 @@ class TaskRepositoryCustomImpl(
                 qTask.isDeleted.isFalse,
                 qTask.status.eq(FOCUSED),
             ).fetch()
+    }
+
+    override fun findCompletedTasksOrderByCompletedTimeDesc(memberId: Long): List<TaskEntity> {
+        return queryFactory
+            .selectFrom(qTask)
+            .where(
+                qTask.member.id.eq(memberId),
+                qTask.isDeleted.isFalse,
+                qTask.status.eq(TaskStatus.COMPLETE),
+            )
+            .orderBy(qTask.updatedAt.desc())
+            .fetch()
+    }
+
+    override fun findProcrastinatedTasksOrderByDueDateDesc(memberId: Long): List<TaskEntity> {
+        return queryFactory
+            .selectFrom(qTask)
+            .where(
+                qTask.member.id.eq(memberId),
+                qTask.isDeleted.isFalse,
+                qTask.status.`in`(listOf(PROCRASTINATING, FAIL)),
+            )
+            .orderBy(qTask.dueDatetime.desc())
+            .fetch()
     }
 }

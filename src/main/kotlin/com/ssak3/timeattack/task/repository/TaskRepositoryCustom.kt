@@ -44,8 +44,20 @@ interface TaskRepositoryCustom {
      */
     fun findTodoTasks(todoStatuses: List<TaskStatus>): List<TaskEntity>
 
-    /*
+    /**
      * 현재 활성화된(몰입중인) 작업 목록 조회
      */
     fun findActiveTasks(memberId: Long): List<TaskEntity>
+
+    /**
+     * 완료한 일 목록 조회
+     * - 완료 시간 기준으로 내림차순 정렬
+     */
+    fun findCompletedTasksOrderByCompletedTimeDesc(memberId: Long): List<TaskEntity>
+
+    /**
+     * 미룬 일 목록 조회
+     * - 마감일 기준으로 내림차순 정렬
+     */
+    fun findProcrastinatedTasksOrderByDueDateDesc(memberId: Long): List<TaskEntity>
 }

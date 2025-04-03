@@ -4,7 +4,7 @@ import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.retrospection.controller.dto.RetrospectionCreateRequest
 import com.ssak3.timeattack.retrospection.domain.Retrospection
-import com.ssak3.timeattack.retrospection.repository.entity.RetrospectionRepository
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.service.TaskService
