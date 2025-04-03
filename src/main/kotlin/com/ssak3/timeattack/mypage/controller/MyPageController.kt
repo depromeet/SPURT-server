@@ -24,8 +24,18 @@ class MyPageController(
     fun myPage(
         @AuthenticationPrincipal member: Member,
     ): ResponseEntity<MyPageResponse> {
-        val myPageResponse = myPageService.myPage(member)
+        val myPageDto = myPageService.getMyPage(member)
 
-        return ResponseEntity.ok(myPageResponse)
+        return ResponseEntity.ok(
+            MyPageResponse(
+                satisfactionAvg = myPageDto.satisfactionAvg,
+                concentrationAvg = myPageDto.concentrationAvg,
+                personas = myPageDto.personas,
+                completedTasks = myPageDto.completedTasks,
+                procrastinatedTasks = myPageDto.procrastinatedTasks,
+                completedTaskCount = myPageDto.completedTasks.size,
+                procrastinatedTaskCount = myPageDto.procrastinatedTasks.size,
+            ),
+        )
     }
 }
