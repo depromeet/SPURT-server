@@ -7,6 +7,8 @@ import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
+import com.ssak3.timeattack.retrospection.domain.Retrospection
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
@@ -41,6 +43,7 @@ class TaskService(
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
     private val eventPublisher: ApplicationEventPublisher,
+    private val retrospectionRepository: RetrospectionRepository,
 ) : Logger {
     @Transactional
     fun createUrgentTask(
@@ -455,5 +458,25 @@ class TaskService(
         memberId: Long,
     ) {
         eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId = memberId, taskId = taskId))
+    }
+
+    /**
+     * task와 retrospection 조회하기
+     */
+    fun getTaskWithRetrospection(
+        member: Member,
+        taskId: Long,
+    ): Pair<Task, Retrospection?> {
+        // Task 조회
+        checkNotNull(member.id, "MemberId")
+        val task = findTaskById(taskId)
+        task.assertOwnedBy(member.id)
+        logger.info("Task 조회: ${task.id}, ${task.name}")
+
+        // 회고 데이터 조회
+        checkNotNull(task.id, "TaskId")
+        val retrospection = retrospectionRepository.findByTaskId(task.id)?.let { Retrospection.fromEntity(it) }
+        logger.info("회고 데이터 조회: ${retrospection?.id}, ${retrospection?.satisfaction}")
+        return Pair(task, retrospection)
     }
 }
