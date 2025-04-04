@@ -2,7 +2,8 @@ package com.ssak3.timeattack.notifications.domain
 
 object FcmNotificationConstants {
     fun getMessage(index: Int): String {
-        val messages = taskBeforeMessageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
+        val messages =
+            taskBeforeMessageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
         return messages
     }
 
