@@ -6,4 +6,5 @@ data class PushNotificationSendRequest(
     val taskId: String,
     val body: String,
     val route: String,
+    val title: String = "SPURT",
 )

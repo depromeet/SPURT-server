@@ -22,7 +22,7 @@ class FirebaseCloudMessageService : Logger {
             Message.builder()
                 .setToken(message.token)
                 .setNotification(
-                    Notification.builder().setTitle(TITLE).setBody(message.body).build(),
+                    Notification.builder().setTitle(message.title).setBody(message.body).build(),
                 )
                 .setApnsConfig(getAPNSConfig())
                 .setAndroidConfig(getAndroidConfig())

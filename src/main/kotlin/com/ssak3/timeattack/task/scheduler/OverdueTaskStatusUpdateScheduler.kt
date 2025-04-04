@@ -69,7 +69,7 @@ class OverdueTaskStatusUpdateScheduler(
                         taskId = checkNotNull(task.id, "task id"),
                         body =
                             """
-                            PPT 만들고 대본 작성 마감일이 끝났어요!
+                            ${task.name} 마감일이 끝났어요!
                             회고를 작성하며 과정을 돌아보세요.
                             """.trimIndent(),
                         route = "/retrospection",

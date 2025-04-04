@@ -8,4 +8,5 @@ data class FcmMessage(
     val taskId: Long,
     val body: String,
     val route: String,
+    val title: String = "SPURT",
 )
