@@ -15,7 +15,6 @@ import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
-import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
@@ -138,9 +137,9 @@ class TaskServiceEventTest(
 
         val expectedReminderAlarms =
             listOf(
-                ReminderAlarm(1, LocalDateTime.of(2025, 1, 1, 0, 15, 0)),
-                ReminderAlarm(2, LocalDateTime.of(2025, 1, 1, 0, 30, 0)),
-                ReminderAlarm(3, LocalDateTime.of(2025, 1, 1, 0, 45, 0)),
+                LocalDateTime.of(2025, 1, 1, 0, 15, 0),
+                LocalDateTime.of(2025, 1, 1, 0, 30, 0),
+                LocalDateTime.of(2025, 1, 1, 0, 45, 0),
             )
         assertThat(reminderSaveEvent.alarmTimes).containsExactlyElementsOf(expectedReminderAlarms)
     }

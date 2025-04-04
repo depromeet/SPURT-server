@@ -4,6 +4,11 @@ import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.common.utils.checkNotNull
+import com.ssak3.timeattack.external.firebase.domain.DevicePlatform
+import com.ssak3.timeattack.notifications.domain.FcmMessage
+import com.ssak3.timeattack.notifications.service.FcmDeviceService
+import com.ssak3.timeattack.notifications.service.FcmPushNotificationService
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.domain.TaskStatus.Companion.statusesToFail
@@ -11,6 +16,7 @@ import com.ssak3.timeattack.task.domain.TaskStatus.FAIL
 import com.ssak3.timeattack.task.domain.TaskStatus.FOCUSED
 import com.ssak3.timeattack.task.repository.TaskRepository
 import org.springframework.context.event.EventListener
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
@@ -19,6 +25,9 @@ import java.time.ZoneId
 @Service
 class OverdueTaskStatusUpdateScheduler(
     private val taskRepository: TaskRepository,
+    private val retrospectionRepository: RetrospectionRepository,
+    private val fcmPushNotificationService: FcmPushNotificationService,
+    private val fcmDeviceService: FcmDeviceService,
     private val taskScheduler: TaskScheduler,
     private val transactionTemplate: TransactionTemplate,
 ) : Logger {
@@ -34,6 +43,41 @@ class OverdueTaskStatusUpdateScheduler(
         )
 
         logger.info("Task(${task.id}) 상태 체크 스케줄러 등록 완료: 예정 실행 시간 = $scheduledTime")
+
+        val scheduledTimeForPushNotification = task.dueDatetime.plusMinutes(30)
+        taskScheduler.schedule(
+            { checkRetrospectionAndSendPushNotification(task.id) },
+            scheduledTimeForPushNotification.atZone(ZoneId.systemDefault()).toInstant(),
+        )
+
+        logger.info("Task(${task.id}) 회고 푸시 알림 등록 완료: 예정 실행 시간 = $scheduledTime")
+    }
+
+    private fun checkRetrospectionAndSendPushNotification(taskId: Long) {
+        val isExist = retrospectionRepository.findByTaskId(taskId) != null
+        val task =
+            taskRepository.findByIdOrNull(taskId)
+                ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, taskId)
+        val memberId = checkNotNull(task.member.id, "memberId")
+
+        if (!isExist) {
+            fcmDeviceService.getDevicesByMember(memberId).forEach { device ->
+                val message =
+                    FcmMessage(
+                        token = device.fcmRegistrationToken,
+                        platform = DevicePlatform.valueOf(device.devicePlatform.toString()),
+                        taskId = checkNotNull(task.id, "task id"),
+                        body =
+                            """
+                            PPT 만들고 대본 작성 마감일이 끝났어요!
+                            회고를 작성하며 과정을 돌아보세요.
+                            """.trimIndent(),
+                        route = "/retrospection",
+                    )
+
+                fcmPushNotificationService.sendNotification(message)
+            }
+        }
     }
 
     /**
