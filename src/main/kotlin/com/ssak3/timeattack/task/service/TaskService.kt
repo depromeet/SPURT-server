@@ -16,6 +16,7 @@ import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
+import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
@@ -461,22 +462,33 @@ class TaskService(
     }
 
     /**
-     * task와 retrospection 조회하기
+     * 작업과 관련된 회고 데이터를 함께 조회
      */
     fun getTaskWithRetrospection(
         member: Member,
         taskId: Long,
     ): Pair<Task, Retrospection?> {
-        // Task 조회
-        checkNotNull(member.id, "MemberId")
-        val task = findTaskById(taskId)
-        task.assertOwnedBy(member.id)
-        logger.info("Task 조회: ${task.id}, ${task.name}")
+        // 작업 조회 및 소유권 검증
+        val task = findTaskByIdAndMember(member, taskId)
+        logger.info("Task 조회: ID=${task.id}, name=${task.name}")
 
-        // 회고 데이터 조회
-        checkNotNull(task.id, "TaskId")
-        val retrospection = retrospectionRepository.findByTaskId(task.id)?.let { Retrospection.fromEntity(it) }
-        logger.info("회고 데이터 조회: ${retrospection?.id}, ${retrospection?.satisfaction}")
+        // 회고 데이터 조회 (없으면 null)
+        val retrospection = findRetrospectionForTask(task)
         return Pair(task, retrospection)
+    }
+
+    /**
+     * 작업에 관련된 회고 데이터 조회
+     * 완료 상태의 작업만 회고 데이터가 조회됨
+     */
+    private fun findRetrospectionForTask(task: Task): Retrospection? {
+        if (task.status != COMPLETE) return null
+
+        checkNotNull(task.id, "TaskId")
+        return retrospectionRepository.findByTaskId(task.id)?.let { entity ->
+            val retrospection = Retrospection.fromEntity(entity)
+            logger.info("회고 조회: ID=${retrospection.id}, 만족도=${retrospection.satisfaction}")
+            retrospection
+        }
     }
 }
