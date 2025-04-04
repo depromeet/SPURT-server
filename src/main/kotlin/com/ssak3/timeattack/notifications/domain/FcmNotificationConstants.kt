@@ -2,7 +2,7 @@ package com.ssak3.timeattack.notifications.domain
 
 object FcmNotificationConstants {
     fun getMessage(index: Int): String {
-        val messages = messageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
+        val messages = taskBeforeMessageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
         return messages
     }
 
@@ -40,7 +40,7 @@ object FcmNotificationConstants {
 
     private const val REMINDER_LIMIT = 3
 
-    private val messageTemplate =
+    private val taskBeforeMessageTemplate =
         mapOf(
             0 to
                 """
