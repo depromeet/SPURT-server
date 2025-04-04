@@ -5,10 +5,5 @@ import java.time.LocalDateTime
 data class ReminderSaveEvent(
     val memberId: Long,
     val taskId: Long,
-    val alarmTimes: List<ReminderAlarm>,
-)
-
-data class ReminderAlarm(
-    val order: Int,
-    val alarmTime: LocalDateTime,
+    val alarmTimes: List<LocalDateTime>,
 )

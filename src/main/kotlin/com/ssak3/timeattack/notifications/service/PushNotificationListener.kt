@@ -3,6 +3,7 @@ package com.ssak3.timeattack.notifications.service
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.service.MemberService
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
+import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getRemindMessage
 import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getSupportMessage
 import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.task.service.TaskService
@@ -33,16 +34,18 @@ class PushNotificationListener(
         val member = memberService.getMemberById(event.memberId)
         val task = taskService.getTaskById(event.taskId)
 
-        val pushNotification =
-            PushNotification(
-                member = member,
-                task = task,
-                scheduledAt = event.alarmTime.withSecond(0),
-                order = 0,
-                message = getMessage(0),
-            )
+        val pushNotifications =
+            event.alarmTimes.mapIndexed { i, alarmTime ->
+                PushNotification(
+                    member = member,
+                    task = task,
+                    scheduledAt = alarmTime,
+                    order = 0,
+                    message = getMessage(i),
+                )
+            }
 
-        pushNotificationService.save(pushNotification)
+        pushNotificationService.saveAll(pushNotifications)
     }
 
     @EventListener
@@ -51,14 +54,18 @@ class PushNotificationListener(
         val member = memberService.getMemberById(event.memberId)
         val task = taskService.getTaskById(event.taskId)
 
+        // 기존 알림 제거
+        pushNotificationService.delete(task)
+
+        // 리마인드 알림 등록
         val pushNotifications: List<PushNotification> =
-            event.alarmTimes.map {
+            event.alarmTimes.mapIndexed { i, alarmTime ->
                 PushNotification(
                     member = member,
                     task = task,
-                    scheduledAt = it.alarmTime.withSecond(0),
-                    order = it.order,
-                    message = getMessage(it.order),
+                    scheduledAt = alarmTime,
+                    order = i + 1,
+                    message = getRemindMessage(i),
                 )
             }
 
@@ -104,6 +111,9 @@ class PushNotificationListener(
         val member = memberService.getMemberById(event.memberId)
         val task = taskService.getTaskById(event.taskId)
 
+        // 기존 알림 제거
+        pushNotificationService.delete(task)
+
         val pushNotifications: List<PushNotification> =
             event.alarmTimes.map {
                 PushNotification(
@@ -111,7 +121,13 @@ class PushNotificationListener(
                     task = task,
                     scheduledAt = it.alarmTime.withSecond(0),
                     order = -1,
-                    message = getSupportMessage(personaId = task.persona.id.toInt(), index = it.index),
+                    message =
+                        getSupportMessage(
+                            personaId = task.persona.id.toInt(),
+                            personaName = task.persona.name,
+                            nickname = member.nickname,
+                            index = it.index,
+                        ),
                 )
             }
 

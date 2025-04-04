@@ -5,5 +5,5 @@ import java.time.LocalDateTime
 class TriggerActionNotificationSaveEvent(
     val memberId: Long,
     val taskId: Long,
-    val alarmTime: LocalDateTime,
+    val alarmTimes: List<LocalDateTime>,
 )
