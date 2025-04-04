@@ -32,6 +32,7 @@ class PushNotificationScheduler(
                         taskId = it.task.id,
                         body = it.message,
                         route = getRoute(it.order),
+                        title = it.task.name,
                     )
 
                 fcmPushNotificationService.sendNotification(message)

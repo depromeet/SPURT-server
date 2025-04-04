@@ -32,6 +32,7 @@ class PushNotificationController(
                     taskId = request.taskId.toLong(),
                     body = request.body,
                     route = request.route,
+                    title = request.title,
                 ),
             )
 
