@@ -280,11 +280,18 @@ class TaskServiceTest(
             lateinit var task: Task
 
             beforeEach {
-                val taskToSave = Fixture.createScheduledTaskWithNow(now, id = null, member = member, persona = persona)
+                val taskToSave =
+                    Fixture.createScheduledTaskWithNow(
+                        now,
+                        id = null,
+                        member = member,
+                        persona = persona,
+                        status = TaskStatus.COMPLETE,
+                    )
                 task = Task.fromEntity(taskRepository.save(taskToSave.toEntity()))
             }
 
-            context("회고 데이터가 있는 경우") {
+            context("Task 상태가 COMPLETE인 경우") {
                 lateinit var retrospection: Retrospection
 
                 beforeEach {
@@ -308,8 +315,19 @@ class TaskServiceTest(
                 }
             }
 
-            context("회고 데이터가 없는 경우") {
+            context("Task 상태가 COMPLETE이지만 회고 데이터가 없는 경우") {
                 it("Task만 조회되고 회고 데이터는 null이다") {
+                    // when
+                    val (taskResult, retrospectionResult) = taskService.getTaskWithRetrospection(member, task.id!!)
+
+                    // then
+                    taskResult.id shouldBe task.id
+                    retrospectionResult.shouldBeNull()
+                }
+            }
+
+            context("Task 상태가 COMPLETE가 아닌 경우") {
+                it("회고 데이터를 조회하지 않는다") {
                     // when
                     val (taskResult, retrospectionResult) = taskService.getTaskWithRetrospection(member, task.id!!)
 
