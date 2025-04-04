@@ -13,6 +13,7 @@ import com.ssak3.timeattack.task.controller.dto.TaskResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
+import com.ssak3.timeattack.task.controller.dto.TaskWithRetrospectionResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
 import com.ssak3.timeattack.task.domain.TaskStatus
@@ -194,5 +195,22 @@ class TaskController(
         taskUpdateRequest.validateRequest()
         val updatedTask = taskService.updateTask(member, taskId, taskUpdateRequest)
         return ResponseEntity.ok(TaskResponse.fromTask(updatedTask))
+    }
+
+    @Operation(summary = "회고와 함께 작업 조회(마이페이지용)", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @GetMapping("/{taskId}/retrospection")
+    fun getRetrospection(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true)
+        @Positive taskId: Long,
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<TaskWithRetrospectionResponse> {
+        val (task, retrospection) = taskService.getTaskWithRetrospection(member, taskId)
+
+        val response =
+            retrospection?.let { TaskWithRetrospectionResponse.fromTaskAndRetrospection(task, it) }
+                ?: TaskWithRetrospectionResponse.fromTaskOnly(task)
+
+        return ResponseEntity.ok(response)
     }
 }
