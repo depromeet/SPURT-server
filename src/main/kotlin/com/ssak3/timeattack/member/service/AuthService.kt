@@ -188,6 +188,7 @@ class AuthService(
         )
     }
 
+    @Transactional
     fun withdraw(member: Member) {
         val requestedMemberId = checkNotNull(member.id, "memberId")
 
@@ -202,7 +203,7 @@ class AuthService(
                 oAuthClient.unlink(member.oAuthProviderInfo.subject)
             }
             OAuthProvider.APPLE -> {
-                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.KAKAO)
+                val oAuthClient = oAuthClientFactory.getClient(OAuthProvider.APPLE)
                 oAuthClient.unlink(requestedMemberId.toString())
             }
             OAuthProvider.GOOGLE -> TODO()
