@@ -21,7 +21,6 @@ import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
-import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
 import com.ssak3.timeattack.task.service.events.SupportAlarm
 import com.ssak3.timeattack.task.service.events.SupportNotificationSaveEvent
@@ -102,11 +101,12 @@ class TaskService(
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
         // 4. Task 이벤트 발행
+        val alarmTimes = getAlarmTimes(scheduledTaskRequest.triggerActionAlarmTime)
         val triggerActionNotificationSaveEvent =
             TriggerActionNotificationSaveEvent(
                 checkNotNull(member.id),
                 checkNotNull(savedTaskEntity.id),
-                scheduledTaskRequest.triggerActionAlarmTime,
+                alarmTimes,
             )
         eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
 
@@ -118,6 +118,10 @@ class TaskService(
         // 5. Task 반환
         return savedTask
     }
+
+    // 2분단위로 첫번째 알림 + 5번 추가 알림 = 6번
+    private fun getAlarmTimes(startTime: LocalDateTime): List<LocalDateTime> =
+        generateSequence(startTime) { it.plusMinutes(2) }.take(6).map { it.withSecond(0).withNano(0) }.toList()
 
     private fun findPersonaByTaskTypeAndTaskMode(
         taskType: String,
@@ -271,7 +275,7 @@ class TaskService(
                         taskHoldOffRequest.remindInterval * order.toLong(),
                     )
                 task.validateReminderAlarmTime(nextReminderAlarmTime)
-                ReminderAlarm(order, nextReminderAlarmTime)
+                nextReminderAlarmTime
             }
 
         // 3. 리마인더 알림 저장 이벤트 발행

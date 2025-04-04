@@ -1,21 +1,31 @@
 package com.ssak3.timeattack.notifications.domain
 
-import kotlin.random.Random
-
 object FcmNotificationConstants {
-    fun getMessage(order: Int): String {
-        val messages = messageTemplate[order] ?: throw IllegalStateException("message not exist for this number")
-        val index = Random.nextInt(messages.size)
-        return messages[index]
+    fun getMessage(index: Int): String {
+        val messages =
+            taskBeforeMessageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
+        return messages
+    }
+
+    fun getRemindMessage(index: Int): String {
+        val message = remindMessageTemplate[index] ?: throw IllegalStateException("message not exist for this number")
+        return message
     }
 
     fun getSupportMessage(
         personaId: Int,
+        personaName: String,
+        nickname: String,
         index: Int,
     ): String {
-        val messages =
+        val supportMessage =
             supportMessageTemplate[personaId] ?: throw IllegalStateException("message not exist for this number")
-        return messages[index]
+        val message =
+            """
+            $personaName ${nickname}님
+            ${supportMessage[index]}
+            """.trimIndent()
+        return message
     }
 
     fun getRoute(order: Int): String {
@@ -31,36 +41,57 @@ object FcmNotificationConstants {
 
     private const val REMINDER_LIMIT = 3
 
-    private val messageTemplate =
+    private val taskBeforeMessageTemplate =
         mapOf(
             0 to
-                listOf(
-                    """
-                    작업 시간이 다 되었어요!
-                    작은 행동부터 시작해볼까요?
-                    """.trimIndent(),
-                ),
+                """
+                작업 시간이 다 되었어요!
+                작은 행동부터 시작해볼까요?
+                """.trimIndent(),
             1 to
-                listOf(
-                    """
-                    이제 두 번의 기회만 남았어요!
-                    미루기 전에 얼른 시작해볼까요?
-                    """.trimIndent(),
-                ),
+                """
+                아직 할 일을 시작하지 않으셨네요.
+                그리 어렵지 않아요. 1분만 투자해볼까요?
+                """.trimIndent(),
             2 to
-                listOf(
-                    """
-                    한번만 더 알림오고 끝이에요!
-                    작업을 미루기 전에 얼른 시작해보세요!
-                    """.trimIndent(),
-                ),
+                """
+                혹시 까먹으셨나요? 아직 시작하지 않으셨어요!
+                시작 타이밍, 지금 딱 좋아요. 기회는 계속 안 옵니다!
+                """.trimIndent(),
             3 to
-                listOf(
-                    """
-                    이게 마지막 기회에요!
-                    더 미루면 알림도 포기할거에요. 당장 시작하세요!
-                    """.trimIndent(),
-                ),
+                """
+                이제 3번 중 2번 남았습니다. 더 미루면 놓쳐요!
+                다음 알림까진 2분… 진짜 시작해볼까요?
+                """.trimIndent(),
+            4 to
+                """
+                마지막 기회 하나 남았습니다. 진짜 이번엔 시작해야 해요.
+                이제 끝입니다. 알림은 여기까지만 참을게요!
+                """.trimIndent(),
+            5 to
+                """
+                더 이상 알림은 없습니다. 지금이 진짜 마지막 찬스 🔥
+                지금 안 하면 오늘도 미룸 예약!
+                """.trimIndent(),
+        )
+
+    private val remindMessageTemplate =
+        mapOf(
+            0 to
+                """
+                이제 두 번의 기회만 남았어요!
+                미루기 전에 얼른 시작해볼까요?
+                """.trimIndent(),
+            1 to
+                """
+                한번만 더 알림오고 끝이에요!
+                작업을 미루기 전에 얼른 시작해보세요!
+                """.trimIndent(),
+            2 to
+                """
+                이게 마지막 기회에요!
+                더 미루면 알림도 포기할거에요. 당장 시작하세요!
+                """.trimIndent(),
         )
 
     /**
