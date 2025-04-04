@@ -11,6 +11,7 @@ class Subtask(
 ) {
     fun toEntity() =
         SubtaskEntity(
+            id = id,
             task = task.toEntity(),
             name = name,
             isDeleted = isDeleted,

@@ -2,10 +2,13 @@ package com.ssak3.timeattack.notifications.service
 
 import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.service.MemberService
+import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getMessage
+import com.ssak3.timeattack.notifications.domain.FcmNotificationConstants.getSupportMessage
 import com.ssak3.timeattack.notifications.domain.PushNotification
 import com.ssak3.timeattack.task.service.TaskService
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
+import com.ssak3.timeattack.task.service.events.SupportNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import org.springframework.context.event.EventListener
@@ -36,6 +39,7 @@ class PushNotificationListener(
                 task = task,
                 scheduledAt = event.alarmTime.withSecond(0),
                 order = 0,
+                message = getMessage(0),
             )
 
         pushNotificationService.save(pushNotification)
@@ -54,6 +58,7 @@ class PushNotificationListener(
                     task = task,
                     scheduledAt = it.alarmTime.withSecond(0),
                     order = it.order,
+                    message = getMessage(it.order),
                 )
             }
 
@@ -85,7 +90,31 @@ class PushNotificationListener(
                 task = task,
                 scheduledAt = event.alarmTime.withSecond(0),
                 order = 0,
+                message = getMessage(0),
             )
         pushNotificationService.save(pushNotification)
+    }
+
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    fun saveSupportNotifications(event: SupportNotificationSaveEvent) {
+        logger.info("SupportNotificationSaveEvent: $event")
+
+        val member = memberService.getMemberById(event.memberId)
+        val task = taskService.getTaskById(event.taskId)
+
+        val pushNotifications: List<PushNotification> =
+            event.alarmTimes.map {
+                PushNotification(
+                    member = member,
+                    task = task,
+                    scheduledAt = it.alarmTime.withSecond(0),
+                    order = -1,
+                    message = getSupportMessage(personaId = task.persona.id.toInt(), index = it.index),
+                )
+            }
+
+        pushNotificationService.saveAll(pushNotifications)
     }
 }

@@ -27,7 +27,8 @@ class PushNotificationService(
     }
 
     fun delete(task: Task) {
-        val entities = pushNotificationRepository.findAllByTaskIs(task.toEntity())
+        val now = LocalDateTime.now()
+        val entities = pushNotificationRepository.findAllByTaskAndScheduledAtIsAfter(task.toEntity(), now)
         entities.forEach { e ->
             val notification = PushNotification.fromEntity(e)
             notification.delete()

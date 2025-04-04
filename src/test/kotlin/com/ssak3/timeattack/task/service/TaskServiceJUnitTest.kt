@@ -3,6 +3,7 @@ package com.ssak3.timeattack.task.service
 import com.ssak3.timeattack.IntegrationTest
 import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType
+import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.member.repository.MemberRepository
@@ -12,6 +13,7 @@ import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
+import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.repository.TaskModeRepository
@@ -26,6 +28,7 @@ import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEve
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -114,6 +117,14 @@ class TaskServiceJUnitTest(
                 "긴급한",
             )
 
+        val eventSlot = slot<Any>()
+        val capturedEvents = mutableListOf<Any>()
+
+        every { eventPublisher.publishEvent(capture(eventSlot)) } answers {
+            capturedEvents.add(eventSlot.captured)
+            Unit
+        }
+
         // when
         val task = taskService.createUrgentTask(member, taskRequest)
 
@@ -124,6 +135,9 @@ class TaskServiceJUnitTest(
         val savedTaskKeywordsCombination = task.persona.taskKeywordsCombination
         assertEquals(savedTaskKeywordsCombination.taskType.name, "프로그래밍")
         assertEquals(savedTaskKeywordsCombination.taskMode.name, "긴급한")
+
+        assertEquals(1, capturedEvents.size)
+        assert(capturedEvents.any { it is Task })
     }
 
     @Test
@@ -141,7 +155,13 @@ class TaskServiceJUnitTest(
                 taskMode = "긴급한",
             )
 
-        every { eventPublisher.publishEvent(any()) } returns Unit
+        val eventSlot = slot<Any>()
+        val capturedEvents = mutableListOf<Any>()
+
+        every { eventPublisher.publishEvent(capture(eventSlot)) } answers {
+            capturedEvents.add(eventSlot.captured)
+            Unit
+        }
 
         // when
         val task = taskService.createScheduledTask(member, taskRequest)
@@ -154,7 +174,10 @@ class TaskServiceJUnitTest(
         assertEquals(savedTaskKeywordsCombination.taskType.name, "프로그래밍")
         assertEquals(savedTaskKeywordsCombination.taskMode.name, "긴급한")
 
-        verify(exactly = 1) { eventPublisher.publishEvent(any<TriggerActionNotificationSaveEvent>()) }
+        // 이벤트 타입별로 각각 하나씩 있는지 확인
+        assertEquals(2, capturedEvents.size)
+        assert(capturedEvents.any { it is TriggerActionNotificationSaveEvent })
+        assert(capturedEvents.any { it is Task })
     }
 
     @Test
@@ -183,7 +206,9 @@ class TaskServiceJUnitTest(
         val tasksByDayOfWeek = taskService.getTodoTasksForRestOfCurrentWeek(Fixture.createMember())
 
         // then
-        when (today.dayOfWeek) {
+        val dayOfWeek = today.dayOfWeek
+        checkNotNull(dayOfWeek, "DayOfWeek")
+        when (dayOfWeek) {
             DayOfWeek.MONDAY -> assertThat(tasksByDayOfWeek).hasSize(6)
             DayOfWeek.TUESDAY -> assertThat(tasksByDayOfWeek).hasSize(5) // 수,목,금,토,일 (5개)
             DayOfWeek.WEDNESDAY -> assertThat(tasksByDayOfWeek).hasSize(4) // 목,금,토,일 (4개)

@@ -13,8 +13,10 @@ import com.ssak3.timeattack.task.controller.dto.TaskResponse
 import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskStatusResponse
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
+import com.ssak3.timeattack.task.controller.dto.TaskWithRetrospectionResponse
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskResponse
+import com.ssak3.timeattack.task.domain.TaskStatus
 import com.ssak3.timeattack.task.service.TaskService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -67,7 +69,17 @@ class TaskController(
         @RequestBody @Valid taskStatusRequest: TaskStatusRequest,
     ): ResponseEntity<TaskStatusResponse> {
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
-        val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest)
+        val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest.status)
+
+        // 몰입 상태가 되면 응원 문구 푸시 알림 요청
+        if (taskStatusRequest.status == TaskStatus.FOCUSED) {
+            taskService.requestSupportNotifications(taskId = taskId, memberId = member.id)
+        }
+
+        // 완료 상태가 되면 응원 문구 푸시 알림 비활성화
+        if (taskStatusRequest.status == TaskStatus.COMPLETE) {
+            taskService.inactiveSupportNotifications(taskId = taskId, memberId = member.id)
+        }
 
         return ResponseEntity.ok(TaskStatusResponse.from(changedStatusTask))
     }
@@ -183,5 +195,22 @@ class TaskController(
         taskUpdateRequest.validateRequest()
         val updatedTask = taskService.updateTask(member, taskId, taskUpdateRequest)
         return ResponseEntity.ok(TaskResponse.fromTask(updatedTask))
+    }
+
+    @Operation(summary = "회고와 함께 작업 조회(마이페이지용)", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
+    @GetMapping("/{taskId}/retrospection")
+    fun getRetrospection(
+        @Parameter(description = "작업 ID")
+        @PathVariable(required = true)
+        @Positive taskId: Long,
+        @AuthenticationPrincipal member: Member,
+    ): ResponseEntity<TaskWithRetrospectionResponse> {
+        val (task, retrospection) = taskService.getTaskWithRetrospection(member, taskId)
+
+        val response =
+            retrospection?.let { TaskWithRetrospectionResponse.fromTaskAndRetrospection(task, it) }
+                ?: TaskWithRetrospectionResponse.fromTaskOnly(task)
+
+        return ResponseEntity.ok(response)
     }
 }

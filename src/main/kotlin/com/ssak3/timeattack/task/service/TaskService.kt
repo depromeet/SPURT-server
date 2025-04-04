@@ -7,20 +7,24 @@ import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
+import com.ssak3.timeattack.retrospection.domain.Retrospection
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
 import com.ssak3.timeattack.task.controller.dto.TaskHoldOffRequest
-import com.ssak3.timeattack.task.controller.dto.TaskStatusRequest
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.controller.dto.UrgentTaskRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskCategory
 import com.ssak3.timeattack.task.domain.TaskStatus
+import com.ssak3.timeattack.task.domain.TaskStatus.COMPLETE
 import com.ssak3.timeattack.task.repository.TaskModeRepository
 import com.ssak3.timeattack.task.repository.TaskRepository
 import com.ssak3.timeattack.task.repository.TaskTypeRepository
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.ReminderAlarm
 import com.ssak3.timeattack.task.service.events.ReminderSaveEvent
+import com.ssak3.timeattack.task.service.events.SupportAlarm
+import com.ssak3.timeattack.task.service.events.SupportNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationSaveEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
 import org.springframework.context.ApplicationEventPublisher
@@ -28,7 +32,9 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
+import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
 @Service
@@ -38,6 +44,7 @@ class TaskService(
     private val taskModeRepository: TaskModeRepository,
     private val personaRepository: PersonaRepository,
     private val eventPublisher: ApplicationEventPublisher,
+    private val retrospectionRepository: RetrospectionRepository,
 ) : Logger {
     @Transactional
     fun createUrgentTask(
@@ -59,6 +66,11 @@ class TaskService(
             )
         // 3. Task 저장
         val savedTaskEntity = taskRepository.save(task.toEntity())
+
+        val savedTask = Task.fromEntity(savedTaskEntity)
+
+        // 종료 시간에 실패 체크 스케줄러 등록
+        eventPublisher.publishEvent(savedTask)
 
         // 4. Task 반환
         return Task.fromEntity(savedTaskEntity)
@@ -98,8 +110,13 @@ class TaskService(
             )
         eventPublisher.publishEvent(triggerActionNotificationSaveEvent)
 
+        val savedTask = Task.fromEntity(savedTaskEntity)
+
+        // 종료 시간에 실패 체크 스케줄러 등록
+        eventPublisher.publishEvent(savedTask)
+
         // 5. Task 반환
-        return Task.fromEntity(savedTaskEntity)
+        return savedTask
     }
 
     private fun findPersonaByTaskTypeAndTaskMode(
@@ -138,7 +155,7 @@ class TaskService(
     fun changeTaskStatus(
         taskId: Long,
         memberId: Long,
-        request: TaskStatusRequest,
+        newStatus: TaskStatus,
     ): Task {
         // Task 가져오기
         val task =
@@ -156,12 +173,12 @@ class TaskService(
         task.assertOwnedBy(memberId)
 
         // Task 상태 변경
-        task.changeStatus(request.status)
+        task.changeStatus(newStatus)
 
         // Task 수정 반영
         val savedTaskEntity = taskRepository.save(task.toEntity())
 
-        logger.info("Task 상태 변경 반영: ${request.status} -> ${savedTaskEntity.status}")
+        logger.info("Task 상태 변경 반영: $newStatus -> ${savedTaskEntity.status}")
         return Task.fromEntity(savedTaskEntity)
     }
 
@@ -242,7 +259,7 @@ class TaskService(
     ) {
         checkNotNull(member.id)
         // 1. Task 상태 변경
-        val task = changeTaskStatus(taskId, member.id, TaskStatusRequest(TaskStatus.HOLDING_OFF))
+        val task = changeTaskStatus(taskId, member.id, TaskStatus.HOLDING_OFF)
 
         // 2. 리마인더 알림 시간 계산
         // 횟수만큼 반복하면서 기준 시간에서 remindInterval을 더한 시간을 계산
@@ -324,6 +341,154 @@ class TaskService(
                     checkNotNull(request.triggerActionAlarmTime, "triggerActionAlarmTime"),
                 )
             eventPublisher.publishEvent(triggerActionNotificationUpdateEvent)
+        }
+    }
+
+    /**
+     * [푸시 알림 문구 정책(index)]
+     * - 초단기 할 일 (1시간 이하)
+     *   1. 10분 전(5)
+     * - 단기 할 일 (1~4시간 이하)
+     *   1. 1시간 전(4)
+     * - 중장기 할 일 (4~24시간 이하)
+     *   1. 중간 지점(2)
+     *   2. 1시간 전(4)
+     * - 장기 할 일 (1일 이상)
+     *   1. 매일 오전 9시(2)
+     *   2. 마감 24시간 전(3)
+     *   3. 1시간 전(4)
+     */
+    fun requestSupportNotifications(
+        taskId: Long,
+        memberId: Long,
+    ) {
+        val task =
+            taskRepository.findByIdOrNull(taskId)
+                ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, taskId)
+
+        val dueDatetime = task.dueDatetime
+        val startAlarmTime = task.triggerActionAlarmTime
+        val interval = Duration.between(dueDatetime, startAlarmTime).toMinutes()
+
+        val supportAlarms = mutableListOf<SupportAlarm>()
+
+        if (interval <= 60) {
+            supportAlarms.add(
+                SupportAlarm(
+                    index = 5,
+                    alarmTime = dueDatetime.minusMinutes(10),
+                ),
+            )
+        } else if (interval <= 240) {
+            supportAlarms.add(
+                SupportAlarm(
+                    index = 4,
+                    alarmTime = dueDatetime.minusHours(1),
+                ),
+            )
+        } else if (interval <= 1440) {
+            supportAlarms.addAll(
+                listOf(
+                    SupportAlarm(
+                        index = 2,
+                        alarmTime = dueDatetime.minusMinutes(interval / 2),
+                    ),
+                    SupportAlarm(
+                        index = 4,
+                        alarmTime = dueDatetime.minusHours(1),
+                    ),
+                ),
+            )
+        } else {
+            val dateTimes = getBetweenDateTimes(dueDatetime)
+            dateTimes.forEach { dateTime ->
+                supportAlarms.add(
+                    SupportAlarm(
+                        index = 1,
+                        alarmTime = dateTime,
+                    ),
+                )
+            }
+            supportAlarms.addAll(
+                listOf(
+                    SupportAlarm(
+                        index = 3,
+                        alarmTime = dueDatetime.minusDays(1),
+                    ),
+                    SupportAlarm(
+                        index = 3,
+                        alarmTime = dueDatetime.minusDays(1),
+                    ),
+                    SupportAlarm(
+                        index = 4,
+                        alarmTime = dueDatetime.minusHours(1),
+                    ),
+                ),
+            )
+        }
+
+        eventPublisher.publishEvent(
+            SupportNotificationSaveEvent(
+                memberId = memberId,
+                taskId = taskId,
+                alarmTimes = supportAlarms,
+            ),
+        )
+    }
+
+    private fun getBetweenDateTimes(dueDatetime: LocalDateTime): List<LocalDateTime> {
+        var current = LocalDateTime.now()
+        val dateTimes = mutableListOf<LocalDateTime>()
+
+        // 오늘 이미 오전 9시가 지났으면 오늘은 알림 대상에 포함하지 않습니다.(내일부터 시작)
+        if (current.hour >= 9) {
+            current = current.plusDays(1)
+        }
+
+        while (current < dueDatetime) {
+            dateTimes.add(current.toLocalDate().atTime(9, 0))
+            current = current.plusDays(1)
+        }
+
+        return dateTimes
+    }
+
+    // 몰입이 완료되면 등록된 푸시알림 비활성화
+    fun inactiveSupportNotifications(
+        taskId: Long,
+        memberId: Long,
+    ) {
+        eventPublisher.publishEvent(DeleteTaskNotificationEvent(memberId = memberId, taskId = taskId))
+    }
+
+    /**
+     * 작업과 관련된 회고 데이터를 함께 조회
+     */
+    fun getTaskWithRetrospection(
+        member: Member,
+        taskId: Long,
+    ): Pair<Task, Retrospection?> {
+        // 작업 조회 및 소유권 검증
+        val task = findTaskByIdAndMember(member, taskId)
+        logger.info("Task 조회: ID=${task.id}, name=${task.name}")
+
+        // 회고 데이터 조회 (없으면 null)
+        val retrospection = findRetrospectionForTask(task)
+        return Pair(task, retrospection)
+    }
+
+    /**
+     * 작업에 관련된 회고 데이터 조회
+     * 완료 상태의 작업만 회고 데이터가 조회됨
+     */
+    private fun findRetrospectionForTask(task: Task): Retrospection? {
+        if (task.status != COMPLETE) return null
+
+        checkNotNull(task.id, "TaskId")
+        return retrospectionRepository.findByTaskId(task.id)?.let { entity ->
+            val retrospection = Retrospection.fromEntity(entity)
+            logger.info("회고 조회: ID=${retrospection.id}, 만족도=${retrospection.satisfaction}")
+            retrospection
         }
     }
 }

@@ -33,4 +33,6 @@ class PushNotificationEntity(
     val isDeleted: Boolean,
     @Column(name = "`order`")
     val order: Int,
+    @Column(name = "message", length = 240)
+    val message: String,
 ) : BaseEntity()

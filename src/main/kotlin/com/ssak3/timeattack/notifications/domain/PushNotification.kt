@@ -11,6 +11,7 @@ class PushNotification(
     val scheduledAt: LocalDateTime,
     var isDeleted: Boolean = false,
     val order: Int,
+    val message: String,
 ) {
     fun toEntity() =
         PushNotificationEntity(
@@ -19,6 +20,7 @@ class PushNotification(
             scheduledAt = scheduledAt,
             isDeleted = isDeleted,
             order = order,
+            message = message,
         )
 
     fun delete() {
@@ -32,6 +34,7 @@ class PushNotification(
                 task = Task.fromEntity(entity.task),
                 scheduledAt = entity.scheduledAt,
                 order = entity.order,
+                message = entity.message,
             )
     }
 }

@@ -2,6 +2,7 @@ package com.ssak3.timeattack.task.service
 
 import com.ninjasquad.springmockk.MockkBean
 import com.ssak3.timeattack.IntegrationTest
+import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.utils.checkNotNull
 import com.ssak3.timeattack.fixture.Fixture
 import com.ssak3.timeattack.member.domain.Member
@@ -10,6 +11,8 @@ import com.ssak3.timeattack.notifications.service.PushNotificationListener
 import com.ssak3.timeattack.persona.domain.Persona
 import com.ssak3.timeattack.persona.repository.PersonaRepository
 import com.ssak3.timeattack.persona.repository.entity.PersonaEntity
+import com.ssak3.timeattack.retrospection.domain.Retrospection
+import com.ssak3.timeattack.retrospection.repository.RetrospectionRepository
 import com.ssak3.timeattack.task.controller.dto.TaskUpdateRequest
 import com.ssak3.timeattack.task.domain.Task
 import com.ssak3.timeattack.task.domain.TaskStatus
@@ -20,7 +23,9 @@ import com.ssak3.timeattack.task.repository.entity.TaskModeEntity
 import com.ssak3.timeattack.task.repository.entity.TaskTypeEntity
 import com.ssak3.timeattack.task.service.events.DeleteTaskNotificationEvent
 import com.ssak3.timeattack.task.service.events.TriggerActionNotificationUpdateEvent
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -36,6 +41,7 @@ class TaskServiceTest(
     @Autowired private val taskTypeRepository: TaskTypeRepository,
     @Autowired private val taskModeRepository: TaskModeRepository,
     @Autowired private val personaRepository: PersonaRepository,
+    @Autowired private val retrospectionRepository: RetrospectionRepository,
 ) : DescribeSpec() {
     @Autowired lateinit var events: ApplicationEvents
 
@@ -266,6 +272,83 @@ class TaskServiceTest(
                     // then
                     val updateEvents = events.stream(TriggerActionNotificationUpdateEvent::class.java).toList()
                     updateEvents.size shouldBe 0
+                }
+            }
+        }
+
+        describe("마이페이지에서 Task 조회 시") {
+            lateinit var task: Task
+
+            beforeEach {
+                val taskToSave =
+                    Fixture.createScheduledTaskWithNow(
+                        now,
+                        id = null,
+                        member = member,
+                        persona = persona,
+                        status = TaskStatus.COMPLETE,
+                    )
+                task = Task.fromEntity(taskRepository.save(taskToSave.toEntity()))
+            }
+
+            context("Task 상태가 COMPLETE인 경우") {
+                lateinit var retrospection: Retrospection
+
+                beforeEach {
+                    // 회고 데이터 생성 및 저장
+                    val retrospectionEntity =
+                        retrospectionRepository.save(
+                            Fixture.createRetrospection(id = null, task = task).toEntity(),
+                        )
+                    retrospection = Retrospection.fromEntity(retrospectionEntity)
+                }
+
+                it("Task와 함께 회고 데이터가 조회된다") {
+                    // when
+                    val (taskResult, retrospectionResult) = taskService.getTaskWithRetrospection(member, task.id!!)
+
+                    // then
+                    taskResult.id shouldBe task.id
+                    retrospectionResult.shouldNotBeNull()
+                    retrospectionResult.id shouldBe retrospection.id
+                    retrospectionResult.satisfaction shouldBe retrospection.satisfaction
+                }
+            }
+
+            context("Task 상태가 COMPLETE이지만 회고 데이터가 없는 경우") {
+                it("Task만 조회되고 회고 데이터는 null이다") {
+                    // when
+                    val (taskResult, retrospectionResult) = taskService.getTaskWithRetrospection(member, task.id!!)
+
+                    // then
+                    taskResult.id shouldBe task.id
+                    retrospectionResult.shouldBeNull()
+                }
+            }
+
+            context("Task 상태가 COMPLETE가 아닌 경우") {
+                it("회고 데이터를 조회하지 않는다") {
+                    // when
+                    val (taskResult, retrospectionResult) = taskService.getTaskWithRetrospection(member, task.id!!)
+
+                    // then
+                    taskResult.id shouldBe task.id
+                    retrospectionResult.shouldBeNull()
+                }
+            }
+
+            context("다른 사용자의 Task를 조회하려는 경우") {
+                lateinit var anotherMember: Member
+
+                beforeEach {
+                    anotherMember = Member.fromEntity(memberRepository.save(Fixture.createMember(id = null).toEntity()))
+                }
+
+                it("예외가 발생한다") {
+                    // when & then
+                    shouldThrow<ApplicationException> {
+                        taskService.getTaskWithRetrospection(anotherMember, task.id!!)
+                    }
                 }
             }
         }
