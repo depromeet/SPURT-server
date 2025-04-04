@@ -6,6 +6,7 @@ import com.ssak3.timeattack.task.domain.Task
 import java.time.LocalDateTime
 
 class PushNotification(
+    val id: Long = 0,
     val member: Member,
     val task: Task,
     val scheduledAt: LocalDateTime,
@@ -15,6 +16,7 @@ class PushNotification(
 ) {
     fun toEntity() =
         PushNotificationEntity(
+            id = id,
             member = member.toEntity(),
             task = task.toEntity(),
             scheduledAt = scheduledAt,
@@ -30,6 +32,7 @@ class PushNotification(
     companion object {
         fun fromEntity(entity: PushNotificationEntity) =
             PushNotification(
+                id = entity.id,
                 member = Member.fromEntity(entity.member),
                 task = Task.fromEntity(entity.task),
                 scheduledAt = entity.scheduledAt,
