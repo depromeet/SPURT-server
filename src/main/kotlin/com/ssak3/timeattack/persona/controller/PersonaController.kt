@@ -22,7 +22,7 @@ class PersonaController(
     fun getPlaylists(
         @PathVariable(required = true) @Positive id: Long,
     ): ResponseEntity<PersonaPlaylistResponse> {
-        val playlistIds = personaService.getPlayListIds(id)
+        val playlistIds = personaService.getPlaylists(id.toInt()) ?: emptyList()
         val response = PersonaPlaylistResponse(playlistIds)
         return ResponseEntity.ok(response)
     }
