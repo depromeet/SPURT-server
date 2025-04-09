@@ -72,7 +72,7 @@ class TaskController(
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
         val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest.status)
 
-        logger.info("======== 변경된 작업 확인: $changedStatusTask")
+        logger.info("======== 변경 요청한 작업 상태[${taskStatusRequest.status}] -> 변경된 작업 상태[${changedStatusTask.status}]")
 
         // 몰입 상태가 되면 응원 문구 푸시 알림 요청
         if (changedStatusTask.status == TaskStatus.FOCUSED) {
