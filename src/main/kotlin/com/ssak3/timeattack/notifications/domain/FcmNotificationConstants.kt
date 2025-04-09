@@ -31,7 +31,7 @@ object FcmNotificationConstants {
     fun getRoute(order: Int): String {
         // 0보다 작을 경우 = 응원 문구 푸시 알림
         return if (order < 0) {
-            "/home-page"
+            "/"
         } else if (order == 0) {
             "/action/start"
         } else {
