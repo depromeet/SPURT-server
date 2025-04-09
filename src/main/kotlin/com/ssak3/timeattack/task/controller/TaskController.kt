@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/tasks")
 class TaskController(
     private val taskService: TaskService,
-): Logger {
+) : Logger {
     @Operation(summary = "긴급 업무 생성", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping("/urgent")
     fun createUrgentTask(
