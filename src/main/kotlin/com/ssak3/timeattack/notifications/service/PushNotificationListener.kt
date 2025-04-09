@@ -72,7 +72,7 @@ class PushNotificationListener(
         pushNotificationService.saveAll(pushNotifications)
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun deleteNotifications(event: DeleteTaskNotificationEvent) {
         logger.info("DeleteTaskAlarmEvent: $event")
         val task = taskService.getTaskById(event.taskId)
@@ -100,7 +100,7 @@ class PushNotificationListener(
         pushNotificationService.save(pushNotification)
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun saveSupportNotifications(event: SupportNotificationSaveEvent) {
         logger.info("SupportNotificationSaveEvent: $event")
 
