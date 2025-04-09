@@ -72,7 +72,6 @@ class PushNotificationListener(
         pushNotificationService.saveAll(pushNotifications)
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun deleteNotifications(event: DeleteTaskNotificationEvent) {
         logger.info("DeleteTaskAlarmEvent: $event")
@@ -101,7 +100,6 @@ class PushNotificationListener(
         pushNotificationService.save(pushNotification)
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     fun saveSupportNotifications(event: SupportNotificationSaveEvent) {
         logger.info("SupportNotificationSaveEvent: $event")
