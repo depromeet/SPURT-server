@@ -76,6 +76,7 @@ class TaskController(
 
         // 몰입 상태가 되면 응원 문구 푸시 알림 요청
         if (changedStatusTask.status == TaskStatus.FOCUSED) {
+            logger.info("task status is focused")
             taskService.requestSupportNotifications(taskId = taskId, memberId = member.id)
         }
 

@@ -431,6 +431,8 @@ class TaskService(
             )
         }
 
+        logger.info("alarTimes: $supportAlarms")
+
         eventPublisher.publishEvent(
             SupportNotificationSaveEvent(
                 memberId = memberId,
