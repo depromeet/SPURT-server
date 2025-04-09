@@ -4,6 +4,7 @@ import com.ssak3.timeattack.common.config.SwaggerConfig.Companion.SECURITY_SCHEM
 import com.ssak3.timeattack.common.dto.MessageResponse
 import com.ssak3.timeattack.common.exception.ApplicationException
 import com.ssak3.timeattack.common.exception.ApplicationExceptionType.UNAUTHORIZED_ACCESS
+import com.ssak3.timeattack.common.utils.Logger
 import com.ssak3.timeattack.member.domain.Member
 import com.ssak3.timeattack.task.controller.dto.HomeTasksResponse
 import com.ssak3.timeattack.task.controller.dto.ScheduledTaskCreateRequest
@@ -40,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/tasks")
 class TaskController(
     private val taskService: TaskService,
-) {
+) : Logger {
     @Operation(summary = "긴급 업무 생성", security = [SecurityRequirement(name = SECURITY_SCHEME_NAME)])
     @PostMapping("/urgent")
     fun createUrgentTask(
@@ -70,6 +71,8 @@ class TaskController(
     ): ResponseEntity<TaskStatusResponse> {
         checkNotNull(member.id) { throw ApplicationException(UNAUTHORIZED_ACCESS) }
         val changedStatusTask = taskService.changeTaskStatus(taskId, member.id, taskStatusRequest.status)
+
+        logger.info("======== 변경 요청한 작업 상태[${taskStatusRequest.status}] -> 변경된 작업 상태[${changedStatusTask.status}]")
 
         // 몰입 상태가 되면 응원 문구 푸시 알림 요청
         if (changedStatusTask.status == TaskStatus.FOCUSED) {
