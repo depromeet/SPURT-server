@@ -18,6 +18,10 @@ class FirebaseCloudMessageService : Logger {
         logger.info("[Firebase Messaging] start to send: $message")
         val firebaseMessaging = FirebaseMessaging.getInstance()
 
+        val data = mutableMapOf<String, String>()
+        data["route"] = message.route
+        message.taskId?.let { data["taskId"] = message.taskId.toString() }
+
         val fcmMessage =
             Message.builder()
                 .setToken(message.token)
@@ -26,12 +30,7 @@ class FirebaseCloudMessageService : Logger {
                 )
                 .setApnsConfig(getAPNSConfig())
                 .setAndroidConfig(getAndroidConfig())
-                .putAllData(
-                    mapOf(
-                        "route" to message.route,
-                        "taskId" to message.taskId.toString(),
-                    ),
-                )
+                .putAllData(data)
                 .build()
 
         var response = ""

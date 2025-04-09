@@ -25,11 +25,13 @@ class PushNotificationScheduler(
             checkNotNull(it.member.id)
             checkNotNull(it.task.id)
             fcmDeviceService.getDevicesByMember(it.member.id).forEach { device ->
+                // 응원문구(홈으로 가는 푸시 알림)은 task id 전달되면 안됨
+                val taskId = if (it.order < 0) null else it.task.id
                 val message =
                     FcmMessage(
                         token = device.fcmRegistrationToken,
                         platform = DevicePlatform.valueOf(device.devicePlatform.toString()),
-                        taskId = it.task.id,
+                        taskId = taskId,
                         body = it.message,
                         route = getRoute(it.order),
                         title = it.task.name,
