@@ -372,8 +372,8 @@ class TaskService(
                 ?: throw ApplicationException(ApplicationExceptionType.TASK_NOT_FOUND_BY_ID, taskId)
 
         val dueDatetime = task.dueDatetime
-        val startAlarmTime = task.triggerActionAlarmTime
-        val interval = Duration.between(dueDatetime, startAlarmTime).toMinutes()
+        val interval = task.estimatedTime?.toLong() ?: Duration.between(dueDatetime, task.createdAt).toMinutes()
+        logger.info("======= task(${taskId}) interval time is $interval")
 
         val supportAlarms = mutableListOf<SupportAlarm>()
 
