@@ -50,7 +50,7 @@ class OverdueTaskStatusUpdateScheduler(
             scheduledTimeForPushNotification.atZone(ZoneId.systemDefault()).toInstant(),
         )
 
-        logger.info("Task(${task.id}) 회고 푸시 알림 등록 완료: 예정 실행 시간 = $scheduledTime")
+        logger.info("Task(${task.id}) 회고 푸시 알림 등록 완료: 예정 실행 시간 = $scheduledTimeForPushNotification")
     }
 
     private fun checkRetrospectionAndSendPushNotification(taskId: Long) {
