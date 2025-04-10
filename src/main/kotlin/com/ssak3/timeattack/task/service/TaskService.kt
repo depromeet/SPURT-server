@@ -362,6 +362,7 @@ class TaskService(
      *   2. 마감 24시간 전(3)
      *   3. 1시간 전(4)
      */
+    @Transactional
     fun requestSupportNotifications(
         taskId: Long,
         memberId: Long,
@@ -458,6 +459,7 @@ class TaskService(
     }
 
     // 몰입이 완료되면 등록된 푸시알림 비활성화
+    @Transactional
     fun inactiveSupportNotifications(
         taskId: Long,
         memberId: Long,
