@@ -373,7 +373,7 @@ class TaskService(
 
         val dueDatetime = task.dueDatetime
         val interval = task.estimatedTime?.toLong() ?: Duration.between(dueDatetime, task.createdAt).toMinutes()
-        logger.info("======= task(${taskId}) interval time is $interval")
+        logger.info("======= task($taskId) interval time is $interval")
 
         val supportAlarms = mutableListOf<SupportAlarm>()
 
