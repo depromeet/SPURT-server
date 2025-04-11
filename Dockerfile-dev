@@ -5,7 +5,7 @@ WORKDIR /app
 # Gradle 빌드 후 생성된 jar 파일을 컨테이너로 복사
 # JAR_FILE 변수에 실제 jar 파일 경로를 지정
 ARG JAR_FILE=build/libs/*.jar
-ARG ELASTIC_APM_AGENT_FILE=src/main/resources/elastic-apm-agent-1.52.3.jar
+ARG ELASTIC_APM_AGENT_FILE=src/main/resources/apm/elastic-apm-agent-1.52.3.jar
 ARG ELASTIC_SECRET_TOKEN
 ARG ELASTIC_SERVER_IP
 ARG ELASTIC_SERVER_PORT
