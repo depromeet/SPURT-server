@@ -129,6 +129,7 @@ fabric.properties
 
 # Package Files #
 *.jar
+!elastic-apm-agent-1.52.3.jar
 *.war
 *.nar
 *.ear
