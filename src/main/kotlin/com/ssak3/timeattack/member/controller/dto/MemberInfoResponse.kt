@@ -5,4 +5,5 @@ data class MemberInfoResponse(
     val nickname: String,
     val email: String,
     val profileImageUrl: String?,
+    val hasFcmToken: Boolean,
 )
