@@ -54,7 +54,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest .
+          docker build \
+          --build-arg ELASTIC_SECRET_TOKEN=${{ secrets.ELASTIC_SECRET_TOKEN }} \
+          --build-arg ELASTIC_SERVER_IP=${{ secrets.ELASTIC_SERVER_IP }} \
+          --build-arg ELASTIC_SERVER_PORT=${{ secrets.ELASTIC_SERVER_PORT }} \
+          -f Dockerfile-dev -t ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest .
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -72,20 +76,20 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
             cd ${{ secrets.DEV_COMPOSE_PATH }}
-            
+
             echo "${{ secrets.DEV_ENV }}" > .env
             cat .env || echo ".env file is missing!"
-            
+
             docker pull ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest
-            
+
             if [ "$(docker ps -q -f name=spurt-api-dev)" ]; then
               echo "Stopping and removing existing container..."
               docker compose down
             else
               echo "No running container found."
             fi
-            
+
             docker compose up -d
-            
+
             echo "Checking container status..."
             docker ps -a | grep spurt-api-dev

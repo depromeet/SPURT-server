@@ -5,7 +5,28 @@ WORKDIR /app
 # Gradle 빌드 후 생성된 jar 파일을 컨테이너로 복사
 # JAR_FILE 변수에 실제 jar 파일 경로를 지정
 ARG JAR_FILE=build/libs/*.jar
+ARG ELASTIC_APM_AGENT_FILE=src/main/resources/elastic-apm-agent-1.52.3.jar
+ARG ELASTIC_SECRET_TOKEN
+ARG ELASTIC_SERVER_IP
+ARG ELASTIC_SERVER_PORT
+
 COPY ${JAR_FILE} app.jar
+COPY ${ELASTIC_APM_AGENT_FILE} /opt/elastic-apm-agent.jar
+ENV ELASTIC_SECRET_TOKEN=${ELASTIC_SECRET_TOKEN}
+ENV ELASTIC_SERVER_IP=${ELASTIC_SERVER_IP}
+ENV ELASTIC_SERVER_PORT=${ELASTIC_SERVER_PORT}
 
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app/app.jar"]
+#ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=dev", "-jar", "/app/app.jar"]
+ENTRYPOINT ["sh", "-c", "\
+  java \
+  -Dfile.encoding=UTF-8 \
+  -Duser.timezone=Asia/Seoul \
+  -Dspring.profiles.active=dev \
+  -javaagent:/opt/elastic-apm-agent.jar \
+  -Delastic.apm.service_name=spurt \
+  -Delastic.apm.server_urls=http://${ELASTIC_SERVER_IP}:${ELASTIC_SERVER_PORT} \
+  -Delastic.apm.environment=dev \
+  -Delastic.apm.secret_token=${ELASTIC_SECRET_TOKEN} \
+  -Delastic.apm.application_packages=com.ssak3.timeattack \
+  -jar /app/app.jar"]
