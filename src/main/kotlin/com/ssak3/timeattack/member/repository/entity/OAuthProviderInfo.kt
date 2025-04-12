@@ -12,5 +12,9 @@ class OAuthProviderInfo(
     @Column(name = "subject", length = 255)
     val subject: String,
 ) {
+    override fun toString(): String {
+        return oauthProvider.toString()
+    }
+
     constructor() : this(OAuthProvider.KAKAO, "")
 }
