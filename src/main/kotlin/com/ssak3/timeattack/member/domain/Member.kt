@@ -28,6 +28,11 @@ class Member(
             isDeleted = isDeleted,
         )
 
+    override fun toString(): String {
+        return "Member(id=$id, nickname='$nickname', email='$email', " +
+            "AuthProviderInfo=$oAuthProviderInfo, createdAt=$createdAt)"
+    }
+
     companion object {
         fun fromEntity(memberEntity: MemberEntity) =
             Member(
