@@ -55,9 +55,9 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-          --build-arg ELASTIC_SECRET_TOKEN=${{ secrets.ELASTIC_SECRET_TOKEN }} \
-          --build-arg ELASTIC_SERVER_IP=${{ secrets.ELASTIC_SERVER_IP }} \
-          --build-arg ELASTIC_SERVER_PORT=${{ secrets.ELASTIC_SERVER_PORT }} \
+#          --build-arg ELASTIC_SECRET_TOKEN=${{ secrets.ELASTIC_SECRET_TOKEN }} \
+#          --build-arg ELASTIC_SERVER_IP=${{ secrets.ELASTIC_SERVER_IP }} \
+#          --build-arg ELASTIC_SERVER_PORT=${{ secrets.ELASTIC_SERVER_PORT }} \
           -f Dockerfile-dev -t ${{ secrets.DOCKER_IMAGE_NAME_DEV }}:latest .
 
       - name: Push Docker image to Docker Hub
